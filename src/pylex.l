@@ -1,6 +1,13 @@
 %{
 #include <iostream>
 #include "lib/stack.h"
+
+/*
+
+STRING		\".*\"
+{STRING}	std::cout << "STRING";
+*/
+
 %}
 
 %option noyywrap
@@ -40,15 +47,18 @@ ID 			[a-z][a-z0-9]*
 NUMBER		[0-9]*
 FRACTION	[0-9]*.[0-9]*
 NEWLINE		[\n]
+INDENT		[\t]
 COMMENT		"#".*
-STRING		\".*\"
+
+STRINGSTACK	["]
+
 
 %%
 
-{FALSE}		std::cout << "FALSE";                     
-{CLASS}		std::cout << "CLASS";                     
-{FINALLY}	std::cout << "FINALLY";               
-{IS}		std::cout << "IS";                     	
+{FALSE}		std::cout << "FALSE";
+{CLASS}		std::cout << "CLASS";
+{FINALLY}	std::cout << "FINALLY";
+{IS}		std::cout << "IS";
 {RETURN}	std::cout << "RETURN";
 {NONE}		std::cout << "NONE";
 {CONTINUE}	std::cout << "CONTINUE";
@@ -79,8 +89,20 @@ STRING		\".*\"
 
 {COMMENT}	/* we do nothing as expected */
 {NEWLINE}	std::cout << std::endl;
+<INDENT>	{
+				std::cout << "INDENT";
+				/* push or pop number of indent of stack */
+				while (yytext != EOF)
+				{
+					std::cout << yytext;
+				}
+			}
 {ID}		std::cout << "ID";
-{STRING}	std::cout << "STRING";
+{STRINGSTACK}	{
+					std::cout << "STRINGSTACK";
+					/* push " to stack and pop when find the other one */
+				}
+
 
 %%
 
@@ -100,4 +122,6 @@ int main(int argc, char *argv[])
 	}
 
 	yylex();
+	// yyparse()
+	// yyterminate()
 }
