@@ -3,24 +3,20 @@
 #include "lib/stack.h"
 
 int new_line = 1;
+stack stack;
 
 /*
 
 STRING		\".*\"
-{STRING}	std::cout << "STRING";
 
-INDENT		[\t]
-<INDENT>	{
-				std::cout << "INDENT";
-				// push or pop number of indent of stack
-				while (yytext != EOF)
-				{
-					std::cout << yytext;
-				}
-			}
+COMMENT		"#".*"\n"
+{COMMENT}	// we do nothing as expected
 
+LINE-COMMENT	"#".*"\n"
+{LINE-COMMENT}	// we do nothing 
 
 */
+
 
 %}
 
@@ -60,10 +56,13 @@ PRINT		"print"
 ID 			[a-z][a-z0-9]*
 NUMBER		[0-9]*
 FRACTION	[0-9]*.[0-9]*
-NEWLINE		[\n]
-COMMENT		"#".*
+NEWLINE		"\n"+
 
-STRING		["]
+COMMENT		"#"
+
+STRING		"\""
+
+INDENT		"\t"|"		"
 
 
 %%
@@ -100,9 +99,40 @@ STRING		["]
 
 {NUMBER} 	std::cout << "NUMBER";
 
-{COMMENT}	/* we do nothing as expected */
-{NEWLINE}	std::cout << std::endl; new_line++;
+{NEWLINE}	{
+				std::cout << " NEWLINE" << std::endl;
+				new_line++;
+
+				int in =yyinput(); 
+				if (in !='\t' && in != ' ' && in != '#')
+				{
+					int dedents = stack.peek();
+					while(stack.peek() != 0)
+					{
+						stack.pop();
+					}
+
+					for (int i = 0; i < dedents; i++)
+					{
+						std::cout << "DEDENT ";	
+					}
+				}
+				yyunput(in, yytext_ptr);
+			}
+
 {ID}		std::cout << "ID";
+
+{COMMENT}	{
+				int in = yyinput();
+				while(in != '\n')
+				{
+					in = yyinput();
+				}
+				yyunput(in, yytext_ptr);
+				std::cout << "NEWLINE" << std::endl;
+				new_line++;
+			}
+
 
 {STRING}	{
 				int in = yyinput();
@@ -120,13 +150,94 @@ STRING		["]
 				std::cout << "STRING";
 			}
 
+{INDENT}	{
+				int indent = 1;
+				int in = yyinput();
+
+				/* case: whitespace indent */
+				if (in == ' ')
+				{
+					yyunput(in, yytext_ptr);
+					int whitespace = 0;
+					while (in == ' ')
+					{
+						whitespace++;
+						in = yyinput();
+					}
+
+					/* push back last unmatched char */
+					yyunput(in, yytext_ptr);
+
+					/* convention: 8 whitespaces equals 1 tab */
+					if (whitespace % 8 != 0)
+					{
+						indent = whitespace / 8;
+					}
+				}
+
+				/* case: tab indent */
+				else if (in == '\t')
+				{
+					yyunput(in, yytext_ptr);
+					while (in == '\t')
+					{
+						indent++;
+						in = yyinput();
+					}
+					/* push back last unmatched char */
+					yyunput(in, yytext_ptr);
+				}
+
+				/* case: only indent */
+				else
+				{
+					/* push back last unmatched char */
+					yyunput(in, yytext_ptr);
+				}
+
+				/* if indent level matches stack peek there's nothing to do */
+
+				if (stack.peek() < indent)
+				{
+					stack.push(indent);
+
+					for (int i = 0; i < indent; i++)
+					{
+						std::cout << "INDENT ";
+					}	
+				}
+
+				else if (stack.peek() > indent)
+				{
+					int dedents = stack.peek();
+					/* pop stack's indent levels until match */
+					while (stack.peek() != indent)
+					{
+						if (stack.isEmpty())
+						{
+							std::cout << std::endl;
+							std::cout << "File \"" << yyin << "\", line " << new_line << std::endl;
+							std::cout << "Indent error: unindent does not match any outer indentation level" << std::endl;
+							yyterminate();
+						}
+
+						stack.pop();
+					}
+
+					/* matched unindent level */
+					for (int i = 0; i < dedents - 1; i++)
+					{
+						std::cout << "DEDENT ";
+					}
+				}
+			}
+
 %%
 
 int main(int argc, char *argv[])
 {
-	stack stack;
 	// push zero to stack as proposed in Python documentation
-	stack.push((char*) '0');
+	stack.push(0);
 
 	if (argc > 1)
 	{
@@ -138,6 +249,4 @@ int main(int argc, char *argv[])
 	}
 
 	yylex();
-	// yyparse()
-	// yyterminate()
 }

@@ -10,7 +10,7 @@
 // Struct to use as abstract implementation of the stack core / list
  struct Node
  {
- 	char* data;
+ 	int data;
  	struct Node *next;
  };
 
@@ -24,9 +24,9 @@
 
  	void pop();
  	void print();
- 	void push(char* e);
+ 	void push(int e);
  	bool isEmpty();
- 	char* peek();
+ 	int peek();
  	int getSize();
 
  private:
@@ -59,7 +59,7 @@
  }
 
 // Returns the top element of the stack, but does not removes it
- char* stack::peek()
+ int stack::peek()
  {
  	if(!isEmpty()) {
  		return elements->data;
@@ -67,7 +67,7 @@
  }
 
 // Pushes a new element into the stack
- void stack::push(char* e)
+ void stack::push(int e)
  {
  	node *pushed = (node*) malloc(sizeof(node));
  	pushed->data = e;
