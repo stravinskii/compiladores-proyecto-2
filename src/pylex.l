@@ -2,10 +2,24 @@
 #include <iostream>
 #include "lib/stack.h"
 
+int new_line = 1;
+
 /*
 
 STRING		\".*\"
 {STRING}	std::cout << "STRING";
+
+INDENT		[\t]
+<INDENT>	{
+				std::cout << "INDENT";
+				// push or pop number of indent of stack
+				while (yytext != EOF)
+				{
+					std::cout << yytext;
+				}
+			}
+
+
 */
 
 %}
@@ -47,10 +61,9 @@ ID 			[a-z][a-z0-9]*
 NUMBER		[0-9]*
 FRACTION	[0-9]*.[0-9]*
 NEWLINE		[\n]
-INDENT		[\t]
 COMMENT		"#".*
 
-STRINGSTACK	["]
+STRING		["]
 
 
 %%
@@ -88,21 +101,24 @@ STRINGSTACK	["]
 {NUMBER} 	std::cout << "NUMBER";
 
 {COMMENT}	/* we do nothing as expected */
-{NEWLINE}	std::cout << std::endl;
-<INDENT>	{
-				std::cout << "INDENT";
-				/* push or pop number of indent of stack */
-				while (yytext != EOF)
-				{
-					std::cout << yytext;
-				}
-			}
+{NEWLINE}	std::cout << std::endl; new_line++;
 {ID}		std::cout << "ID";
-{STRINGSTACK}	{
-					std::cout << "STRINGSTACK";
-					/* push " to stack and pop when find the other one */
-				}
 
+{STRING}	{
+				int in = yyinput();
+				while (in != '"')
+				{
+					/* Python doesnt allow multi-line strings */
+					in = yyinput();
+					if (in == '\n')
+					{
+						std::cout << "File \"" << yyin << "\", line " << new_line << std::endl;
+						std::cout << "Syntax error: EOL while scanning a string" << std::endl;
+						yyterminate();
+					}
+				}
+				std::cout << "STRING";
+			}
 
 %%
 
