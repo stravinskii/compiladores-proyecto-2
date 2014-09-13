@@ -6,7 +6,6 @@ int new_line = 1;
 stack stack;
 
 /*
-
 STRING		\".*\"
 
 COMMENT		"#".*"\n"
@@ -14,7 +13,6 @@ COMMENT		"#".*"\n"
 
 LINE-COMMENT	"#".*"\n"
 {LINE-COMMENT}	// we do nothing 
-
 */
 
 
@@ -23,47 +21,53 @@ LINE-COMMENT	"#".*"\n"
 %option noyywrap
 %option outfile="pylex.cpp"
 
-FALSE		"False"
-CLASS		"class"
-FINALLY		"finally"
-IS			"is"
-RETURN		"return"
-NONE		"None"
-CONTINUE	"continue"
-FOR			"for"
-LAMBDA		"lambda"
-TRY			"try"
-TRUE		"True"
-DEF			"def"
-FROM		"from"
-WHILE		"while"
-AND			"and"
-DEL			"del"
-NOT			"not"
-WITH		"with"
-AS			"as"
-ELIF		"elif"
-IF			"if"
-OR			"or"
-ELSE		"else"
-IMPORT		"import"
-PASS		"pass"
-BREAK		"break"
-EXCEPT		"except"
-IN			"in"
-PRINT		"print"
+/* Keywords */
+FALSE				False
+CLASS				class
+FINALLY				finally
+IS					is
+RETURN				return
+NONE				None
+CONTINUE			continue
+FOR					for
+LAMBDA				lambda
+TRY					try
+TRUE				True
+DEF					def
+FROM				from
+WHILE				while
+AND					and
+DEL					del
+NOT					not
+WITH				with
+AS					as
+ELIF				elif
+IF					if
+OR					or
+ELSE				else
+IMPORT				import
+PASS				pass
+BREAK				break
+EXCEPT				except
+IN					in
+PRINT				print
 
-ID 			[a-z][a-z0-9]*
-NUMBER		[0-9]*
-FRACTION	[0-9]*.[0-9]*
-NEWLINE		"\n"+
-
-COMMENT		"#"
-
-STRING		"\""
-
-INDENT		"\t"|"		"
-
+ID 					[a-zA-z][_a-zA-Z0-9]*
+NUMBER				{INTEGER}|{FLOATNUMBER}
+INTEGER        		{DECIMALINTEGER}
+DECIMALINTEGER		{NONZERODIGIT}{DIGIT}*|"0"+
+NONZERODIGIT  		[1-9]
+DIGIT				[0-9]
+FLOATNUMBER  		{POINTFLOAT}|{EXPONENTFLOAT}
+POINTFLOAT   		{INTPART}+{FRACTION}|{INTPART}"."
+EXPONENTFLOAT		({INTPART}|{POINTFLOAT}){EXPONENT}
+INTPART      		{DIGIT}+
+FRACTION     		"."{DIGIT}+
+EXPONENT     		("e"|"E")("+"|"-"){1}{DIGIT}+
+NEWLINE				"\n"+
+COMMENT				"#"
+STRING				"\""
+INDENT				"\t"|" "{8}
 
 %%
 
