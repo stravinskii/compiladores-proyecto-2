@@ -1,13 +1,10 @@
-# this is "string en comentario" a comment in python
-s = "Something string and continue it on another line"
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import math
-x = "Codigo de prueba"
+Identifier = 3.022
+an_id = "String!"
+an_id_with_Numb3rs = 12
 avanza = True
-if True:
-	pass
 while avanza: #comentario a media linea
 		y = 1
 		if y == 8 :
@@ -19,13 +16,8 @@ while avanza: #comentario a media linea
 			print " esta es una cadenaa"
 			z = 10
 print "Termina el programa"
-
-
 	
 num = 2
-num1 = 2 * 3
-num2 = 2 / 1
-num2 -= 1 
 while num < 11:
 	if num % 2 == 0:
 		print num , " es par"
@@ -35,11 +27,3 @@ while num < 11:
 cadena = "Palabra"
 for c in cadena:
     print c
-
-# for x in s:
-# is this a valid comment
-			# x = True
-			# while x:
-# comments dont matter at ident
-				# x = False
-	# indent = 0
