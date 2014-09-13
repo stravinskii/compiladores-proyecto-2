@@ -16,57 +16,49 @@ ofstream arch_salida;
 %option outfile="pylex.cpp"
 
 
-FALSE		"False"
-CLASS		"class"
-FINALLY		"finally"
-IS		"is"
-RETURN		"return"
-NONE		"None"
-CONTINUE	"continue"
-FOR		"for"
-LAMBDA		"lambda"
-TRY		"try"
-TRUE		"True"
-DEF		"def"
-FROM		"from"
-WHILE		"while"
-AND		"and"
-DEL		"del"
-NOT		"not"
-WITH		"with"
-AS		"as"
-ELIF		"elif"
-IF		"if"
-OR		"or"
-ELSE		"else"
-IMPORT		"import"
-PASS		"pass"
-BREAK		"break"
-EXCEPT		"except"
-IN		"in"
-PRINT		"print"
-EQUALS		"=="
-ASSIGN		"="
-PLUS		"+"
-MINUS		"-"
-MULT		"*"
-DIV		"/"
-MOD		"%"
-LESSTHAN	"<"
-GREATERTHAN	">"
+/* Keywords */
+FALSE				False
+CLASS				class
+FINALLY				finally
+IS					is
+RETURN				return
+NONE				None
+CONTINUE			continue
+FOR					for
+LAMBDA				lambda
+TRY					try
+TRUE				True
+DEF					def
+FROM				from
+WHILE				while
+AND					and
+DEL					del
+NOT					not
+WITH				with
+AS					as
+ELIF				elif
+IF					if
+OR					or
+ELSE				else
+IMPORT				import
+PASS				pass
+BREAK				break
+EXCEPT				except
+IN					in
+PRINT				print
 
 /*Administrativos, tipos y caracteres especiales*/
-DOTS		":"
-INDENT		"        "|"\t"
-DEDENT		"dedent"
+DOTS				":"
+INDENT				"        "|"\t"
+DEDENT				"dedent"
 
 
-ID 			[a-zA-z][_a-zA-Z0-9]*
-NUMBER			{INTEGER}|{FLOATNUMBER}
+ID 					[a-zA-z][_a-zA-Z0-9]*
+NUMBER				{INTEGER}|{FLOATNUMBER}
 INTEGER        		{DECIMALINTEGER}
 DECIMALINTEGER		{NONZERODIGIT}{DIGIT}*|"0"+
 NONZERODIGIT  		[1-9]
-DIGIT			[0-9]
+DIGIT				[0-9]
 FLOATNUMBER  		{POINTFLOAT}|{EXPONENTFLOAT}
 POINTFLOAT   		{INTPART}+{FRACTION}|{INTPART}"."
 EXPONENTFLOAT		({INTPART}|{POINTFLOAT}){EXPONENT}
@@ -74,12 +66,16 @@ INTPART      		{DIGIT}+
 FRACTION     		"."{DIGIT}+
 EXPONENT     		("e"|"E")("+"|"-"){1}{DIGIT}+
 
-NEWLINE		"\n"+
-COMMENT		"#"
-STRING		"\""
-COMMA		","
-ERROR		"mistake"
-EOF		"\0"
+NEWLINE				"\n"+
+COMMENT				"#"
+STRING				"\""
+
+OPERATORS			("+"|"-"|"*"|"**"|"/"|"//"|"%"|"<<"|">>"|"&"|"|"|"^"|"~"|"<"|">"|"<="|">="|"=="|"!=")
+DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*="|"/="|"//="|"%="|"&="|"|="|"^="|">>="|"<<="|"**=")
+
+COMMA				","
+ERROR				"mistake"
+EOF					"\0"
 
 
 %%
@@ -113,18 +109,10 @@ EOF		"\0"
 {EXCEPT}	arch_salida<<"EXCEPT";
 {IN}		arch_salida<<"IN";
 {PRINT}		arch_salida<<"PRINT";
-{EQUALS}	arch_salida<<"EQUALS";
-{ASSIGN}	arch_salida<<"ASSIGN";
 {NUMBER}	arch_salida<<"NUMBER";
 {COMMA}		arch_salida<<",";
-{PLUS}		arch_salida<<"+";
-{MINUS}		arch_salida<<"-";
-{MULT}		arch_salida<<"*";
-{DIV}		arch_salida<<"/";
-{MOD}		arch_salida<<"%";
-{DOTS}		arch_salida<<":";
-{LESSTHAN}	arch_salida<<"<";
-{GREATERTHAN}	arch_salida<<">";
+{OPERATORS}	arch_salida<<yytext;
+{DELIMITERS} arch_salida<<yytext;
 
 {ERROR}		{cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
 {COMMENT}	{int in=yyinput();
