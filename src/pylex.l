@@ -6,15 +6,9 @@ int new_line = 1;
 stack stack;
 
 /*
-STRING		\".*\"
-
-COMMENT		"#".*"\n"
-{COMMENT}	// we do nothing as expected
-
 LINE-COMMENT	"#".*"\n"
 {LINE-COMMENT}	// we do nothing 
 */
-
 
 %}
 
@@ -69,6 +63,9 @@ COMMENT				"#"
 STRING				"\""
 INDENT				"\t"|" "{8}
 
+OPERATORS			("+"|"-"|"*"|"**"|"/"|"//"|"%"|"<<"|">>"|"&"|"|"|"^"|"~"|"<"|">"|"<="|">="|"=="|"!=")
+DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*="|"/="|"//="|"%="|"&="|"|="|"^="|">>="|"<<="|"**=")
+
 %%
 
 {FALSE}		std::cout << "FALSE";
@@ -101,13 +98,16 @@ INDENT				"\t"|" "{8}
 {IN}		std::cout << "IN";
 {PRINT}		std::cout << "PRINT";
 
+{OPERATORS}	std::cout << yytext;
+{DELIMITERS} std::cout << yytext;
+
 {NUMBER} 	std::cout << "NUMBER";
 
 {NEWLINE}	{
 				std::cout << " NEWLINE" << std::endl;
 				new_line++;
 
-				int in =yyinput(); 
+				int in = yyinput(); 
 				if (in !='\t' && in != ' ' && in != '#')
 				{
 					int dedents = stack.peek();
@@ -240,7 +240,7 @@ INDENT				"\t"|" "{8}
 
 int main(int argc, char *argv[])
 {
-	// push zero to stack as proposed in Python documentation
+	/* push zero to stack as proposed in Python documentation */
 	stack.push(0);
 
 	if (argc > 1)
