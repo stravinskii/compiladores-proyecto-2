@@ -2,12 +2,11 @@
 #include <iostream>
 #include "lib/stack.h"
 
-int new_line = 1;
 stack stack;
+int new_line = 1;
+bool start = true;
 
 /*
-LINE-COMMENT	"#".*"\n"
-{LINE-COMMENT}	// we do nothing 
 {NUMBER}		{std::cout << "NUMBER"; return NUMBER;}
 */
 
@@ -17,7 +16,7 @@ LINE-COMMENT	"#".*"\n"
 %option outfile="pylex.cpp"
 
 
-ID 					[a-zA-z][_a-zA-Z0-9]*
+NAME 				[a-zA-z][_a-zA-Z0-9]*
 NUMBER				{INTEGER}|{FLOATNUMBER}
 INTEGER        		{DECIMALINTEGER}
 DECIMALINTEGER		{NONZERODIGIT}{DIGIT}*|"0"+
@@ -41,83 +40,48 @@ OPERATORS			("+"|"-"|"*"|"**"|"/"|"//"|"%"|"<<"|">>"|"&"|"|"|"^"|"~"|"<"|">"|"<=
 DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*="|"/="|"//="|"%="|"&="|"|="|"^="|">>="|"<<="|"**=")
 
 
+%s START
 %s NEWLINE
+%s DEDENT
 %%
 
+{EOF}		{std::cout << "EOF";}
+
 {KEYWORDS}		{
+					// yylval.cadena = yytext;
 					std::cout << yytext;
 					BEGIN(INITIAL);
+					// return KEYWORDS
 				}
 {OPERATORS}		{
+					// yylval.cadena = yytext;
 					std::cout << yytext;
 					BEGIN(INITIAL);
+					// return OPERATORS
 				}
 {DELIMITERS} 	{
+					// yytext.cadena = yytext;
 					std::cout << yytext;
 					BEGIN(INITIAL);
+					// return DELIMITERS
 				}
 
 {FLOATNUMBER}	{ 
 					/* yylval.flotante = atof(yytext); */
-					std::cout << "NUMBER"; 
 					BEGIN(INITIAL);
+					std::cout << "NUMBER";
 				}
 {INTEGER}		{ 
 					/* yylval.entero = atoi(yytext); */
-					std::cout << "NUMBER"; 
 					BEGIN(INITIAL);
+					std::cout << "NUMBER"; 
 				}
 
-{NEWLINE}	{
-				std::cout << "NEWLINE" << std::endl;
-				/* return NEWLINE; */
-				new_line++;
-
-				int in = yyinput(); 
-				if (in !='\t' && in != ' ' && in != '#')
-				{
-					int dedents = stack.peek();
-					while(stack.peek() != 0)
-					{
-						stack.pop();
-					}
-
-					for (int i = 0; i < dedents; i++)
-					{
-						std::cout << "DEDENT";
-						/* return DEDENT; */
-					}
-				}
-				yyunput(in, yytext_ptr);
-				BEGIN(NEWLINE);
-			}
-
-{ID}		{
+{NAME}		{
 				/* yylval.identificador = yytext; */
-				std::cout << "ID";
 				BEGIN(INITIAL);
+				std::cout << "NAME";
 			}
-
-<NEWLINE>{COMMENT}	{
-						int in = yyinput();
-						while(in != '\n')
-						{
-							in = yyinput();
-						}
-						new_line++;
-						BEGIN(INITIAL);
-					}
-
-{COMMENT}	{
-				int in = yyinput();
-				while(in != '\n')
-				{
-					in = yyinput();
-				}
-				yyunput(in, yytext_ptr);
-				new_line++;
-			}
-
 
 {STRING}	{
 				int in = yyinput();
@@ -137,6 +101,139 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 				BEGIN(INITIAL);
 			}
 
+<START>{NEWLINE}	{
+						new_line++;
+						int in = yyinput();
+						if (in == '\n')
+						{
+							while (in != '\n')
+							{
+								new_line++;
+								in = yyinput();
+							}
+						}
+
+						if (in != '#')
+						{
+							BEGIN(INITIAL);
+						}
+
+						/* push back unmatching char */
+						unput(in);
+					}
+
+<DEDENT>{NEWLINE}	{
+						std::cout << "NEWLINE token in condition DEDENT" << std::endl;
+						int in = yyinput();
+						/* if it's an indent */
+						if (in == '\t' || in == ' ')
+						{
+							// std::cout << "its an indent!" << std::endl;
+							/* push back unmatching char */
+							unput(in);
+							BEGIN(INITIAL);
+							std::cout << "NEWLINE" << std::endl;
+						}
+						/* if it's a comment */
+						else if (in == '#')
+						{
+							// std::cout << "its a comment!" << std::endl;
+							/* push back unmatching char */
+							unput(in);
+							BEGIN(NEWLINE);
+							std::cout << "NEWLINE" << std::endl;
+						}
+						/* if it's not an INDENT or COMMENT check DEDENT */
+						else
+						{
+							// std::cout << "not indent nor comment" << std::endl;
+							/* push back unmatching char */
+							unput(in);
+
+							/* if last DEDENT was returned */
+							if (stack.peek() == 0)
+							{
+								// std::cout << "last dedent" << std::endl;
+								BEGIN(INITIAL);
+								std::cout << "NEWLINE" << std::endl;
+							}
+							/* there are still DEDENTS level to pop */
+							else
+							{
+								// std::cout << "dedent found from stack peek" << std::endl;
+								stack.pop();
+								/* push back newline for next DEDENT */
+								yyless(yyleng);
+								std::cout << "DEDENT";
+							}
+						}
+					}
+
+{NEWLINE}	{
+				new_line++;
+				int in = yyinput();
+				if (in == '\n')
+				{
+					while (in != '\n')
+					{
+						new_line++;
+						in = yyinput();	
+					}
+				}
+
+				/* push back unmatching char */
+				unput(in);
+				/* push back last newline for DEDENT check */
+				BEGIN(DEDENT);
+				yyless(yyleng);
+			}
+
+<START>{COMMENT}	{
+						int in = yyinput();
+						while (in != '\n')
+						{
+							in = yyinput();
+						}
+
+						in = yyinput();
+						if (in != '#' && in != '\n')
+						{
+							BEGIN(INITIAL);
+						}
+
+						/* push back unmatching char */
+						unput(in);
+					}
+
+<NEWLINE>{COMMENT}	{
+						int in = yyinput();
+						while (in != '\n')
+						{
+							in = yyinput();
+						}
+						new_line++;
+
+						/* check if there are more line comments */
+						in = yyinput();
+						if (in != '#')
+						{
+							BEGIN(INITIAL);
+						}
+
+						/* push back unmatching char */
+						unput(in);
+					}
+
+{COMMENT}	{
+				int in = yyinput();
+				while(in != '\n')
+				{
+					in = yyinput();
+				}
+				unput(in);
+				new_line++;
+			}
+
 <NEWLINE>{INDENT}	{
 						int indent = 1;
 						int in = yyinput();
@@ -144,7 +241,7 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 						/* case: whitespace indent */
 						if (in == ' ')
 						{
-							yyunput(in, yytext_ptr);
+							unput(in);
 							while (in == ' ')
 							{
 								indent++;
@@ -152,27 +249,27 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 							}
 
 							/* push back last unmatched char */
-							yyunput(in, yytext_ptr);
+							unput(in);
 						}
 
 						/* case: tab indent */
 						else if (in == '\t')
 						{
-							yyunput(in, yytext_ptr);
+							unput(in);
 							while (in == '\t')
 							{
 								indent++;
 								in = yyinput();
 							}
 							/* push back last unmatched char */
-							yyunput(in, yytext_ptr);
+							unput(in);
 						}
 
 						/* case: only indent */
 						else
 						{
 							/* push back last unmatched char */
-							yyunput(in, yytext_ptr);
+							unput(in);
 						}
 
 						/* if indent level matches stack peek there's nothing to do */
@@ -181,7 +278,7 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 						{
 							stack.push(indent);
 							std::cout << "INDENT";
-							
+
 						}
 
 						else if (stack.peek() > indent)
@@ -212,12 +309,12 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 						}
 					}
 
-{EOF}		{std::cout << "EOF";}
-
 %%
 
 int main(int argc, char *argv[])
 {
+	BEGIN(START);
+
 	/* push zero to stack as proposed in Python documentation */
 	stack.push(0);
 
