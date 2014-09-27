@@ -1,4 +1,4 @@
 all:
-	flex pylex.l
+	flex pylex.bck.l
 	g++ pylex.cpp -o pylex
 	./pylex pylex.py

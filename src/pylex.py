@@ -12,7 +12,7 @@ while avanza: #comentario a media linea
 			print "Y es 8"
 			avanza = False
 		else:
-	#Comentario mal identado	
+			#Comentario mal identado	
 			print " esta es una cadenaa"
 			z = 10
 print "Termina el programa"
