@@ -93,34 +93,81 @@ compound_stmt: if_stmt;
 			 | with_stmt;
 			 | funcdef;
 
-if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite];
+if_stmt: 'if' test ':' suite if_stmt_elif if_stmt_else;
+if_stmt_elif: if_stmt_elif;
+			| 'elif' test ':' suite;
+			| epsilon;
+if_stmt_else: 'else' ':' suite;
+			| epsilon;
 
-while_stmt: 'while' test ':' suite ['else' ':' suite];
+while_stmt: 'while' test ':' suite while_stmt_else; 
+while_stmt_else: 'else' ':' suite;
+				| epsilon;
 
-for_stmt: 'for' exprlist 'in' testlist ':' suite ['else' ':' suite];
+for_stmt: 'for' exprlist 'in' testlist ':' suite for_stmt_else; 
+for_stmt_else: 'else' ':' suite;
+				| epsilon;
 
 /* Quizás estaría bien eliminar with de la gramática */
 with_stmt: 'with' with_item (',' with_item)*  ':' suite
 with_item: test ['as' expr]
 
 suite: simple_stmt; 
-	| NEWLINE INDENT stmt+ DEDENT;
+		| NEWLINE INDENT suite_stmt DEDENT;
+suite_stmt:	stmt;
+		| more_stmt;
+more_stmt: stmt more_stmt;
+		| epsilon;
 
-simple_stmt: small_stmt (';' small_stmt)* [';'] NEWLINE;
+simple_stmt: small_stmt more_simple_stmt end_simple_stmt NEWLINE;
+
+more_simple_stmt: ';' small_stmt;
+				| epsilon; 
+end_simple_stmt: ';';
+				| epsilon;
 
 small_stmt: expr_stmt; 
-			| print_stmt;  
+			| print_stmt;
 			| del_stmt;
-			| pass_stmt; 
+			| pass_stmt;
 			| flow_stmt;
-			| global_stmt; 
+			| global_stmt;
 			| exec_stmt;
 
-expr_stmt: testlist (augassign testlist | ('=' testlist)*);
+expr_stmt: testlist expr_stmt_at;
+expr_stmt_at: augassign testlist;
+			| more_testlist;
+more_testlist: '=' testlist more_testlist;
+				| '=' testlist;
+				| epsilon; 
 
-augassign: ('+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=' | '**=' | '//=');
+augassign: '+=';
+		| '-=';
+		| '*=';
+		| '/=';
+		| '%=';
+		| '&=';
+		| '|=';
+		| '^=';
+		| '<<=';
+		| '>>=';
+		| '**=';
+		| '//=';
 
-print_stmt: 'print' ( [ test (',' test)* [','] ] | '>>' test [ (',' test)+ [','] ] );
+print_stmt: 'print' print_stmt_next 
+print_stmt_next: print_stmt_test
+				| '>>' test [ (',' test)+ print_stmt_test_last ];
+
+print_stmt_second: more_test print_stmt_test_last;
+more_test: ',' test;
+		| ',' test more_test;
+
+print_stmt_test: test print_stmt_more_test print_stmt_test_last;
+				| epsilon;
+print_stmt_more_test: ',' test print_stmt_more_test;
+					| epsilon;
+print_stmt_test_last: ';';
+					| epsilon;
 
 /* Quizás estaría bien eliminar del de la gramática */
 del_stmt: 'del' exprlist;
@@ -134,23 +181,52 @@ flow_stmt: break_stmt;
 
 break_stmt: 'break';
 continue_stmt: 'continue';
-return_stmt: 'return' [testlist];
+return_stmt: 'return' return_stmt_tl;
+return_stmt_tl: testlist;
+				| epsilon;
 
 /* raise me parece innecesario */
-raise_stmt: 'raise' [test [',' test [',' test]]]
-
-/* global me parece innecesario pero en tema de registros plantea algo importante */
-global_stmt: 'global' NAME (',' NAME)*;
+/* raise_stmt: 'raise' [test [',' test [',' test]]]; */
 
 /* exec me parece innecesario */
-exec_stmt: 'exec' expr ['in' test [',' test]];
+/* exec_stmt: 'exec' expr ['in' test [',' test]]; *?
+
+/* global me parece innecesario pero en tema de registros plantea algo importante */
+global_stmt: 'global' NAME global_stmt_name;
+global_stmt_name: ',' NAME global_stmt_name;
+				| epsilon;
+
+/* Funciones */
 
 funcdef: 'def' NAME parameters ':' suite;
-parameters: '(' [varargslist] ')';
-varargslist: ((fpdef ['=' test] ',')*('*' NAME [',' '**' NAME] | '**' NAME) |
-              fpdef ['=' test] (',' fpdef ['=' test])* [','])
-fpdef: NAME | '(' fplist ')'
-fplist: fpdef (',' fpdef)* [',']
+parameters: '(' varargslist ')';
+varargslist: args_first args_first_next;
+			| fpdef args_def args_def_more ',';
+			| fpdef args_def args_def_more;
+			| epsilon;
+
+args_first: fpdef ['=' test] ',' args_first;
+			| epsilon;
+
+args_first_next: '*' NAME args_name;
+				| '**' NAME;
+
+args_name: ',' '**' NAME;
+		| epsilon;
+
+args_def: '=' test;
+		| epsilon;
+
+args_def_more: ',' fpdef args_def args_def_more;
+			| epsilon;
+
+fpdef: NAME;
+	| '(' fplist ')';
+
+fplist: fpdef fpdef_more ',';
+		| fpdef fpdef_more;
+fpdef_more: ',' fpdef fpdef_more;
+			| epsilon;
 
 %%
 
