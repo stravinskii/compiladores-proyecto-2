@@ -1,3 +1,7 @@
+
+
+
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import math
@@ -16,7 +20,11 @@ while avanza: #comentario a media linea
 			print " esta es una cadenaa"
 			z = 10
 print "Termina el programa"
-	
+
+
+
+
+
 num = 2
 while num < 11:
 	if num % 2 == 0:
