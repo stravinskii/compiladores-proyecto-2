@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-
-#define YYDEBUG 1
 using namespace std;
 
 int yylex(); 
@@ -62,7 +60,7 @@ test:/*or_test ['if' or_test 'else' test] */
 	
 old_test: or_test;
 
-or_test: 	/*and_test (OR and_test)*			{};*/
+or_test: 	/*and_test (OR and_test)*		{};*/
 		and_test or_andtest			{};
 		
 or_andtest:	epsilon					{}
@@ -79,11 +77,12 @@ not_test: 	NOT not_test				{}
 
 		
 comparison: /*expr (comp_op expr)*			{};*/
-	expr comp_op_expr				{};
-		
-comp_op_expr:	epsilon					{}
-	|comp_op expr comp_op_expr		{};
-		
+	expr comp_op_expr_kleene;
+
+comp_op_expr_kleene: 
+	comp_op_expr_kleene comp_op expr
+	|epsilon;
+	
 comp_op: LESSTHAN
 	|MORETHAN
 	|EQUALS
@@ -124,11 +123,11 @@ leftright_shift_expr: epsilon				{}
 
 arithmetic_expr: /*term ('+' term)*			{};
 		|term ('-' term)*			{};*/
-	term sign_term					{cout<<"Expr arit\n";};
+	term sign_term					{};
 
-sign_term: epsilon					{}
-	|MAS term sign_term				{}
-	|MENOS term sign_term				{};
+sign_term:epsilon					{}
+	|sign_term MAS term			{cout<<"Suma\n";}
+	|sign_term MENOS term			{cout<<"Resta\n";};
 
 term: /*factor ('*'factor)*;
 	| factor ('/'factor)*;
@@ -137,10 +136,10 @@ term: /*factor ('*'factor)*;
 	factor factor_operation				{};
 	
 factor_operation: epsilon				{}
-	|POR factor factor_operation			{}
-	|ENTRE factor factor_operation			{}
-	|MOD factor factor_operation			{}
-	|DIV factor factor_operation			{};
+	|POR factor factor_operation			{cout<<"Multiplicacion\n";}
+	|ENTRE factor factor_operation			{cout<<"Division\n";}
+	|MOD factor factor_operation			{cout<<"Modulo\n";}
+	|DIV factor factor_operation			{cout<<"Division Entera\n";};
 
 factor: /*'+' factor;
 	| '-' factor;
@@ -169,8 +168,8 @@ arglist: /*(argument ',')* (argument [','] |'*' test (',' argument)* [',' '**' t
 argument_comma: epsilon
 	|argument COMMA argument_comma;
 	
-argument_multiple: argument COMMA
-	|argument
+argument_multiple: argument
+	|argument COMMA
 	|POR test comma_argument
 	|POR test comma_argument COMMA POT test
 	|POT test;
@@ -239,8 +238,8 @@ string_plus:
 
 /*LO QUE ESTA ARRIBA ES DE ARITHMETIC EXP*/
 listmaker: 	/*test ( list_for | (',' test)* [','] )*/
-		test list_for				{}		
-		|test comma_test comma_one			{};
+	test list_for				{}		
+	|test comma_test comma_one			{};
 		
 		
 testlist_comp: test 
@@ -285,7 +284,7 @@ elif_test_td_suite_kleene: epsilon
 else_td_suite_one: epsilon
 	|ELSE TWODOTS suite;
 
-while_stmt: WHILE test TWODOTS suite while_stmt_else ;
+while_stmt: WHILE test TWODOTS suite while_stmt_else {cout<<"While stmt";};
 
 while_stmt_else: ELSE TWODOTS suite
 	| epsilon;
@@ -430,34 +429,3 @@ fpdef_more: COMMA fpdef fpdef_more
 	| epsilon;
 
 %%
-
-
-int main(int argc, char* argv[]) 
-{
-	/* Flex */
-	// BEGIN(START);
-	// stack.push(0);
-	/* end Flex */
-	
-	if (argc > 1)
-	{
-		FILE *file =fopen(argv[1],"r");
-		yyin = file;
-	} 
-	else
-	{
-		yyin = stdin;
-	}
-
-	do
-	{
-		yyparse();
-	} 
-	while (!feof(yyin));
-}
-
-
-
-
-
-
