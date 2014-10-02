@@ -2,27 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <vector>
+#include <fstream>
+#include <cstdio>
 using namespace std;
 
 int yylex(); 
 int yyerror(const char *s) { printf ("Error: %s\n", s); }
-int seguir=1;
 
-string checkStrings(string delimiter, string deseado[]){
-	for(int i=0; i< deseado->length(); i++){
-		if (delimiter.compare(deseado[i])==0)
-			return *deseado;
-	}
-	yyerror("de sintaxis, babuino");
-}
 
-string checkString(string delimiter, string deseado){
-	if(delimiter.compare(deseado)==0)
-		return deseado;
-	else
-		yyerror("de sintaxis, babuino");
-}
+extern "C" FILE *yyin;
 
 
 %}
@@ -39,34 +27,28 @@ string checkString(string delimiter, string deseado){
 
 /*Aquí van los tokens*/
 %token	<doble> NUMBER
-%token	<cadena> STRING MAS MENOS POR ENTRE MOD DIV POT OPERATOR DELIMITER FALSE CLASS FINALLY IS RETURN NONE CONTINUE FOR LAMBDA TRY TRUE DEF FROM WHILE AND DEL NOT WITH AS ELIF IF OR ELSE IMPORT PASS BREAK EXCEPT IN PRINT COMMA DOT ASSIGN TWODOTS GLOBAL DOTCOMMA 
+%token	STRING MAS MENOS POR ENTRE MOD DIV POT FALSE CLASS FINALLY IS RETURN NONE CONTINUE FOR LAMBDA TRY TRUE DEF FROM WHILE AND DEL NOT WITH AS ELIF IF OR ELSE IMPORT PASS BREAK EXCEPT IN PRINT COMMA DOT ASSIGN TWODOTS DOTCOMMA BINLEFT  BINRIGHT ANDPAND PIPE EXP TILDE LESSTHAN MORETHAN LESSEQUAL MOREEQUAL EQUALS DIFFERENT PICOPARENTESIS OPENPAR CLOSEPAR OPENCOR CLOSECOR OPENKEY CLOSEKEY AT RIGHT MASIGUAL MENOSIGUAL PORIGUAL ENTREIGUAL DIVIGUAL MODIGUAL ANDIGUAL ORIGUAL EXPIGUAL BINRIGHTIGUAL BINLEFTIGUAL POTIGUAL GLOBAL
 %token	<identificador>	NAME
-%token DEDENT INDENT NEWLINE EOF
+%token DEDENT INDENT NEWLINE 
 
 /*Aquí van los tipos*/
 
 
 %%
-file_input: 
-	|arithmetic_expr				{};
+file_input: /*(NEWLINE | stmt)* ENDMARKER*/
+	arithmetic_expr				{};
 	
+/*YA ESTAN EN EL GRANDE*/
 /* Expresiones aritméticas */
 epsilon:	{/*Nada xD*/};
 
-/*test (',' test)* [','];*/
-/*
-testlist:
-		test comma_test COMMA			{}
-		|test comma_test			{};
+test:/*or_test ['if' or_test 'else' test] */
+	or_test 				{}
+	|or_test IF or_test ELSE test		{};	
+	
+old_test: or_test;
 		
-comma_test:	epsilon					{}
-		|COMMA test comma_test			{};
-*/
-		
-test: 		or_test 				{}
-		|or_test IF or_test ELSE test		{};
-		
-or_test: 	/*and_test (OR and_test)*			{};*/
+or_test: 	/*and_test (OR and_test)*		{};*/
 		and_test or_andtest			{};
 		
 or_andtest:	epsilon					{}
@@ -87,7 +69,13 @@ comparison: /*expr (comp_op expr)*			{};*/
 comp_op_expr:	epsilon					{}
 		|comp_op expr comp_op_expr		{};
 		
-comp_op: 	OPERATOR				{string[] list={"<",">","==",">=","<=","<>","!="};checkStrings($1,list);}
+comp_op: 	LESSTHAN
+		|MORETHAN
+		|EQUALS
+		|MOREEQUAL
+		|LESSEQUAL
+		|PICOPARENTESIS
+		|DIFFERENT
 		| IN					{}
 		| NOT IN				{}
 		| IS					{}
@@ -97,32 +85,33 @@ expr: /*xor_expr ('|' xor_expr)*				{};*/
 	xor_expr pipexor_expr				{};
 	
 pipexor_expr: 	epsilon					{}
-		|OPERATOR xor_expr pipexor_expr		{checkString($1,"|");};
+		|PIPE xor_expr;
 		
 xor_expr: /*and_expr ('^' and_expr)*			{};*/
 	and_expr andxor_expr				{};
 
 andxor_expr: 	epsilon					{}
-	|OPERATOR and_expr andxor_expr			{checkString($1,"^");};
+	|EXP and_expr;
 		
 and_expr: /*shift_expr ('&' shift_expr)*			{};*/
 	shift_expr andpandshift_expr			{};
 	
 andpandshift_expr: epsilon				{}
-	|OPERATOR shift_expr andpandshift_expr		{checkString($1,"&");};
+	|ANDPAND shift_expr;
 
 shift_expr: /*arith_expr (('<<'|'>>') arith_expr)*	{};*/
 	arithmetic_expr leftright_shift_expr			{};
 
 leftright_shift_expr: epsilon				{}
-	|OPERATOR arithmetic_expr leftright_shift_expr	{string[] list={">>","<<"};checkStrings($1,list);};
+	|BINRIGHT arithmetic_expr leftright_shift_expr
+	|BINLEFT arithmetic_expr leftright_shift_expr;;
 
 arithmetic_expr: /*term ('+' term)*			{};
 		|term ('-' term)*			{};*/
-	term sign_term				{};
+	term sign_term					{cout<<"Expresion artmetica\n";};
 		
 sign_term: epsilon					{}
-	|MAS term sign_term				{}
+	|MAS term sign_term				{cout<<"MAS term sig_term\n";}
 	|MENOS term sign_term				{};
 
 term: /*factor ('*'factor)*;
@@ -137,14 +126,16 @@ factor_operation: epsilon				{}
 	|MOD factor factor_operation			{}
 	|DIV factor factor_operation			{};
 
+
+
 factor: /*'+' factor;
 	| '-' factor;
 	| '~' factor;
 	| power;*/
-	MAS factor					{}
+	MAS factor					{cout<< "MAS factor";}
 	|MENOS factor					{}
-	|OPERATOR factor				{checkString($1,"~");}
-	|power						{};
+	|TILDE factor				
+	|power;		
 
 power: /*atom trailer* ['**' factor];*/
 	atom trailer_kleene				{}
@@ -153,10 +144,9 @@ power: /*atom trailer* ['**' factor];*/
 trailer_kleene: epsilon					{}
 	|trailer trailer_kleene				{};
 	
-trailer: /*trailer: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME*/
-	DELIMITER DELIMITER				{checkString($1,"("),sheckString($2,")");}
-	|DELIMITER arglist DELIMITER			{checkString($1,"("),sheckString($3,")");}
-	|DELIMITER subscriptlist DELIMITER 		{checkString($1,"["),sheckString($3,"]");}
+trailer: OPENPAR CLOSEPAR
+	|OPENPAR arglist CLOSEPAR	
+	|OPENCOR subscriptlist CLOSECOR
 	|DOT NAME					{};
 	
 			
@@ -189,19 +179,17 @@ comp_iter: comp_for
 comp_if: IF old_test
 	|IF old_test comp_iter;	
 		
-/*EXPRLIST*/
+
 subscriptlist: /*subscript (',' subscript)* [',']*/
 	subscript comma_subscript
 	|subscript comma_subscript COMMA;
 
-comma_subscript: epsilon
-	|COMMA subscript comma_subscript;
+comma_subscript: COMMA subscript comma_subscript
+	|epsilon;
 	
 /* subscript: '.' '.' '.' | test | [test] ':' [test] [sliceop] */
 subscript: DOT DOT DOT
 	| test 
-	
-	
 	| test TWODOTS test sliceop
 	| test TWODOTS test
 	| test TWODOTS
@@ -211,49 +199,45 @@ subscript: DOT DOT DOT
 	| TWODOTS sliceop
 	| TWODOTS;
 	
+	
 sliceop: /*':' [test];*/
 	TWODOTS test
 	|TWODOTS;
 	
-
-	
-atom: NAME
-	| NUMBER
-	| string_plus;
-
-string_plus: STRING					{}
-	|STRING string_plus;
-	
-
-/*old_test [(',' old_test)+ [',']];*/
-/*
-testlist_safe:
-	old_test
-	|old_test COMMA old_test
-	|old_test COMMA old_test COMMA;
-
-comma_old_test: COMMA old_test;
-*/
-
-old_test: or_test;
-
-exprlist: expr expr_kleene COMMA
+exprlist: /*expr (',' expr)* [',']*/
+	expr expr_kleene COMMA
 	| expr expr_kleene;
 
 expr_kleene: COMMA expr expr_kleene
 	| epsilon;
 
+atom:/* ('(' [yield_expr|testlist_comp] ')' | '[' [listmaker] ']' | '{' [dictorsetmaker] '}' |  '`' testlist1 '`' | NAME | NUMBER | STRING+)*/ 
+	/*atom_help*/
+	NAME
+	|NUMBER					{cout<<"NUMERO\n";}
+	|string_plus;
+	
+string_plus: 
+	STRING					{}
+	|STRING string_plus;
+
+
 
 %%
 
 
-int main() {
-
-	yyparse();
+int main(int argc, char* argv[]) {
+	if (argc > 1)
+	{
+		FILE *file =fopen(argv[1],"r");
+		yyin=file;
+	} 
+	else
+	{
+		yyin = stdin;
+	}
+	do{
+		yyparse();
+	}while(!feof(yyin));
 }
-
-
-
-
-
 
