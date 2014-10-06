@@ -5,7 +5,6 @@
 
 stack stack;
 int new_line = 1;
-bool started = true;
 
 extern int yyparse();
 
@@ -138,7 +137,7 @@ RIGHT		"->"
 {FINALLY}		{ BEGIN(INITIAL); return FINALLY; }
 {IS}			{ BEGIN(INITIAL); return IS; }
 {NONE}			{ BEGIN(INITIAL); return NONE; }
-{RESTURN}		{ BEGIN(INITIAL); return RESTURN; }
+{RETURN}		{ BEGIN(INITIAL); return RETURN; }
 {CONTINUE}		{ BEGIN(INITIAL); return CONTINUE; }
 {FOR}			{ BEGIN(INITIAL); return FOR; }
 {LAMBDA}		{ BEGIN(INITIAL); return LAMBDA; }
@@ -378,9 +377,6 @@ RIGHT		"->"
 										indent++;
 										in = yyinput();
 									}
-
-									/* push back last unmatched char */
-									unput(in);
 								}
 
 								/* case: tab indent */
@@ -392,51 +388,49 @@ RIGHT		"->"
 										indent++;
 										in = yyinput();
 									}
-									/* push back last unmatched char */
-									unput(in);
 								}
 
-								/* case: only indent */
-								else
+
+								if (in != "\n")
 								{
 									/* push back last unmatched char */
 									unput(in);
-								}
 
-								/* if indent level matches stack peek there's nothing to do */
+									/* if indent level matches stack peek there's nothing to do */
 
-								if (stack.peek() < indent)
-								{
-									stack.push(indent);
-									return INDENT;
-
-								}
-
-								else if (stack.peek() > indent)
-								{
-									int dedents = stack.peek();
-									/* pop stack's indent levels until match */
-									while (stack.peek() != indent)
+									if (stack.peek() < indent)
 									{
-										if (stack.isEmpty())
+										stack.push(indent);
+										return INDENT;
+
+									}
+
+									else if (stack.peek() > indent)
+									{
+										int dedents = stack.peek();
+										/* pop stack's indent levels until match */
+										while (stack.peek() != indent)
 										{
-											std::cout << std::endl;
-											std::cout << "File \"" << yyin << "\", line " << new_line << std::endl;
-											std::cout << "Indent error: unindent does not match any outer indentation level" << std::endl;
-											yyterminate();
+											if (stack.isEmpty())
+											{
+												std::cout << std::endl;
+												std::cout << "File \"" << yyin << "\", line " << new_line << std::endl;
+												std::cout << "Indent error: unindent does not match any outer indentation level" << std::endl;
+												yyterminate();
+											}
+
+											stack.pop();
 										}
 
-										stack.pop();
-									}
-
-									/* matched unindent level */
-									/*
-									for (int i = 0; i < dedents - 1; i++)
-									{
+										/* matched unindent level */
+										/*
+										for (int i = 0; i < dedents - 1; i++)
+										{
+											return DEDENT;
+										}
+										*/
 										return DEDENT;
 									}
-									*/
-									return DEDENT;
 								}
 							}
 

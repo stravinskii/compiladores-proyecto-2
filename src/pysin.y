@@ -79,11 +79,11 @@ comp_op: /*'<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'*/
 	|EQUALS				{cout<<"==";}
 	|MOREEQUAL			{cout<<">=";}
 	|LESSEQUAL			{cout<<"<=";}
-	|PICOPARENTESIS			{cout<<"<>";}
+	|PICOPARENTESIS		{cout<<"<>";}
 	|DIFFERENT			{cout<<"!=";}
-	|IN				{cout<<"IN";}
+	|IN					{cout<<"IN";}
 	|NOT IN				{cout<<"NOT IN";}
-	|IS				{cout<<"IS";}
+	|IS					{cout<<"IS";}
 	|IS NOT				{cout<<"IS NOT";};
 
 expr: /*xor_expr ('|' xor_expr)*				{};*/
@@ -118,7 +118,7 @@ arithmetic_expr: /*term ('+' term)*			{};
 
 sign_term:epsilon					{}
 	|sign_term MAS term			{cout<<"Suma\n";}
-	|sign_term MENOS term			{cout<<"Resta\n";};
+	|sign_term MENOS term		{cout<<"Resta\n";};
 
 term: /*factor ('*'factor)*;
 	| factor ('/'factor)*;
@@ -137,7 +137,7 @@ factor: /*'+' factor;
 	| '~' factor;
 	| power;*/
 	MAS factor					{cout<<"SUMA\n";}
-	|MENOS factor					{cout<<"RESTA\n";}
+	|MENOS factor				{cout<<"RESTA\n";}
 	|TILDE factor					
 	|power;		
 
@@ -149,10 +149,10 @@ trailer_kleene: epsilon					{}
 	|trailer_kleene trailer 				{};
 	
 trailer: /*'(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME*/
-	OPENPAR CLOSEPAR				{cout<<"()";}
+	OPENPAR CLOSEPAR					{cout<<"()";}
 	|OPENPAR arglist CLOSEPAR			{cout<<"(ARGLIST)";}
-	|OPENCOR subscriptlist CLOSECOR			{cout<<"(SUBSCRIPTLIST)";}
-	|DOT NAME					{cout<<".NAME";};
+	|OPENCOR subscriptlist CLOSECOR		{cout<<"(SUBSCRIPTLIST)";}
+	|DOT NAME							{cout<<".NAME";};
 		
 arglist: /*(argument ',')* (argument [','] |'*' test (',' argument)* [',' '**' test] 	|'**' test) */
 	argument_comma argument_multiple;
@@ -161,10 +161,10 @@ argument_comma: epsilon
 	|argument_comma argument COMMA 			{cout<<",";};
 	
 argument_multiple: argument
-	|argument COMMA					{cout<<",";}	
-	|POR test comma_argument			{cout<<"*";}
+	|argument COMMA								{cout<<",";}	
+	|POR test comma_argument					{cout<<"*";}
 	|POR test comma_argument COMMA POT test		{cout<<"*";}
-	|POT test					{cout<<"**";};		
+	|POT test									{cout<<"**";};		
 	
 comma_argument: epsilon
 	|comma_argument COMMA argument;
@@ -176,15 +176,15 @@ argument: /*test [comp_for] | test '=' test*/
 	
 comp_for: /*'for' exprlist 'in' or_test [comp_iter]*/
 	FOR exprlist IN or_test comp_iter	{cout<<"FOR";}
-	| FOR exprlist IN or_test		{cout<<"FOR";};
+	| FOR exprlist IN or_test			{cout<<"FOR";};
 	
 comp_iter: /*comp_for | comp_if */
 	comp_for 
 	| comp_if;
 	
 comp_if: /*'if' old_test [comp_iter] */
-	IF old_test				{cout<<"IF";}
-	|IF old_test comp_iter			{cout<<"IF";};
+	IF old_test					{cout<<"IF";}
+	|IF old_test comp_iter		{cout<<"IF";};
 		
 subscriptlist: /*subscript (',' subscript)* [',']*/
 	subscript comma_subscript
@@ -220,9 +220,9 @@ atom:/* ('(' [testlist_comp] ')'
 	| '[' [listmaker] ']' 
 	| '{' [dictorsetmaker] '}' 
 	|  '`' testlist1 '`' 
-	| NAME | NUMBER | STRING+)*/ 
-	/*atom_help*/
+	| NAME | NUMBER | STRING+)*/
 	OPENPAR CLOSEPAR
+	|OPENCOR CLOSECOR
 	|OPENPAR testlist_comp CLOSEPAR		
 	|OPENCOR listmaker CLOSECOR
 	|OPENKEY CLOSEKEY
@@ -230,23 +230,30 @@ atom:/* ('(' [testlist_comp] ')'
 	|APOSTROFE testlist1 APOSTROFE
 	|NAME					{cout<<"IDENTIFICADOR";}
 	|NUMBER					{cout<<"NUMBER";}
-	|string_plus;
+	|string_plus
+	|NONE					{cout<<"NONE";}
+	|boolean;
+	
+boolean: TRUE 	{cout<<"TRUE";} 
+	| FALSE		{cout<<"FALSE";};
+	
+
 	
 	
 dictorsetmaker: /*( (test ':' test (comp_for | (',' test ':' test)* [','])) |
                   (test (comp_for | (',' test)* [','])) )*/
-                  test TWODOTS test direct_set_help
+                  test TWODOTS test dictor_set_help
                   |test comp_for
                   |test comma_test_kleene COMMA
                   |test comma_test_kleene;
                   
-direct_set_help: /*(comp_for | (',' test ':' test)* [','])*/
+dictor_set_help: /*(comp_for | (',' test ':' test)* [','])*/
 	comp_for
-	|direct_set_help2 COMMA
-	|direct_set_help2;
+	|dictor_set_help2 COMMA
+	|dictor_set_help2;
 	
-direct_set_help2: epsilon
-	| direct_set_help2 COMMA test TWODOTS test;
+dictor_set_help2: epsilon
+	| dictor_set_help2 COMMA test TWODOTS test;
 
 testlist1: /*test (',' test)**/
 	test comma_test_kleene;
@@ -265,12 +272,12 @@ testlist_comp: /* test ( comp_for | (',' test)* [','] )*/
 	|test comma_test_kleene comma_one;
 		
 list_for: /* 'for' exprlist 'in' testlist_safe [list_iter]*/
-	FOR exprlist IN testlist_safe 		{cout<<"FOR";}
+	FOR exprlist IN testlist_safe 				{cout<<"FOR";}
 	|FOR exprlist IN testlist_safe list_iter	{cout<<"FOR";};
 
 list_iter: /*list_for | list_if*/
 	list_for 
-	| list_if;
+	|list_if;
 
 testlist_safe: /*old_test [(',' old_test)+ [',']];*/
 	old_test
@@ -282,7 +289,7 @@ comma_old_test_plus: COMMA old_test
 
 list_if: /*'if' old_test [list_iter]*/
 	IF old_test					{cout<<"IF___";}
-	|IF old_test list_iter				{cout<<"IF___";};
+	|IF old_test list_iter		{cout<<"IF___";};
 	
 compound_stmt: /*if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated*/
 	if_stmt
@@ -291,19 +298,19 @@ compound_stmt: /*if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcde
 	| funcdef;
 
 if_stmt: /*'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]*/
-	IF test TWODOTS suite elif_test_td_suite_kleene ELSE TWODOTS suite {cout<<"IF___:___ELSE:";}
-	|IF test TWODOTS suite elif_test_td_suite_kleene 		{cout<<"IF___:___";};
+	IF test TWODOTS suite elif_test_td_suite_kleene ELSE TWODOTS suite 	{cout<<"IF___:___ELSE:";}
+	|IF test TWODOTS suite elif_test_td_suite_kleene 					{cout<<"IF___:___";};
 	
 elif_test_td_suite_kleene: epsilon
 	|elif_test_td_suite_kleene ELIF test TWODOTS suite		{cout<<"ELIF___:";};	
 
 while_stmt: /*'while' test ':' suite ['else' ':' suite] */
 	WHILE test TWODOTS suite ELSE TWODOTS suite 	{cout<<"WHILE___:___ ELSE :";}
-	|WHILE test TWODOTS suite			{cout<<"WHILE___:";};
+	|WHILE test TWODOTS suite						{cout<<"WHILE___:";};
 
 for_stmt: /*'for' exprlist 'in' testlist ':' suite ['else' ':' suite]*/
-	FOR exprlist IN testlist TWODOTS suite ELSE TWODOTS suite {cout<<"FOR";}
-	|FOR exprlist IN testlist TWODOTS suite			{cout<<"FOR";};
+	FOR exprlist IN testlist TWODOTS suite ELSE TWODOTS suite 	{cout<<"FOR";}
+	|FOR exprlist IN testlist TWODOTS suite 					{cout<<"FOR";};
 
 suite: /*simple_stmt | NEWLINE INDENT stmt+ DEDENT*/
 	simple_stmt
@@ -317,7 +324,8 @@ stmt: /*simple_stmt | compound_stmt*/
 	| compound_stmt;
 	
 simple_stmt: /*small_stmt (';' small_stmt)* [';'] NEWLINE */
-	small_stmt more_simple_stmt end_simple_stmt;
+	small_stmt more_simple_stmt DOTCOMMA NEWLINE
+	|small_stmt more_simple_stmt NEWLINE;
 
 small_stmt: /*(expr_stmt | print_stmt  | del_stmt | pass_stmt | flow_stmt |
              import_stmt | global_stmt | exec_stmt | assert_stmt)*/
@@ -331,8 +339,6 @@ small_stmt: /*(expr_stmt | print_stmt  | del_stmt | pass_stmt | flow_stmt |
 more_simple_stmt:more_simple_stmt DOTCOMMA small_stmt
 		| epsilon; 
 				
-end_simple_stmt: DOTCOMMA NEWLINE	{cout<<";\n";}
-		|NEWLINE		{cout<<"\n";};
 
 expr_stmt: /*testlist (augassign (yield_expr|testlist) |('=' (yield_expr|testlist))*)*/
 	testlist expr_stmt_at;
