@@ -289,7 +289,10 @@ RIGHT		"->"
 									/* there are still DEDENTS level to pop */
 									else
 									{
-										stack.pop();
+										while (stack.peek() != 0)
+										{
+											stack.pop();
+										}
 										/* push back newline for next DEDENT */
 										// yyless(yyleng);
 										unput('\n');
@@ -431,6 +434,10 @@ RIGHT		"->"
 										*/
 										return DEDENT;
 									}
+								}
+								else
+								{
+									unput('\n');
 								}
 							}
 
