@@ -121,84 +121,84 @@ RIGHT		"->"
 %s DEDENT_CONTEXT
 %%
 
-{APOSTROFE}		return APOSTROFE;
-{EXP}			return EXP;
-{OPENCOR}		return OPENCOR;
-{CLOSECOR}		return CLOSECOR;
-{MAS}			return MAS;
-{MENOS}			return MENOS;
-{POR}			return POR;
-{ENTRE}			return ENTRE;
-{MOD}			return MOD;
-{DIV}			return DIV;
-{POT}			return POT;
-{GLOBAL}		return GLOBAL;
-{FALSE}			return FALSE;
-{CLASS}			return CLASS;
-{FINALLY}		return FINALLY;
-{IS}			return IS;
-{NONE}			return NONE;
-{RETURN}		return RETURN;
-{CONTINUE}		return CONTINUE;
-{FOR}			return FOR;
-{LAMBDA}		return LAMBDA;
-{TRY}			return TRY;
-{TRUE}			return TRUE;
-{DEF}			return DEF;
-{FROM}			return FROM;
-{WHILE}			return WHILE;
-{AND}			return AND;
-{DEL}			return DEL;
-{NOT}			return NOT;
-{WITH}			return WITH;
-{AS}			return AS;
-{ELIF}			return ELIF;
-{IF}			return IF;
-{OR}			return OR;
-{ELSE}			return ELSE;
-{IMPORT}		return IMPORT;
-{PASS}			return PASS;
-{BREAK}			return BREAK;
-{EXCEPT}		return EXCEPT;
-{IN}			return IN;
-{PRINT}			return PRINT;
+{APOSTROFE}		{ BEGIN(INITIAL); return APOSTROFE; }
+{EXP}			{ BEGIN(INITIAL); return EXP; }
+{OPENCOR}		{ BEGIN(INITIAL); return OPENCOR; }
+{CLOSECOR}		{ BEGIN(INITIAL); return CLOSECOR; }
+{MAS}			{ BEGIN(INITIAL); return MAS; }
+{MENOS}			{ BEGIN(INITIAL); return MENOS; }
+{POR}			{ BEGIN(INITIAL); return POR; }
+{ENTRE}			{ BEGIN(INITIAL); return ENTRE; }
+{MOD}			{ BEGIN(INITIAL); return MOD; }
+{DIV}			{ BEGIN(INITIAL); return DIV; }
+{POT}			{ BEGIN(INITIAL); return POT; }
+{GLOBAL}		{ BEGIN(INITIAL); return GLOBAL; }
+{FALSE}			{ BEGIN(INITIAL); return FALSE; }
+{CLASS}			{ BEGIN(INITIAL); return CLASS; }
+{FINALLY}		{ BEGIN(INITIAL); return FINALLY; }
+{IS}			{ BEGIN(INITIAL); return IS; }
+{NONE}			{ BEGIN(INITIAL); return NONE; }
+{RESTURN}		{ BEGIN(INITIAL); return RESTURN; }
+{CONTINUE}		{ BEGIN(INITIAL); return CONTINUE; }
+{FOR}			{ BEGIN(INITIAL); return FOR; }
+{LAMBDA}		{ BEGIN(INITIAL); return LAMBDA; }
+{TRY}			{ BEGIN(INITIAL); return TRY; }
+{TRUE}			{ BEGIN(INITIAL); return TRUE; }
+{DEF}			{ BEGIN(INITIAL); return DEF; }
+{FROM}			{ BEGIN(INITIAL); return FROM; }
+{WHILE}			{ BEGIN(INITIAL); return WHILE; }
+{AND}			{ BEGIN(INITIAL); return AND; }
+{DEL}			{ BEGIN(INITIAL); return DEL; }
+{NOT}			{ BEGIN(INITIAL); return NOT; }
+{WITH}			{ BEGIN(INITIAL); return WITH; }
+{AS}			{ BEGIN(INITIAL); return AS; }
+{ELIF}			{ BEGIN(INITIAL); return ELIF; }
+{IF}			{ BEGIN(INITIAL); return IF; }
+{OR}			{ BEGIN(INITIAL); return OR; }
+{ELSE}			{ BEGIN(INITIAL); return ELSE; }
+{IMPORT}		{ BEGIN(INITIAL); return IMPORT; }
+{PASS}			{ BEGIN(INITIAL); return PASS; }
+{BREAK}			{ BEGIN(INITIAL); return BREAK; }
+{EXCEPT}		{ BEGIN(INITIAL); return EXCEPT; }
+{IN}			{ BEGIN(INITIAL); return IN; }
+{PRINT}			{ BEGIN(INITIAL); return PRINT; }
 
-{COMMA}			return COMMA; 
-{DOT}			return DOT;
-{ASSIGN}		return ASSIGN;
-{TWODOTS}		return TWODOTS;
-{DOTCOMMA}		return DOTCOMMA;
+{COMMA}			{ BEGIN(INITIAL); return COMMA; } 
+{DOT}			{ BEGIN(INITIAL); return DOT; }
+{ASSIGN}		{ BEGIN(INITIAL); return ASSIGN; }
+{TWODOTS}		{ BEGIN(INITIAL); return TWODOTS; }
+{DOTCOMMA}		{ BEGIN(INITIAL); return DOTCOMMA; }
 
-{BINLEFT}		return BINLEFT;
-{BINRIGHT}		return BINRIGHT;
-{ANDPAND}		return ANDPAND;
-{PIPE}			return PIPE;
+{BINLEFT}		{ BEGIN(INITIAL); return BINLEFT; }
+{BINRIGHT}		{ BEGIN(INITIAL); return BINRIGHT; }
+{ANDPAND}		{ BEGIN(INITIAL); return ANDPAND; }
+{PIPE}			{ BEGIN(INITIAL); return PIPE; }
 
-{TILDE}			return TILDE;
-{LESSTHAN}		return LESSTHAN;
-{MORETHAN}		return MORETHAN;
-{LESSEQUAL}		return LESSEQUAL;
-{MOREEQUAL}		return MOREEQUAL;
-{EQUALS}		return EQUALS;
+{TILDE}			{ BEGIN(INITIAL); return TILDE; }
+{LESSTHAN}		{ BEGIN(INITIAL); return LESSTHAN; }
+{MORETHAN}		{ BEGIN(INITIAL); return MORETHAN; }
+{LESSEQUAL}		{ BEGIN(INITIAL); return LESSEQUAL; }
+{MOREEQUAL}		{ BEGIN(INITIAL); return MOREEQUAL; }
+{EQUALS}		{ BEGIN(INITIAL); return EQUALS; }
 
-{OPENPAR}		return OPENPAR;
-{CLOSEPAR}		return CLOSEPAR;
-{OPENKEY}		return OPENKEY;
-{CLOSEKEY}		return CLOSEKEY;
-{AT}			return AT;
-{RIGHT}			return RIGHT;
-{MASIGUAL}		return MASIGUAL;
-{MENOSIGUAL}	return MENOSIGUAL;
-{PORIGUAL}		return PORIGUAL;
-{ENTREIGUAL}	return ENTREIGUAL;
-{DIVIGUAL}		return DIVIGUAL;
-{MODIGUAL}		return MODIGUAL;
-{ANDIGUAL}		return ANDIGUAL;
-{ORIGUAL}		return ORIGUAL;
-{EXPIGUAL}		return EXPIGUAL;
-{BINRIGHTIGUAL}	return BINRIGHTIGUAL;
-{BINLEFTIGUAL}	return BINLEFTIGUAL;
-{POTIGUAL}		return POTIGUAL;
+{OPENPAR}		{ BEGIN(INITIAL); return OPENPAR; }
+{CLOSEPAR}		{ BEGIN(INITIAL); return CLOSEPAR; }
+{OPENKEY}		{ BEGIN(INITIAL); return OPENKEY; }
+{CLOSEKEY}		{ BEGIN(INITIAL); return CLOSEKEY; }
+{AT}			{ BEGIN(INITIAL); return AT; }
+{RIGHT}			{ BEGIN(INITIAL); return RIGHT; }
+{MASIGUAL}		{ BEGIN(INITIAL); return MASIGUAL; }
+{MENOSIGUAL}	{ BEGIN(INITIAL); return MENOSIGUAL; }
+{PORIGUAL}		{ BEGIN(INITIAL); return PORIGUAL; }
+{ENTREIGUAL}	{ BEGIN(INITIAL); return ENTREIGUAL; }
+{DIVIGUAL}		{ BEGIN(INITIAL); return DIVIGUAL; }
+{MODIGUAL}		{ BEGIN(INITIAL); return MODIGUAL; }
+{ANDIGUAL}		{ BEGIN(INITIAL); return ANDIGUAL; }
+{ORIGUAL}		{ BEGIN(INITIAL); return ORIGUAL; }
+{EXPIGUAL}		{ BEGIN(INITIAL); return EXPIGUAL; }
+{BINRIGHTIGUAL}	{ BEGIN(INITIAL); return BINRIGHTIGUAL; }
+{BINLEFTIGUAL}	{ BEGIN(INITIAL); return BINLEFTIGUAL; }
+{POTIGUAL}		{ BEGIN(INITIAL); return POTIGUAL; }
 {EOF}			;
 
 {FLOATNUMBER}	{ 
