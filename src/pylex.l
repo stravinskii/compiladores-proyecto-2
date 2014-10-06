@@ -391,7 +391,7 @@ RIGHT		"->"
 								}
 
 
-								if (in != "\n")
+								if (in != '\n')
 								{
 									/* push back last unmatched char */
 									unput(in);
