@@ -1,7 +1,7 @@
-while True:
-		
-		
-
-	print "string"+" more"
+x="hola"
+while x:
+	
 	
 
+	print "string"+x
+	

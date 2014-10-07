@@ -1,3 +1,11 @@
-x = True
-while x:
-	print x
+while True:
+
+
+
+
+
+	print "string"+x
+	if False:
+		print "Funciona"
+	else:
+		print "No funciona :("

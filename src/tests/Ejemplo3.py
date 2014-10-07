@@ -4,7 +4,8 @@ def holaMundo(x):
 	
 def nomePeine():
 	print "No me peine"
-	return
+	x-=2
+	return x
 	
 print holaMundo(2)
 print nomePeine()

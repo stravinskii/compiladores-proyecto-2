@@ -1,9 +1,9 @@
 x="hola"
-while True:
+for x in algo:
 
 
 
 
 
 	print "string"+x
-	
+
