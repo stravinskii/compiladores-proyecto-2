@@ -1,6 +1,3 @@
 x="hola"
-while x:
-	
-	
-
+while True:
 	print "string"+x
