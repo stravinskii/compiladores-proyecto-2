@@ -12,14 +12,39 @@
 #include <iostream>
 
  using namespace std;
- 
+
+ class Visitor;
+
  class Node
  {
  public:
  	Node() {}
+ 	virtual void accept(Visitor& v);
  };
 
- class VNodeList
+
+ class NodeList
+ {
+ private:
+ 	union NList {
+		list<Node> *listas;
+ 		vector<Node> *vectores;
+ 	};
+
+ public:
+ 	NList children;
+
+	virtual Node getLeftChild();
+	virtual Node getRightChild();
+ 	virtual void setLeftChild(Node node);
+	virtual void setRightChild(Node node);
+
+	virtual void addFirst(Node node);
+	virtual void addLast(Node node);
+ };
+
+
+ class VNodeList : public NodeList
  {
  private:
  	vector<Node> children;
@@ -50,8 +75,7 @@
  	}
  };
 
-
- class LNodeList
+ class LNodeList : public NodeList
  {
  private:
  	list<Node> children;
@@ -69,27 +93,6 @@
  	}
  };
 
- class NodeList
- {
- private:
- 	union NList {
- 		LNodeList* listas;
- 		VNodeList* vectores;
- 	};
-
- public:
- 	NList children;
- 	NodeList()
- 	{
- 		children.listas = new LNodeList();
- 	}
-
- 	NodeList(int n)
- 	{
- 		children.vectores = new VNodeList(n);
- 	}
- };
-
 
  class INode : public Node
  {	
@@ -102,13 +105,12 @@
 
  	virtual void setFChild(Node* first);
  	virtual void setSChild(Node* second);
- private:
- 	LNodeList* children;
+ protected:
+ 	NodeList* children;
  };
 
  INode::INode() : Node()
  {
- 	// children = new NodeList();
  	children = new LNodeList();
  }
 
@@ -125,9 +127,9 @@
  class BinNode : public INode
  {
  public:
- 	BinNode() : INode()
+ 	BinNode()
  	{
- 		nodes = new VNodeList(2);
+ 		children = new VNodeList(2);
  	}
 
  	void addFChild(Node* first)
@@ -142,26 +144,23 @@
 
  	void setFChild(Node first)
  	{
- 		nodes->setLeftChild(first);
+ 		children->setLeftChild(first);
  	}
 
  	void setSChild(Node second)
  	{
- 		nodes->setRightChild(second);
+ 		children->setRightChild(second);
  	}
 
  	Node getLeftChild()
  	{
- 		return nodes->getLeftChild();
+ 		return children->getLeftChild();
  	}
 
  	Node getRightChild()
  	{
- 		return nodes->getRightChild();
+ 		return children->getRightChild();
  	}
-
- private:
- 	VNodeList* nodes;
  };
 
 
