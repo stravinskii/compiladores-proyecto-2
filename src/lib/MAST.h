@@ -258,59 +258,74 @@
  	MAST() : AST() {};
 
 
- 	Node* bIntNode(int val)
+ 	virtual Node* bIntNode(int val)
  	{
  		return new IntNode(val);
  	}
 
- 	Node* bStrNode(string val)
+ 	virtual Node* bStrNode(string val)
  	{
  		return new StrNode(val);
  	}
 
- 	Node* bFloatNode(float val)
+ 	virtual Node* bFloatNode(float val)
  	{
  		return new FloatNode(val);
  	}
 
- 	Node* bIdentNode(string name)
+ 	virtual Node* bIdentNode(string name)
  	{
  		return new IdentNode(name);
  	}
 
- 	Node* bPlusNode()
+ 	virtual Node* bPlusNode()
  	{
  		return new PlusNode();
  	}
 
- 	Node* bMultNode()
+ 	virtual Node* bMultNode()
  	{
  		return new MultNode();
  	}
 
- 	Node* bDiviNode()
+ 	virtual Node* bDiviNode()
  	{
  		return new DiviNode();
  	}
 
- 	Node* bMinusNode()
+ 	virtual Node* bMinusNode()
  	{
  		return new MinusNode();
  	}
 
- 	Node* bIfNode()
+ 	virtual Node* bIfNode()
  	{
  		return new IfNode();
  	}
 
- 	Node* bForNode()
+ 	virtual Node* bForNode()
  	{
  		return new ForNode();
  	}
 
- 	Node* bWhileNode()
+ 	virtual Node* bWhileNode()
  	{
  		return new WhileNode();
+ 	}
+
+ 	virtual Node* bStmtListNode()
+ 	{
+ 		return new StmtListNode();
+ 	}
+
+ 	virtual Node* bSStmtListNode()
+ 	{
+ 		return new SStmtListNode();
+ 	}
+
+ 	virtual Node* bExprNode()
+ 	{
+ 		return new ExprNode();
  	}
  };
 
@@ -405,3 +420,12 @@
  		node->accept(*this);
  	}
  };
+
+
+int main(int argc,char* argv[]){
+  // Node* nodo = new Node;
+  MAST* astTree = new MAST;
+
+  // NodeVisitor vs;
+  // nodo->accept(vs);
+}

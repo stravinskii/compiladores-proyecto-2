@@ -183,21 +183,24 @@
  {
  public:
 
- 	virtual Node* bStmtListNode()=0;
- 	virtual Node* bSStmtListNode()=0;
- 	virtual Node* bExprNode()=0;
-
- 	virtual Node* bStrNode()=0;
- 	virtual Node* bIntNode()=0;
- 	virtual Node* bFloatNode()=0;
- 	virtual Node* bIdentNode()=0;
-
+ 	// BinNode's
  	virtual Node* bPlusNode()=0;
  	virtual Node* bMultNode()=0;
  	virtual Node* bDiviNode()=0;
  	virtual Node* bMinusNode()=0;
 
+ 	// INode's
+ 	virtual Node* bStmtListNode()=0;
+ 	virtual Node* bSStmtListNode()=0;
+ 	virtual Node* bExprNode()=0;
+
  	virtual Node* bIfNode()=0;
  	virtual Node* bForNode()=0;
  	virtual Node* bWhileNode()=0;
+
+ 	// LeafNode's
+ 	virtual Node* bIntNode(int val)=0;
+ 	virtual Node* bStrNode(string val)=0;
+ 	virtual Node* bFloatNode(float val)=0;
+ 	virtual Node* bIdentNode(string name)=0;
  };
