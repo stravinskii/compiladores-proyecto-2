@@ -36,6 +36,11 @@
  public:
  	Node() {}
  	virtual void accept(Visitor& v);
+
+ 	virtual void addFChild(Node* child);
+	virtual void addLChild(Node* child);
+	virtual void setFChild(Node* first);
+	virtual void setSChild(Node* second);
  };
 
 
@@ -43,49 +48,49 @@
  {
  private:
  	union NList {
- 		list<Node> *listas;
- 		vector<Node> *vectores;
+ 		list<Node*> *listas;
+ 		vector<Node*> *vectores;
  	};
 
  public:
  	NList children;
 
- 	virtual Node getLeftChild();
- 	virtual Node getRightChild();
- 	virtual void setLeftChild(Node node);
- 	virtual void setRightChild(Node node);
+ 	virtual Node* getLeftChild();
+ 	virtual Node* getRightChild();
+ 	virtual void setLeftChild(Node* node);
+ 	virtual void setRightChild(Node* node);
 
- 	virtual void addFirst(Node node);
- 	virtual void addLast(Node node);
+ 	virtual void addFirst(Node* node);
+ 	virtual void addLast(Node* node);
  };
 
 
  class VNodeList : public NodeList
  {
  private:
- 	vector<Node> children;
+ 	vector<Node*> children;
  public:
  	VNodeList(int n)
  	{
  		children.resize(n);
  	}
 
- 	virtual void setLeftChild(Node node)
+ 	virtual void setLeftChild(Node* node)
  	{
  		children.front() = node;
  	}
 
- 	virtual void setRightChild(Node node)
+ 	virtual void setRightChild(Node* node)
  	{
  		children.back() = node;
  	}
  	
- 	virtual Node getLeftChild()
+ 	virtual Node* getLeftChild()
  	{
  		return children.front();
  	}
 
- 	virtual Node getRightChild()
+ 	virtual Node* getRightChild()
  	{
  		return children.back();
  	}
@@ -94,16 +99,16 @@
  class LNodeList : public NodeList
  {
  private:
- 	list<Node> children;
+ 	list<Node*> children;
  public:
  	LNodeList() {}
 
- 	virtual void addFirst(Node node)
+ 	virtual void addFirst(Node* node)
  	{
  		children.push_front(node);
  	}
 
- 	virtual void addLast(Node node)
+ 	virtual void addLast(Node* node)
  	{
  		children.push_back(node);
  	}
@@ -121,12 +126,12 @@
 
  	INode(int n);
 
- 	virtual void addFChild(Node child)
+ 	virtual void addFChild(Node* child)
  	{
  		children->addFirst(child);
  	}
 
- 	virtual void addLChild(Node child)
+ 	virtual void addLChild(Node* child)
  	{
  		children->addLast(child);
  	}
@@ -164,22 +169,22 @@
  		throw "Operation not supported for Node";
  	}
 
- 	virtual void setFChild(Node first)
+ 	virtual void setFChild(Node* first)
  	{
  		children->setLeftChild(first);
  	}
 
- 	virtual void setSChild(Node second)
+ 	virtual void setSChild(Node* second)
  	{
  		children->setRightChild(second);
  	}
 
- 	virtual Node getLeftChild()
+ 	virtual Node* getLeftChild()
  	{
  		return children->getLeftChild();
  	}
 
- 	virtual Node getRightChild()
+ 	virtual Node* getRightChild()
  	{
  		return children->getRightChild();
  	}
@@ -211,6 +216,7 @@
  	virtual MultNode* bMultNode()=0;
  	virtual DiviNode* bDiviNode()=0;
  	virtual MinusNode* bMinusNode()=0;
+ 	virtual AssignNode* bAssignNode()=0;
 
  	// INode's
  	virtual StmtListNode* bStmtListNode()=0;

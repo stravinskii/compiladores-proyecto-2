@@ -356,6 +356,11 @@
  	{
  		return new ExprNode();
  	}
+
+ 	virtual AssignNode* bAssignNode()
+ 	{
+ 		return new AssignNode();
+ 	}
  };
 
  class NodeVisitor : public Visitor
@@ -364,10 +369,10 @@
 
  	virtual void visit(PlusNode* node)
  	{
- 		Node left = node->getLeftChild();
- 		Node right = node->getRightChild();
- 		left.accept(*this);
- 		right.accept(*this);
+ 		Node* left = node->getLeftChild();
+ 		Node* right = node->getRightChild();
+ 		left->accept(*this);
+ 		right->accept(*this);
  	}
 
  	virtual void visit(ForNode* node)
@@ -407,26 +412,26 @@
 
  	virtual void visit(MinusNode* node)
  	{
- 		Node left = node->getLeftChild();
- 		Node right = node->getRightChild();
- 		left.accept(*this);
- 		right.accept(*this);
+ 		Node* left = node->getLeftChild();
+ 		Node* right = node->getRightChild();
+ 		left->accept(*this);
+ 		right->accept(*this);
  	}
 
  	virtual void visit(DiviNode* node)
  	{
- 		Node left = node->getLeftChild();
- 		Node right = node->getRightChild();
- 		left.accept(*this);
- 		right.accept(*this);
+ 		Node* left = node->getLeftChild();
+ 		Node* right = node->getRightChild();
+ 		left->accept(*this);
+ 		right->accept(*this);
  	}
 
  	virtual void visit(MultNode* node)
  	{
- 		Node left = node->getLeftChild();
- 		Node right = node->getRightChild();
- 		left.accept(*this);
- 		right.accept(*this);
+ 		Node* left = node->getLeftChild();
+ 		Node* right = node->getRightChild();
+ 		left->accept(*this);
+ 		right->accept(*this);
  	}
 
  	virtual void visit(IdentNode* node)
