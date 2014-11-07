@@ -9,10 +9,12 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include "AST.h"
+#include "AST.hpp"
+#include "CompuestoVisitante.hpp"
 
  using namespace std;
 
+/*
  class ForNode;
  class WhileNode;
  class IfNode;
@@ -28,9 +30,11 @@
  class IntNode;
  class FloatNode;
  class StrNode;
+ class BoolNode;
  class MAST;
  class Visitor;
  class NodeVisitor;
+ */
 
  class Visitor
  {
@@ -50,6 +54,7 @@
  	virtual void visit(IntNode*);
  	virtual void visit(FloatNode*);
  	virtual void visit(StrNode*);
+ 	virtual void visit(BoolNode*);
  };
 
 
@@ -184,7 +189,7 @@
 
  	NValue getValue()
  	{
- 		return value;
+ 		return value.str;
  	}
 
  	virtual void accept(Visitor& v)
@@ -203,7 +208,7 @@
 
  	NValue getValue()
  	{
- 		return value;
+ 		return value.i;
  	}
 
  	virtual void accept(Visitor& v)
@@ -222,7 +227,7 @@
 
  	NValue getValue()
  	{
- 		return value;
+ 		return value.f;
  	}
 
  	virtual void accept(Visitor& v)
@@ -243,10 +248,29 @@
 
  	NValue getValue()
  	{
- 		return value;
+ 		return value.str;
  	}
 
  	virtual void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class BoolNode : public LeafNode
+ {
+ public:
+ 	BoolNode(bool boolean) : LeafNode()
+ 	{
+ 		value.b = &boolean;
+ 	}
+
+	NValue getValue()
+	{
+		return value.b;
+	}
+
+	virtual void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -258,72 +282,77 @@
  	MAST() : AST() {};
 
 
- 	virtual Node* bIntNode(int val)
+ 	virtual IntNode* bIntNode(int val)
  	{
  		return new IntNode(val);
  	}
 
- 	virtual Node* bStrNode(string val)
+ 	virtual StrNode* bStrNode(string val)
  	{
  		return new StrNode(val);
  	}
 
- 	virtual Node* bFloatNode(float val)
+ 	virtual FloatNode* bFloatNode(float val)
  	{
  		return new FloatNode(val);
  	}
 
- 	virtual Node* bIdentNode(string name)
+ 	virtual BoolNode* bBoolNode(bool val)
+ 	{
+ 		return new BoolNode(val);
+ 	}
+
+ 	virtual IdentNode* bIdentNode(string name)
  	{
  		return new IdentNode(name);
  	}
 
- 	virtual Node* bPlusNode()
+ 	virtual PlusNode* bPlusNode()
  	{
  		return new PlusNode();
  	}
 
- 	virtual Node* bMultNode()
+ 	virtual MultNode* bMultNode()
  	{
  		return new MultNode();
  	}
 
- 	virtual Node* bDiviNode()
+ 	virtual DiviNode* bDiviNode()
  	{
  		return new DiviNode();
  	}
 
- 	virtual Node* bMinusNode()
+ 	virtual MinusNode* bMinusNode()
  	{
  		return new MinusNode();
  	}
 
- 	virtual Node* bIfNode()
+ 	virtual IfNode* bIfNode()
  	{
  		return new IfNode();
  	}
 
- 	virtual Node* bForNode()
+ 	virtual ForNode* bForNode()
  	{
  		return new ForNode();
  	}
 
- 	virtual Node* bWhileNode()
+ 	virtual WhileNode* bWhileNode()
  	{
  		return new WhileNode();
  	}
 
- 	virtual Node* bStmtListNode()
+ 	virtual StmtListNode* bStmtListNode()
  	{
  		return new StmtListNode();
  	}
 
- 	virtual Node* bSStmtListNode()
+ 	virtual SStmtListNode* bSStmtListNode()
  	{
  		return new SStmtListNode();
  	}
 
- 	virtual Node* bExprNode()
+ 	virtual ExprNode* bExprNode()
  	{
  		return new ExprNode();
  	}
@@ -336,9 +365,9 @@
  	virtual void visit(PlusNode* node)
  	{
  		Node left = node->getLeftChild();
-		Node right = node->getRightChild();
-		left.accept(*this);
-		right.accept(*this);
+ 		Node right = node->getRightChild();
+ 		left.accept(*this);
+ 		right.accept(*this);
  	}
 
  	virtual void visit(ForNode* node)
@@ -379,25 +408,25 @@
  	virtual void visit(MinusNode* node)
  	{
  		Node left = node->getLeftChild();
-		Node right = node->getRightChild();
-		left.accept(*this);
-		right.accept(*this);
+ 		Node right = node->getRightChild();
+ 		left.accept(*this);
+ 		right.accept(*this);
  	}
 
  	virtual void visit(DiviNode* node)
  	{
  		Node left = node->getLeftChild();
-		Node right = node->getRightChild();
-		left.accept(*this);
-		right.accept(*this);
+ 		Node right = node->getRightChild();
+ 		left.accept(*this);
+ 		right.accept(*this);
  	}
 
  	virtual void visit(MultNode* node)
  	{
  		Node left = node->getLeftChild();
-		Node right = node->getRightChild();
-		left.accept(*this);
-		right.accept(*this);
+ 		Node right = node->getRightChild();
+ 		left.accept(*this);
+ 		right.accept(*this);
  	}
 
  	virtual void visit(IdentNode* node)
@@ -407,7 +436,7 @@
 
  	virtual void visit(IntNode* node)
  	{
- 		node->accept(*this);
+	 		node->accept(*this);
  	}
 
  	virtual void visit(FloatNode* node)
@@ -419,13 +448,23 @@
  	{
  		node->accept(*this);
  	}
+
+ 	virtual void visit(BoolNode* node)
+ 	{
+ 		node->accept(*this);
+ 	}
  };
 
-
-int main(int argc,char* argv[]){
+ //int main(int argc,char* argv[]){
   // Node* nodo = new Node;
-  MAST* astTree = new MAST;
+ 	// MAST* astTree = new MAST;
+ 	// IntNode* nodoInt = astTree->bIntNode(4);
+ 	// int value = nodoInt->getValue().i;
+ 	// std::cout << value << std::endl;
+
+ 	// StrNode* nodoString = astTree->bStrNode("something");
+ 	// nodoString->getValue();
 
   // NodeVisitor vs;
   // nodo->accept(vs);
-}
+ // }
