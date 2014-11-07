@@ -30,6 +30,8 @@
  class FloatNode;
  class StrNode;
  class BoolNode;
+ class StmtNode;
+ class SStmtNode;
 
  class Node
  {

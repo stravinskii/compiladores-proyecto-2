@@ -76,33 +76,33 @@ filein:epsilon
 epsilon:	{/*Nada xD*/};
 
 test:/*or_test ['if' or_test 'else' test] */
-	or_test					{}
-	|or_test IF or_test ELSE test		{cout<<"IF __ ELSE __ ";};	
+	or_test							{$$ = $1;}
+	|or_test IF or_test ELSE test	{cout<<"IF __ ELSE __ ";};	
 	
-old_test: or_test;
+old_test: or_test 	{$$ = $1;};
 
 or_test: 	/*and_test (OR and_test)*		{};*/
-		and_test or_andtest			{};
+		and_test or_andtest			{$$ = $2;};
 		
-or_andtest:	epsilon					{}
-		|or_andtest OR and_test			{cout<<"OR";};
+or_andtest:	epsilon
+		|or_andtest OR and_test		{$$ = $2; cout<<"OR";};
 		
 and_test: 	/*not_test (AND not_test)*		{};*/
-		not_test and_nottest			{};
+		not_test and_nottest			{$$ = $2;};
 		
-and_nottest:	epsilon					{}
+and_nottest:	epsilon
 		|and_nottest AND not_test		{cout<<"AND";};
 		
 not_test: 	/*'not' not_test | comparison*/
 	NOT not_test			{cout<<"NOT";}
-	|comparison				{};
+	|comparison				{$$ = $1;};
 
 		
 comparison: /*expr (comp_op expr)*			{};*/
-	expr comp_op_expr_kleene;
+	expr comp_op_expr_kleene 	{$$ = $1;};
 
 comp_op_expr_kleene: 
-	comp_op_expr_kleene comp_op expr
+	comp_op_expr_kleene comp_op expr 	{$$ = $3;}
 	|epsilon;
 	
 comp_op: /*'<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'*/
@@ -119,30 +119,30 @@ comp_op: /*'<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'*/
 	|IS NOT				{cout<<"IS NOT";};
 
 expr: /*xor_expr ('|' xor_expr)*				{};*/
-	xor_expr pipexor_expr				{};
+	xor_expr pipexor_expr 		{$$ = $2;};
 	
-pipexor_expr: 	epsilon					{}
-	|pipexor_expr PIPE xor_expr ;
+pipexor_expr: 	epsilon
+	|pipexor_expr PIPE xor_expr 	{$$ = $3;};
 		
 xor_expr: /*and_expr ('^' and_expr)*			{};*/
-	and_expr andxor_expr				{};
+	and_expr andxor_expr 	{$$ = $1;};
 
-andxor_expr: 	epsilon					{}
-	|andxor_expr EXP and_expr ;
+andxor_expr: 	epsilon
+	|andxor_expr EXP and_expr 	{$$ = $1;};
 		
 and_expr: /*shift_expr ('&' shift_expr)*			{};*/
-	shift_expr andpandshift_expr			{};
+	shift_expr andpandshift_expr			{$$ = $2;};
 	
 
-andpandshift_expr: epsilon				{}
-	|andpandshift_expr ANDPAND shift_expr;
+andpandshift_expr: epsilon
+	|andpandshift_expr ANDPAND shift_expr 	{$$ = $3;};
 
 shift_expr: /*arith_expr (('<<'|'>>') arith_expr)*	{};*/
-	arithmetic_expr leftright_shift_expr			{};
+	arithmetic_expr leftright_shift_expr			{$$ = $1;};
 
-leftright_shift_expr: epsilon				{}
-	|leftright_shift_expr BINRIGHT arithmetic_expr	{cout<<">>";}
-	|leftright_shift_expr BINLEFT arithmetic_expr	{cout<<"<<";};
+leftright_shift_expr: epsilon
+	|leftright_shift_expr BINRIGHT arithmetic_expr 	{$$ = $3; cout<<">>";}
+	|leftright_shift_expr BINLEFT arithmetic_expr	{$$ = $3; cout<<"<<";};
 
 arithmetic_expr: /*term ('+' term)*			{};
 		|term ('-' term)*			{};*/
@@ -221,44 +221,45 @@ factor: /*'+' factor;
 							$$ = minusn;
 							cout<<"RESTA";
 						}
-	|TILDE factor					
-	|power;		
+	|TILDE factor 		{$$ = $2;}
+	|power 				{$$ = $1;};
 
 power: /*atom trailer* ['**' factor];*/
-	atom trailer_kleene					{}
-	|atom trailer_kleene POT factor		{};
+	atom trailer_kleene					{$$ = $1;}
+	|atom trailer_kleene POT factor		{$$ = $1;};
 
 trailer_kleene: epsilon					{}
 	|trailer_kleene trailer 			{};
 	
 trailer: /*'(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME*/
 	OPENPAR CLOSEPAR					{cout<<"()";}
-	|OPENPAR arglist CLOSEPAR			{cout<<"(ARGLIST)";}
-	|OPENCOR subscriptlist CLOSECOR		{cout<<"(SUBSCRIPTLIST)";}
-	|DOT NAME							{cout<<".NAME";};
+	|OPENPAR arglist CLOSEPAR			{$$ = $2; cout<<"(ARGLIST)";}
+	|OPENCOR subscriptlist CLOSECOR		{$$ = $2; cout<<"(SUBSCRIPTLIST)";}
+	|DOT NAME							{Node *identn = asTree->bIdentNode($2); $$=identn; cout<<".NAME";};
 		
 arglist: /*(argument ',')* (argument [','] |'*' test (',' argument)* [',' '**' test] 	|'**' test) */
-	argument_comma argument_multiple;
+	argument_comma argument_multiple 	{$$ = $2;};
 	
 argument_comma: epsilon
-	|argument_comma argument COMMA 			{cout<<",";};
+	|argument_comma argument COMMA 		{$$ = $2; cout<<",";};
 	
-argument_multiple: argument
-	|argument COMMA								{cout<<",";}	
-	|POR test comma_argument					{cout<<"*";}
-	|POR test comma_argument COMMA POT test		{cout<<"*";}
-	|POT test									{cout<<"**";};		
+argument_multiple: argument 					{$$ = $1;}
+	|argument COMMA								{$$ = $1; cout<<",";}	
+	|POR test comma_argument					{$$ = $2; cout<<"*";}
+	|POR test comma_argument COMMA POT test		{$$ = $2; cout<<"*";}
+	|POT test									{$$ = $2; cout<<"**";};		
 	
 comma_argument: epsilon
-	|comma_argument COMMA argument;
+	|comma_argument COMMA argument 	{$$ = $3;};
 	
 argument: /*test [comp_for] | test '=' test*/
-	test comp_for
-	|test
+	test comp_for 			{$$ = $1;}
+	|test 					{$$ = $1;}
 	|test ASSIGN test 		{
 								Node *assignn = asTree->bAssignNode();
 								assignn->setFChild($1);
 								assignn->setFChild($3);
+								$$ = assignn;
 							};
 	
 comp_for: /*'for' exprlist 'in' or_test [comp_iter]*/
@@ -276,8 +277,8 @@ comp_for: /*'for' exprlist 'in' or_test [comp_iter]*/
 										};
 	
 comp_iter: /*comp_for | comp_if */
-	comp_for 
-	| comp_if;
+	comp_for 	{$$ = $1;}
+	| comp_if 	{$$ = $1;};
 	
 comp_if: /*'if' old_test [comp_iter] */
 	IF old_test					{
@@ -292,22 +293,22 @@ comp_if: /*'if' old_test [comp_iter] */
 								};
 		
 subscriptlist: /*subscript (',' subscript)* [',']*/
-	subscript comma_subscript
-	|subscript comma_subscript COMMA;
+	subscript comma_subscript 			{$$ = $1;}
+	|subscript comma_subscript COMMA 	{$$ = $1;};
 
-comma_subscript: comma_subscript COMMA subscript
+comma_subscript: comma_subscript COMMA subscript 	{$$ = $3;}
 	|epsilon;
 	
 subscript: /*'.' '.' '.' | test | [test] ':' [test] [sliceop] */
 	DOT DOT DOT
-	| test 
-	| test TWODOTS test sliceop		{cout<<":";}
-	| test TWODOTS test				{cout<<":";}
-	| test TWODOTS					{cout<<":";}
-	| test TWODOTS sliceop			{cout<<":";}
-	| TWODOTS test sliceop			{cout<<":";}
-	| TWODOTS test					{cout<<":";}
-	| TWODOTS sliceop				{cout<<":";}
+	| test 							{$$ = $1;}
+	| test TWODOTS test sliceop		{$$ = $1;}
+	| test TWODOTS test				{$$ = $1;}
+	| test TWODOTS					{$$ = $1;}
+	| test TWODOTS sliceop			{$$ = $1;}
+	| TWODOTS test sliceop			{$$ = $2;}
+	| TWODOTS test					{$$ = $2;}
+	| TWODOTS sliceop				{$$ = $2;}
 	| TWODOTS						{cout<<":";};
 
 sliceop: /*':' [test];*/
@@ -345,60 +346,66 @@ boolean: TRUE {Node *booln = asTree->bIntNode(1); $$=booln;}
 	
 dictorsetmaker: /*( (test ':' test (comp_for | (',' test ':' test)* [','])) |
                   (test (comp_for | (',' test)* [','])) )*/
-                  test TWODOTS test dictor_set_help		{cout<<":";}
-                  |test comp_for
-                  |test comma_test_kleene COMMA
-                  |test comma_test_kleene;
+                  test TWODOTS test dictor_set_help		{$$ = $1; cout<<":";}
+                  |test comp_for 						{$$ = $1;}
+                  |test comma_test_kleene COMMA 		{$$ = $1;}
+                  |test comma_test_kleene				{$$ = $1;};
                   
 dictor_set_help: /*(comp_for | (',' test ':' test)* [','])*/
-	comp_for
-	|dictor_set_help2 COMMA
-	|dictor_set_help2;
+	comp_for 					{$$ = $1;}
+	|dictor_set_help2 COMMA 	{$$ = $1;}
+	|dictor_set_help2 			{$$ = $1;};
 	
-dictor_set_help2: epsilon
-	| dictor_set_help2 COMMA test TWODOTS test		{cout<<":";};
+dictor_set_help2: epsilon 							{$$ = $1;}
+	| dictor_set_help2 COMMA test TWODOTS test		{$$ = $1; cout<<":";};
 
 testlist1: /*test (',' test)**/
-	test comma_test_kleene;
+	test comma_test_kleene 	{$$ = $1;};
 	
 string_plus: 
 	STRING					{Node *strn = asTree->bStrNode($1); $$=strn;}
-	|STRING string_plus		{};
+	|STRING string_plus		{$$ = $1;};
 
 /*LO QUE ESTA ARRIBA ES DE ARITHMETIC EXP*/
 listmaker: 	/*test ( list_for | (',' test)* [','] )*/
-	test list_for				{}		
-	|test comma_test_kleene comma_one			{};
+	test list_for							{$$ = $1;}
+	|test comma_test_kleene comma_one		{$$ = $1;};
 		
 testlist_comp: /* test ( comp_for | (',' test)* [','] )*/
-	test comp_for
-	|test comma_test_kleene comma_one;
+	test comp_for 						{$$ = $1;}
+	|test comma_test_kleene comma_one 	{$$ = $1;};
 		
 list_for: /* 'for' exprlist 'in' testlist_safe [list_iter]*/
-	FOR exprlist IN testlist_safe 		{cout<<"FOR";}
-	|FOR exprlist IN testlist_safe list_iter	{cout<<"FOR";};
+	FOR exprlist IN testlist_safe 				{
+													cout<<"FOR";
+												}
+	|FOR exprlist IN testlist_safe list_iter	{
+													cout<<"FOR";
+												};
 
 list_iter: /*list_for | list_if*/
-	list_for 
-	|list_if;
+	list_for 	{$$ = $1;}
+	|list_if 	{$$ = $1;};
 
 testlist_safe: /*old_test [(',' old_test)+ [',']];*/
-	old_test
-	|old_test comma_old_test_plus
-	|old_test comma_old_test_plus COMMA;
+	old_test 								{$$ = $1;}
+	|old_test comma_old_test_plus 			{$$ = $1;}
+	|old_test comma_old_test_plus COMMA 	{$$ = $1;};
 	
-comma_old_test_plus: COMMA old_test
-	|comma_old_test_plus COMMA old_test;
+comma_old_test_plus: COMMA old_test 		{$$ = $2;}
+	|comma_old_test_plus COMMA old_test 	{$$ = $3;};
 
 list_if: /*'if' old_test [list_iter]*/
 	IF old_test					{
 									Node *ifn = asTree->bIfNode();
 									ifn->addFChild($2);
+									$$ = ifn;
 									cout<<"IF___";
 								}
 	|IF old_test list_iter		{
 									Node *ifn = asTree->bIfNode();
 									ifn->addFChild($2);
+									$$ = ifn;
 									cout<<"IF___";
 								};
 	
@@ -559,7 +566,7 @@ funcdef: /*'def' NAME parameters ':' suite*/
 
 parameters: /*'(' [varargslist] ')'*/
 	OPENPAR CLOSEPAR
-	|OPENPAR varargslist CLOSEPAR;
+	|OPENPAR varargslist CLOSEPAR 	{$$ = $2;};
 		
 varargslist: /*
 	  ((fpdef ['=' test] ',')* ('*' NAME [',' '**' NAME] | '**' NAME) | fpdef ['=' test] (',' fpdef ['=' test])* [',']) */
@@ -577,19 +584,19 @@ b: POR NAME
 |POR NAME COMMA POT NAME
 | POT NAME;
 
-d: d COMMA fpdef
-| d COMMA fpdef ASSIGN test
+d: d COMMA fpdef 				{$$ = $3;}
+| d COMMA fpdef ASSIGN test 	{$$ = $3;}
 |epsilon;
 	
 fpdef: 	/*NAME | '(' fplist ')';*/
-	NAME
-	|OPENPAR fplist CLOSEPAR;
+	NAME 						{Node *identn = asTree->bIdentNode($1); $$=identn;}
+	|OPENPAR fplist CLOSEPAR	{$$ = $2;};
 
 fplist: /*fpdef (',' fpdef)* [',']*/
-	fpdef fpdef_kleene COMMA
-	|fpdef fpdef_kleene;
+	fpdef fpdef_kleene COMMA 	{$$ = $1;}
+	|fpdef fpdef_kleene 		{$$ = $1;};
 	
-fpdef_kleene: fpdef_kleene COMMA fpdef
+fpdef_kleene: fpdef_kleene COMMA fpdef 	{$$ = $3;}
 	| epsilon;
 
 %%
