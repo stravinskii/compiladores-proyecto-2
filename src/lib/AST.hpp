@@ -121,8 +121,15 @@
 
  	INode(int n);
 
- 	virtual void addFChild(Node* child);
- 	virtual void addLChild(Node* child);
+ 	virtual void addFChild(Node child)
+ 	{
+ 		children->addFirst(child);
+ 	}
+
+ 	virtual void addLChild(Node child)
+ 	{
+ 		children->addLast(child);
+ 	}
 
  	virtual void setFChild(Node* first)
  	{
