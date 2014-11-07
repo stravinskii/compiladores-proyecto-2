@@ -189,7 +189,7 @@
 
  	NValue getValue()
  	{
- 		return value.str;
+ 		return value;
  	}
 
  	virtual void accept(Visitor& v)
@@ -208,7 +208,7 @@
 
  	NValue getValue()
  	{
- 		return value.i;
+ 		return value;
  	}
 
  	virtual void accept(Visitor& v)
@@ -227,7 +227,7 @@
 
  	NValue getValue()
  	{
- 		return value.f;
+ 		return value;
  	}
 
  	virtual void accept(Visitor& v)
@@ -248,7 +248,7 @@
 
  	NValue getValue()
  	{
- 		return value.str;
+ 		return value;
  	}
 
  	virtual void accept(Visitor& v)
@@ -267,7 +267,7 @@
 
 	NValue getValue()
 	{
-		return value.b;
+		return value;
 	}
 
 	virtual void accept(Visitor& v)
