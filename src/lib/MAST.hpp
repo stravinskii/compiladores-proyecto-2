@@ -19,6 +19,10 @@
  class WhileNode;
  class IfNode;
  class AssignNode;
+
+ class StmtNode;
+ class SStmtNode;
+
  class StmtListNode;
  class SStmtListNode;
  class ExprNode;
@@ -43,6 +47,10 @@
  	virtual void visit(WhileNode*);
  	virtual void visit(IfNode*);
  	virtual void visit(AssignNode*);
+
+ 	virtual void visit(StmtNode*);
+ 	virtual void visit(SStmtNode*);
+
  	virtual void visit(StmtListNode*);
  	virtual void visit(SStmtListNode*);
  	virtual void visit(ExprNode*);
@@ -95,6 +103,27 @@
  {
  public:
  	AssignNode() : INode() {};
+
+ 	virtual void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class StmtNode : public INode
+ {
+ public:
+ 	StmtNode() : INode() {};
+ 	virtual void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class SStmtNode : public INode
+ {
+ public:
+ 	SStmtNode() : INode() {};
 
  	virtual void accept(Visitor& v)
  	{
@@ -342,6 +371,16 @@
  		return new WhileNode();
  	}
 
+ 	virtual StmtNode* bStmtNode()
+ 	{
+ 		return new StmtNode();
+ 	}
+
+	virtual SStmtNode* bSStmtNode()
+	{
+		return new SStmtNode();
+	}
+
  	virtual StmtListNode* bStmtListNode()
  	{
  		return new StmtListNode();
@@ -373,6 +412,16 @@
  		Node* right = node->getRightChild();
  		left->accept(*this);
  		right->accept(*this);
+ 	}
+
+ 	virtual void visit(StmtNode*)
+ 	{
+ 		// pass
+ 	}
+
+ 	virtual void visit(SStmtNode*)
+ 	{
+ 		// pass
  	}
 
  	virtual void visit(ForNode* node)

@@ -13,6 +13,10 @@ class ForNode;
 class WhileNode;
 class IfNode;
 class AssignNode;
+
+class StmtNode;
+class SStmtNode;
+
 class StmtListNode;
 class SStmtListNode;
 class ExprNode;

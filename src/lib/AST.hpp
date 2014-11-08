@@ -18,8 +18,13 @@
  class WhileNode;
  class IfNode;
  class AssignNode;
+
+ class StmtNode;
+ class SStmtNode;
+
  class StmtListNode;
  class SStmtListNode;
+
  class ExprNode;
  class PlusNode;
  class MinusNode;
@@ -77,22 +82,22 @@
  		children.resize(n);
  	}
 
- 	virtual void setLeftChild(Node* node)
+ 	void setLeftChild(Node* node)
  	{
  		children.front() = node;
  	}
 
- 	virtual void setRightChild(Node* node)
+ 	void setRightChild(Node* node)
  	{
  		children.back() = node;
  	}
  	
- 	virtual Node* getLeftChild()
+ 	Node* getLeftChild()
  	{
  		return children.front();
  	}
 
- 	virtual Node* getRightChild()
+ 	Node* getRightChild()
  	{
  		return children.back();
  	}
@@ -105,12 +110,12 @@
  public:
  	LNodeList() {}
 
- 	virtual void addFirst(Node* node)
+ 	void addFirst(Node* node)
  	{
  		children.push_front(node);
  	}
 
- 	virtual void addLast(Node* node)
+ 	void addLast(Node* node)
  	{
  		children.push_back(node);
  	}
@@ -128,22 +133,22 @@
 
  	INode(int n);
 
- 	virtual void addFChild(Node* child)
+ 	void addFChild(Node* child)
  	{
  		children->addFirst(child);
  	}
 
- 	virtual void addLChild(Node* child)
+ 	void addLChild(Node* child)
  	{
  		children->addLast(child);
  	}
 
- 	virtual void setFChild(Node* first)
+ 	void setFChild(Node* first)
  	{
  		throw "Operation not supported for Node";
  	}
 
- 	virtual void setSChild(Node* second)
+ 	void setSChild(Node* second)
  	{
  		throw "Operation not supported for Node";
  	}
@@ -161,32 +166,32 @@
  		children = new VNodeList(2);
  	}
 
- 	virtual void addFChild(Node* first)
+ 	void addFChild(Node* first)
  	{
  		throw "Operation not supported for Node";
  	}
 
- 	virtual void addLChild(Node* second)
+ 	void addLChild(Node* second)
  	{
  		throw "Operation not supported for Node";
  	}
 
- 	virtual void setFChild(Node* first)
+ 	void setFChild(Node* first)
  	{
  		children->setLeftChild(first);
  	}
 
- 	virtual void setSChild(Node* second)
+ 	void setSChild(Node* second)
  	{
  		children->setRightChild(second);
  	}
 
- 	virtual Node* getLeftChild()
+ 	Node* getLeftChild()
  	{
  		return children->getLeftChild();
  	}
 
- 	virtual Node* getRightChild()
+ 	Node* getRightChild()
  	{
  		return children->getRightChild();
  	}
@@ -221,6 +226,10 @@
  	virtual AssignNode* bAssignNode()=0;
 
  	// INode's
+
+ 	virtual StmtNode* bStmtNode()=0;
+ 	virtual SStmtNode* bSStmtNode()=0;
+ 	
  	virtual StmtListNode* bStmtListNode()=0;
  	virtual SStmtListNode* bSStmtListNode()=0;
  	virtual ExprNode* bExprNode()=0;
