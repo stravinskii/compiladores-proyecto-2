@@ -19,6 +19,8 @@
  class IfNode;
  class AssignNode;
 
+ class ArgsNode;
+ class FuncNode;
  class StmtNode;
  class SStmtNode;
 
@@ -26,6 +28,14 @@
  class SStmtListNode;
 
  class ExprNode;
+
+ class AndNode;
+ class OrNode;
+ class XorNode;
+ class NotNode;
+
+ class PotNode;
+
  class PlusNode;
  class MinusNode;
  class DiviNode;
@@ -45,9 +55,9 @@
  	virtual void accept(Visitor& v);
 
  	virtual void addFChild(Node* child);
-	virtual void addLChild(Node* child);
-	virtual void setFChild(Node* first);
-	virtual void setSChild(Node* second);
+ 	virtual void addLChild(Node* child);
+ 	virtual void setFChild(Node* first);
+ 	virtual void setSChild(Node* second);
  };
 
 
@@ -219,6 +229,12 @@
  public:
 
  	// BinNode's
+ 	virtual AndNode* bAndNode()=0;
+ 	virtual OrNode* bOrNode()=0;
+ 	virtual XorNode* bXorNode()=0;
+ 	virtual NotNode* bNotNode()=0;
+
+ 	virtual PotNode* bPotNode()=0;
  	virtual PlusNode* bPlusNode()=0;
  	virtual MultNode* bMultNode()=0;
  	virtual DiviNode* bDiviNode()=0;
@@ -226,7 +242,8 @@
  	virtual AssignNode* bAssignNode()=0;
 
  	// INode's
-
+ 	virtual ArgsNode* bArgsNode()=0;
+ 	virtual FuncNode* bFuncNode()=0;
  	virtual StmtNode* bStmtNode()=0;
  	virtual SStmtNode* bSStmtNode()=0;
  	

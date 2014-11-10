@@ -14,12 +14,21 @@ class WhileNode;
 class IfNode;
 class AssignNode;
 
+class ArgsNode;
+class FuncNode;
 class StmtNode;
 class SStmtNode;
 
 class StmtListNode;
 class SStmtListNode;
 class ExprNode;
+
+class AndNode;
+class OrNode;
+class XorNode;
+class NotNode;
+class PotNode;
+
 class PlusNode;
 class MinusNode;
 class DiviNode;

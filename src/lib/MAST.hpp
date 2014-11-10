@@ -48,12 +48,21 @@
  	virtual void visit(IfNode*);
  	virtual void visit(AssignNode*);
 
+ 	virtual void visit(FuncNode*);
+ 	virtual void visit(ArgsNode*);
  	virtual void visit(StmtNode*);
  	virtual void visit(SStmtNode*);
 
  	virtual void visit(StmtListNode*);
  	virtual void visit(SStmtListNode*);
  	virtual void visit(ExprNode*);
+
+ 	virtual void visit(AndNode*);
+ 	virtual void visit(OrNode*);
+ 	virtual void visit(XorNode*);
+ 	virtual void visit(NotNode*);
+ 	virtual void visit(PotNode*);
+
  	virtual void visit(PlusNode*);
  	virtual void visit(MinusNode*);
  	virtual void visit(DiviNode*);
@@ -65,13 +74,78 @@
  	virtual void visit(BoolNode*);
  };
 
+ class AndNode : public BinNode
+ {
+ public:
+ 	AndNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class OrNode : public BinNode
+ {
+ public:
+ 	OrNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class XorNode : public BinNode
+ {
+ public:
+ 	XorNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class NotNode : public BinNode
+ {
+ public:
+ 	NotNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class ArgsNode : public INode
+ {
+ public:
+ 	ArgsNode() : INode() {};
+ 	
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class FuncNode : public INode
+ {
+ public:
+ 	FuncNode() : INode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
 
  class ForNode : public INode
  {
  public:
  	ForNode() : INode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -82,7 +156,7 @@
  public:
  	WhileNode() : INode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -93,7 +167,7 @@
  public:
  	IfNode() : INode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -104,7 +178,7 @@
  public:
  	AssignNode() : INode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -114,7 +188,7 @@
  {
  public:
  	StmtNode() : INode() {};
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -125,7 +199,7 @@
  public:
  	SStmtNode() : INode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -136,7 +210,7 @@
  public:
  	StmtListNode() : INode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -147,7 +221,7 @@
  public:
  	SStmtListNode() : INode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -158,7 +232,7 @@
  public:
  	ExprNode() : INode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -169,7 +243,7 @@
  public:
  	PlusNode() : BinNode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -180,7 +254,7 @@
  public:
  	MinusNode() : BinNode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -191,7 +265,7 @@
  public:
  	DiviNode() : BinNode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -202,7 +276,7 @@
  public:
  	MultNode() : BinNode() {};
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -221,7 +295,7 @@
  		return value;
  	}
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -240,7 +314,7 @@
  		return value;
  	}
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -259,7 +333,7 @@
  		return value;
  	}
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -280,7 +354,7 @@
  		return value;
  	}
 
- 	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -294,12 +368,12 @@
  		value.b = &boolean;
  	}
 
-	NValue getValue()
-	{
-		return value;
-	}
+ 	NValue getValue()
+ 	{
+ 		return value;
+ 	}
 
-	virtual void accept(Visitor& v)
+ 	void accept(Visitor& v)
  	{
  		v.visit(this);
  	}
@@ -310,93 +384,127 @@
  public:
  	MAST() : AST() {};
 
+ 	AndNode* bAndNode()
+ 	{
+ 		return new AndNode();
+ 	}
 
- 	virtual IntNode* bIntNode(int val)
+ 	OrNode* bOrNode()
+ 	{
+ 		return new OrNode();
+ 	}
+
+ 	XorNode* bXorNode()
+ 	{
+ 		return new XorNode();
+ 	}
+
+ 	NotNode* bNotNode()
+ 	{
+ 		return new NotNode();
+ 	}
+
+ 	PotNode* bPotNode()
+ 	{
+ 		return new PotNode();
+ 	}
+
+ 	ArgsNode* bArgsNode()
+ 	{
+ 		return new ArgsNode();
+ 	}
+
+ 	FuncNode* bFuncNode()
+ 	{
+ 		return new FuncNode();
+ 	}
+
+ 	IntNode* bIntNode(int val)
  	{
  		return new IntNode(val);
  	}
 
- 	virtual StrNode* bStrNode(string val)
+ 	StrNode* bStrNode(string val)
  	{
  		return new StrNode(val);
  	}
 
- 	virtual FloatNode* bFloatNode(float val)
+ 	FloatNode* bFloatNode(float val)
  	{
  		return new FloatNode(val);
  	}
 
- 	virtual BoolNode* bBoolNode(bool val)
+ 	BoolNode* bBoolNode(bool val)
  	{
  		return new BoolNode(val);
  	}
 
- 	virtual IdentNode* bIdentNode(string name)
+ 	IdentNode* bIdentNode(string name)
  	{
  		return new IdentNode(name);
  	}
 
- 	virtual PlusNode* bPlusNode()
+ 	PlusNode* bPlusNode()
  	{
  		return new PlusNode();
  	}
 
- 	virtual MultNode* bMultNode()
+ 	MultNode* bMultNode()
  	{
  		return new MultNode();
  	}
 
- 	virtual DiviNode* bDiviNode()
+ 	DiviNode* bDiviNode()
  	{
  		return new DiviNode();
  	}
 
- 	virtual MinusNode* bMinusNode()
+ 	MinusNode* bMinusNode()
  	{
  		return new MinusNode();
  	}
 
- 	virtual IfNode* bIfNode()
+ 	IfNode* bIfNode()
  	{
  		return new IfNode();
  	}
 
- 	virtual ForNode* bForNode()
+ 	ForNode* bForNode()
  	{
  		return new ForNode();
  	}
 
- 	virtual WhileNode* bWhileNode()
+ 	WhileNode* bWhileNode()
  	{
  		return new WhileNode();
  	}
 
- 	virtual StmtNode* bStmtNode()
+ 	StmtNode* bStmtNode()
  	{
  		return new StmtNode();
  	}
 
-	virtual SStmtNode* bSStmtNode()
-	{
-		return new SStmtNode();
-	}
+ 	SStmtNode* bSStmtNode()
+ 	{
+ 		return new SStmtNode();
+ 	}
 
- 	virtual StmtListNode* bStmtListNode()
+ 	StmtListNode* bStmtListNode()
  	{
  		return new StmtListNode();
  	}
 
- 	virtual SStmtListNode* bSStmtListNode()
+ 	SStmtListNode* bSStmtListNode()
  	{
  		return new SStmtListNode();
  	}
 
- 	virtual ExprNode* bExprNode()
+ 	ExprNode* bExprNode()
  	{
  		return new ExprNode();
  	}
 
- 	virtual AssignNode* bAssignNode()
+ 	AssignNode* bAssignNode()
  	{
  		return new AssignNode();
  	}
@@ -406,60 +514,43 @@
  {
  public:
 
- 	virtual void visit(PlusNode* node)
- 	{
- 		Node* left = node->getLeftChild();
- 		Node* right = node->getRightChild();
- 		left->accept(*this);
- 		right->accept(*this);
- 	}
-
- 	virtual void visit(StmtNode*)
+ 	void visit(AndNode* node)
  	{
  		// pass
  	}
 
- 	virtual void visit(SStmtNode*)
+ 	void visit(OrNode* node)
  	{
  		// pass
  	}
 
- 	virtual void visit(ForNode* node)
+ 	void visit(XorNode* node)
+ 	{
+ 		// pass
+ 	}
+
+ 	void visit(NotNode* node)
+ 	{
+ 		// pass
+ 	}
+
+ 	void visit(PotNode* node)
+ 	{
+ 		// pass
+ 	}
+
+
+ 	void visit(FuncNode* node)
  	{
  		// pass 
  	}
 
- 	virtual void visit(WhileNode* node)
+ 	void visit(ArgsNode* node)
  	{
  		// pass 
  	}
 
- 	virtual void visit(IfNode* node)
- 	{
- 		// pass 
- 	}
-
- 	virtual void visit(AssignNode* node)
- 	{
- 		// pass 
- 	}
-
- 	virtual void visit(StmtListNode* node)
- 	{
- 		// pass 
- 	}
-
- 	virtual void visit(SStmtListNode* node)
- 	{
- 		// pass 
- 	}
-
- 	virtual void visit(ExprNode* node)
- 	{
- 		// pass 
- 	}
-
- 	virtual void visit(MinusNode* node)
+ 	void visit(PlusNode* node)
  	{
  		Node* left = node->getLeftChild();
  		Node* right = node->getRightChild();
@@ -467,7 +558,52 @@
  		right->accept(*this);
  	}
 
- 	virtual void visit(DiviNode* node)
+ 	void visit(StmtNode*)
+ 	{
+ 		// pass
+ 	}
+
+ 	void visit(SStmtNode*)
+ 	{
+ 		// pass
+ 	}
+
+ 	void visit(ForNode* node)
+ 	{
+ 		// pass 
+ 	}
+
+ 	void visit(WhileNode* node)
+ 	{
+ 		// pass 
+ 	}
+
+ 	void visit(IfNode* node)
+ 	{
+ 		// pass 
+ 	}
+
+ 	void visit(AssignNode* node)
+ 	{
+ 		// pass 
+ 	}
+
+ 	void visit(StmtListNode* node)
+ 	{
+ 		// pass 
+ 	}
+
+ 	void visit(SStmtListNode* node)
+ 	{
+ 		// pass 
+ 	}
+
+ 	void visit(ExprNode* node)
+ 	{
+ 		// pass 
+ 	}
+
+ 	void visit(MinusNode* node)
  	{
  		Node* left = node->getLeftChild();
  		Node* right = node->getRightChild();
@@ -475,7 +611,7 @@
  		right->accept(*this);
  	}
 
- 	virtual void visit(MultNode* node)
+ 	void visit(DiviNode* node)
  	{
  		Node* left = node->getLeftChild();
  		Node* right = node->getRightChild();
@@ -483,27 +619,35 @@
  		right->accept(*this);
  	}
 
- 	virtual void visit(IdentNode* node)
+ 	void visit(MultNode* node)
+ 	{
+ 		Node* left = node->getLeftChild();
+ 		Node* right = node->getRightChild();
+ 		left->accept(*this);
+ 		right->accept(*this);
+ 	}
+
+ 	void visit(IdentNode* node)
  	{
  		node->accept(*this);
  	}
 
- 	virtual void visit(IntNode* node)
- 	{
-	 		node->accept(*this);
- 	}
-
- 	virtual void visit(FloatNode* node)
+ 	void visit(IntNode* node)
  	{
  		node->accept(*this);
  	}
 
- 	virtual void visit(StrNode* node)
+ 	void visit(FloatNode* node)
  	{
  		node->accept(*this);
  	}
 
- 	virtual void visit(BoolNode* node)
+ 	void visit(StrNode* node)
+ 	{
+ 		node->accept(*this);
+ 	}
+
+ 	void visit(BoolNode* node)
  	{
  		node->accept(*this);
  	}
