@@ -1,223 +1,215 @@
 /*
- * Implementación de clases para un AST con los patrones Builder, Composite y Visitor.
- * La implementación de los patrones de diseño se hacen con las clases Node, NodeList y AST.
- *
- * @author: Alejandro Hernández Mora
- * @author: Alan Mauricio García García
- */
+* Implementación de clases para un AST con los patrones Builder, Composite y Visitor.
+* La implementación de los patrones de diseño se hacen con las clases Node, NodeList y AST.
+*
+* @author: Alejandro Hernández Mora
+* @author: Alan Mauricio García García
+*/
 
 #include <list>
 #include <vector>
 #include <string>
 #include <iostream>
 
- using namespace std;
 
- class Visitor;
- class ForNode;
- class WhileNode;
- class IfNode;
- class AssignNode;
+using namespace std;
 
- class ArgsNode;
- class FuncNode;
- class StmtNode;
- class SStmtNode;
+class Visitor;
+class ForNode;
+class WhileNode;
+class IfNode;
+class AssignNode;
 
- class StmtListNode;
- class SStmtListNode;
+class StmtNode;
+class SStmtNode;
 
- class ExprNode;
+class StmtListNode;
+class SStmtListNode;
 
- class LTNode;
- class GTNode;
- class EqNode;
- class NEqNode;
- class LTEqNode;
- class GTEqNode;
+class ExprNode;
+
+class ArgsNode;
+class FuncNode;
+
+class LTNode;
+class GTNode;
+class EqNode;
+class NEqNode;
+class LTEqNode;
+class GTEqNode;
+
+class AndNode;
+class OrNode;
+class XorNode;
+class NotNode;
+class PotNode;
+
+class PlusNode;
+class MinusNode;
+class DiviNode;
+class MultNode;
+class IdentNode;
+class IntNode;
+class FloatNode;
+class StrNode;
+class BoolNode;
+class StmtNode;
+class SStmtNode;
+
+class Node{
+public:
+	~Node();
+	virtual void accept(Visitor&)=0;
+	virtual void addFChild(Node*)=0;
+	virtual void addLChild(Node*)=0;
+	virtual void setFChild(Node*)=0;
+	virtual void setSChild(Node*)=0;
+	
+protected:
+Node();
+};
 
 
- class AndNode;
- class OrNode;
- class XorNode;
- class NotNode;
-
- class PotNode;
-
- class PlusNode;
- class MinusNode;
- class DiviNode;
- class MultNode;
- class IdentNode;
- class IntNode;
- class FloatNode;
- class StrNode;
- class BoolNode;
- class StmtNode;
- class SStmtNode;
-
- class Node
- {
- public:
- 	Node() {}
- 	virtual void accept(Visitor& v);
-
- 	virtual void addFChild(Node* child);
- 	virtual void addLChild(Node* child);
- 	virtual void setFChild(Node* first);
- 	virtual void setSChild(Node* second);
- };
+union NList {
+	list<Node*> listas;
+	vector<Node*> vectores;
+};
 
 
- class NodeList
- {
+class NodeList{
+public:
+	NList* children;
+
+	virtual Node* getLeftChild();
+	virtual Node* getRightChild();
+	virtual void setLeftChild(Node* node);
+	virtual void setRightChild(Node* node);
+
+	virtual void addFirst(Node* node);
+	virtual void addLast(Node* node);
+	
+	NList* getChildren(){
+		return children;
+	}
+};
+
+
+ class VNodeList : public NodeList{
  private:
- 	union NList {
- 		list<Node*> *listas;
- 		vector<Node*> *vectores;
- 	};
-
+ 	NodeList* children;
  public:
- 	NList children;
-
- 	virtual Node* getLeftChild();
- 	virtual Node* getRightChild();
- 	virtual void setLeftChild(Node* node);
- 	virtual void setRightChild(Node* node);
-
- 	virtual void addFirst(Node* node);
- 	virtual void addLast(Node* node);
- };
-
-
- class VNodeList : public NodeList
- {
- private:
- 	vector<Node*> children;
- public:
- 	VNodeList(int n)
- 	{
- 		children.resize(n);
+ 	VNodeList(int n){
+ 		getChildren().resize(n);
  	}
 
- 	void setLeftChild(Node* node)
- 	{
- 		children.front() = node;
+ 	void setLeftChild(Node* node){
+ 		getChildren().front() = node;
  	}
 
- 	void setRightChild(Node* node)
- 	{
- 		children.back() = node;
+ 	void setRightChild(Node* node){
+ 		getChildren().back() = node;
  	}
  	
- 	Node* getLeftChild()
- 	{
- 		return children.front();
+ 	Node* getLeftChild(){
+ 		return getChildren().front();
  	}
 
- 	Node* getRightChild()
- 	{
- 		return children.back();
+ 	Node* getRightChild(){
+ 		return getChildren().back();
  	}
+ 	
+ 	vector<Node*> getChildren(){
+		return children->children->vectores;
+	}
  };
 
- class LNodeList : public NodeList
- {
+ class LNodeList : public NodeList{
  private:
- 	list<Node*> children;
+ 	NodeList* children;
  public:
  	LNodeList() {}
 
- 	void addFirst(Node* node)
- 	{
- 		children.push_front(node);
+ 	void addFirst(Node* node){
+ 		getChildren().push_front(node);
  	}
 
- 	void addLast(Node* node)
- 	{
- 		children.push_back(node);
+ 	void addLast(Node* node){
+ 		getChildren().push_back(node);
  	}
+ 	
+ 	list<Node*> getChildren(){
+		return children->children->listas;
+	}
  };
 
 
- class INode : public Node
- {	
+ class INode : public Node{	
+ protected:
+ 	NodeList* children;
+	 
  public:
- 	
- 	INode() : Node()
- 	{
+ 	INode() : Node(){
  		children = new LNodeList();
  	}
 
  	INode(int n);
 
- 	void addFChild(Node* child)
- 	{
+ 	void addFChild(Node* child){
  		children->addFirst(child);
  	}
 
- 	void addLChild(Node* child)
- 	{
+ 	void addLChild(Node* child){
  		children->addLast(child);
  	}
 
- 	void setFChild(Node* first)
- 	{
+ 	void setFChild(Node* first)	{
  		throw "Operation not supported for Node";
  	}
 
- 	void setSChild(Node* second)
- 	{
+ 	void setSChild(Node* second){
  		throw "Operation not supported for Node";
  	}
 
- protected:
- 	NodeList* children;
+ 	list<Node*> getChildren(){
+ 		return getChildren();
+ 	}
+
  };
 
 
- class BinNode : public INode
- {
+ class BinNode : public INode{
  public:
- 	BinNode()
- 	{
+ 	BinNode(){
  		children = new VNodeList(2);
  	}
 
- 	void addFChild(Node* first)
- 	{
+ 	void addFChild(Node* first)	{
  		throw "Operation not supported for Node";
  	}
 
- 	void addLChild(Node* second)
- 	{
+ 	void addLChild(Node* second){
  		throw "Operation not supported for Node";
  	}
 
- 	void setFChild(Node* first)
- 	{
+ 	void setFChild(Node* first){
  		children->setLeftChild(first);
  	}
 
- 	void setSChild(Node* second)
- 	{
+ 	void setSChild(Node* second){
  		children->setRightChild(second);
  	}
 
- 	Node* getLeftChild()
- 	{
+ 	Node* getLeftChild(){
  		return children->getLeftChild();
  	}
 
- 	Node* getRightChild()
- 	{
+ 	Node* getRightChild(){
  		return children->getRightChild();
  	}
  };
 
 
- class LeafNode : public Node
- {
+ class LeafNode : public Node{
  protected:
  	union NValue {
  		int i;
@@ -232,8 +224,7 @@
  };
 
  // Constructor
- class AST
- {
+ class AST{
  public:
 
  	// BinNode's
@@ -259,6 +250,7 @@
  	// INode's
  	virtual ArgsNode* bArgsNode()=0;
  	virtual FuncNode* bFuncNode()=0;
+ 	
  	virtual StmtNode* bStmtNode()=0;
  	virtual SStmtNode* bSStmtNode()=0;
  	

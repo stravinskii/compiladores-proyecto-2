@@ -1,7 +1,6 @@
 #ifndef COMPUESTOVISITANTE_HPP
 #define COMPUESTOVISITANTE_HPP
 
-
 class Node;
 class NodeList;
 class VNodeList;
@@ -13,21 +12,14 @@ class ForNode;
 class WhileNode;
 class IfNode;
 class AssignNode;
+class StmtListNode;
+class SStmtListNode;
+class ExprNode;
 
 class ArgsNode;
 class FuncNode;
 class StmtNode;
 class SStmtNode;
-
-class StmtListNode;
-class SStmtListNode;
-class ExprNode;
-
-class AndNode;
-class OrNode;
-class XorNode;
-class NotNode;
-class PotNode;
 
 class LTNode;
 class GTNode;
@@ -35,6 +27,12 @@ class EqNode;
 class NEqNode;
 class LTEqNode;
 class GTEqNode;
+class AndNode;
+class OrNode;
+class XorNode;
+class NotNode;
+class PotNode;
+
 
 class PlusNode;
 class MinusNode;
@@ -44,10 +42,6 @@ class IdentNode;
 class IntNode;
 class FloatNode;
 class StrNode;
-class BoolNode;
-class MAST;
-class Visitor;
 class NodeVisitor;
-class AST;
 
 #endif
