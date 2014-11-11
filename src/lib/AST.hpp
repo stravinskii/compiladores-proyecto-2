@@ -29,6 +29,14 @@
 
  class ExprNode;
 
+ class LTNode;
+ class GTNode;
+ class EqNode;
+ class NEqNode;
+ class LTEqNode;
+ class GTEqNode;
+
+
  class AndNode;
  class OrNode;
  class XorNode;
@@ -233,6 +241,13 @@
  	virtual OrNode* bOrNode()=0;
  	virtual XorNode* bXorNode()=0;
  	virtual NotNode* bNotNode()=0;
+
+ 	virtual LTNode* bLTNode()=0;
+ 	virtual GTNode* bGTNode()=0;
+ 	virtual EqNode* bEqNode()=0;
+ 	virtual NEqNode* bNEqNode()=0;
+ 	virtual LTEqNode* bLTEqNode()=0;
+ 	virtual GTEqNode* bGTEqNode()=0;
 
  	virtual PotNode* bPotNode()=0;
  	virtual PlusNode* bPlusNode()=0;

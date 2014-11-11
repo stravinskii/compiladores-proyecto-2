@@ -63,6 +63,13 @@
  	virtual void visit(NotNode*);
  	virtual void visit(PotNode*);
 
+ 	virtual void visit(LTNode*);
+ 	virtual void visit(GTNode*);
+ 	virtual void visit(EqNode*);
+ 	virtual void visit(NEqNode*);
+ 	virtual void visit(LTEqNode*);
+ 	virtual void visit(GTEqNode*);
+
  	virtual void visit(PlusNode*);
  	virtual void visit(MinusNode*);
  	virtual void visit(DiviNode*);
@@ -72,6 +79,83 @@
  	virtual void visit(FloatNode*);
  	virtual void visit(StrNode*);
  	virtual void visit(BoolNode*);
+ };
+
+ class LTNode : public BinNode
+ {
+ public:
+ 	LTNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class GTNode : public BinNode
+ {
+ public:
+ 	GTNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class EqNode : public BinNode
+ {
+ public:
+ 	EqNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class NEqNode : public BinNode
+ {
+ public:
+ 	NEqNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class LTEqNode : public BinNode
+ {
+ public:
+ 	LTEqNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class GTEqNode : public BinNode
+ {
+ public:
+ 	GTEqNode() : BinNode() {};
+
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
+ };
+
+ class PotNode : public BinNode
+ {
+ public:
+ 	PotNode() : BinNode() {};
+ 	
+ 	void accept(Visitor& v)
+ 	{
+ 		v.visit(this);
+ 	}
  };
 
  class AndNode : public BinNode
@@ -384,6 +468,36 @@
  public:
  	MAST() : AST() {};
 
+ 	LTNode* bLTNode()
+ 	{
+ 		return new LTNode();
+ 	}
+
+ 	GTNode* bGTNode()
+ 	{
+ 		return new GTNode();
+ 	}
+
+ 	EqNode* bEqNode()
+ 	{
+ 		return new EqNode();
+ 	}
+
+ 	NEqNode* bNEqNode()
+ 	{
+ 		return new NEqNode();
+ 	}
+
+ 	LTEqNode* bLTEqNode()
+ 	{
+ 		return new LTEqNode();
+ 	}
+
+ 	GTEqNode* bGTEqNode()
+ 	{
+ 		return new GTEqNode();
+ 	}
+
  	AndNode* bAndNode()
  	{
  		return new AndNode();
@@ -513,6 +627,38 @@
  class NodeVisitor : public Visitor
  {
  public:
+
+
+ 	void visit(LTNode* node)
+ 	{
+ 		// pass
+ 	}
+
+ 	void visit(GTNode* node)
+ 	{
+		// pass
+ 	}
+
+ 	void visit(EqNode* node)
+ 	{
+		// pass
+ 	}
+
+ 	void visit(NEqNode* node)
+ 	{
+		// pass
+ 	}
+
+ 	void visit(LTEqNode* node)
+ 	{
+		// pass
+ 	}
+
+ 	void visit(GTEqNode* node)
+ 	{
+		// pass
+ 	}
+
 
  	void visit(AndNode* node)
  	{

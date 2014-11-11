@@ -29,6 +29,13 @@ class XorNode;
 class NotNode;
 class PotNode;
 
+class LTNode;
+class GTNode;
+class EqNode;
+class NEqNode;
+class LTEqNode;
+class GTEqNode;
+
 class PlusNode;
 class MinusNode;
 class DiviNode;
