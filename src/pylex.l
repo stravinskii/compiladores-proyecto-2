@@ -1,13 +1,14 @@
 %{
 #include <iostream>
+#include "../lib/Stack.h"
 #include "pysin.hpp"
-#include "lib/stack.h"
-
 stack stack;
 int new_line = 1;
 int newline_dedent = 0;
 
 extern int yyparse();
+
+
 
 %}
 
@@ -16,7 +17,7 @@ extern int yyparse();
 
 /* Numbers */
 NAME 				[a-zA-z][_a-zA-Z0-9]*
-NUMBER				{INTEGER}|{FLOATNUMBER}
+/*NUMBER				{INTEGER}|{FLOATNUMBER}*/
 INTEGER        		{DECIMALINTEGER}
 DECIMALINTEGER		{NONZERODIGIT}{DIGIT}*|"0"+
 NONZERODIGIT  		[1-9]
@@ -33,7 +34,7 @@ COMMENT				"#"
 STRING				"\""
 INDENT				"\t"|" "
 EOF					"<<EOF>>"
-TABNEWLINE			(("\t"|" ")+"\n")
+TABNEWLINE			(("\t"|" ")+"\n")+
 
 /* Operators */
 MAS			"+"
@@ -120,6 +121,7 @@ RIGHT		"->"
 %s START
 %s NEWLINE_CONTEXT
 %s DEDENT_CONTEXT
+%x EOF_CONTEXT
 %%
 
 {APOSTROFE}		{ BEGIN(INITIAL); return APOSTROFE; }
@@ -202,18 +204,18 @@ RIGHT		"->"
 {POTIGUAL}		{ BEGIN(INITIAL); return POTIGUAL; }
 
 {FLOATNUMBER}	{ 
-					/* yylval.flotante = atof(yytext); */
+					yylval.flotante = atof(yytext);
 					BEGIN(INITIAL);
-					return NUMBER;
+					return FLOATNUMBER;
 				}
 {INTEGER}		{ 
-					/* yylval.entero = atoi(yytext); */
+					yylval.entero = atoi(yytext);
 					BEGIN(INITIAL);
-					return NUMBER;
+					return INTEGER;
 				}
 
 {NAME}		{
-				/* yylval.identificador = yytext; */
+				yylval.cadena = yytext;
 				BEGIN(INITIAL);
 				return NAME;
 			}
@@ -231,7 +233,7 @@ RIGHT		"->"
 						yyterminate();
 					}
 				}
-				/* yylval.cadena = yytext; */
+				yylval.cadena = yytext;
 				BEGIN(INITIAL);
 				return STRING;
 			}
@@ -265,6 +267,7 @@ RIGHT		"->"
 									/* push back unmatching char */
 									unput(in);
 									BEGIN(NEWLINE_CONTEXT);
+									/*std::cout<<"newline";*/
 									return NEWLINE;
 								}
 								/* if it's a comment */
@@ -273,27 +276,34 @@ RIGHT		"->"
 									/* push back unmatching char */
 									unput(in);
 									BEGIN(NEWLINE_CONTEXT);
+									/*std::cout<<"newline";*/
 									return NEWLINE;
 								}
 								/* if it's not an INDENT or COMMENT check DEDENT */
 								else
 								{
+									int eof_reached = (in == EOF) ? 1 : 0;
+
 									/* push back unmatching char */
 									unput(in);
 
 									/* if last DEDENT was returned */
 									if (stack.peek() == 0)
 									{
-										if (!newline_dedent)
+										newline_dedent = 0;
+
+										if (eof_reached)
 										{
-											newline_dedent = 1;
-											BEGIN(INITIAL);
-											return NEWLINE;
+											BEGIN(NEWLINE_CONTEXT);
 										}
 										else
 										{
-											newline_dedent = 1;
 											BEGIN(INITIAL);
+										}
+
+										if (!newline_dedent)
+										{
+											return NEWLINE;
 										}
 									}
 									/* there are still DEDENTS level to pop */
@@ -304,6 +314,7 @@ RIGHT		"->"
 											newline_dedent = 1;
 											/* push back newline for next DEDENT */
 											unput('\n');
+											/*std::cout<<"newline";*/
 											return NEWLINE;
 										}
 										else
@@ -311,6 +322,7 @@ RIGHT		"->"
 											stack.pop();
 											/* push back newline for next DEDENT */
 											unput('\n');
+											/*std::cout<<"dedent";*/
 											return DEDENT;
 										}
 									}
@@ -384,8 +396,17 @@ RIGHT		"->"
 			}
 
 <NEWLINE_CONTEXT>{TABNEWLINE}	{
-							new_line += yyleng / 2;
-						}
+									for (int i = 0; i < yyleng; i++)
+									{
+										char c = yytext[i];
+										if (c == '\n')
+										{
+											new_line++;
+										}
+									}
+
+									BEGIN(NEWLINE_CONTEXT);
+								}
 
 <NEWLINE_CONTEXT>{INDENT}	{
 								int indent = 0;
@@ -418,12 +439,17 @@ RIGHT		"->"
 
 								/* push back last unmatched char */
 								unput(in);
-
+								/*if(in =='\n'){
+									std::cout<<"Aqui hay algo chueco\n";
+									
+									
+								}*/
 								/* if indent level matches stack peek there's nothing to do */
 
 								if (stack.peek() < indent)
 								{
 									stack.push(indent);
+									/*std::cout<<"indent";*/
 									return INDENT;
 
 								}
@@ -445,17 +471,34 @@ RIGHT		"->"
 									}
 
 									/* matched unindent level */
+									/*std::cout<<"dedent";*/
 									return DEDENT;
 								}
 							}
 
-{EOF}	{
-			if (stack.peek() != 0)
-			{
-				stack.pop();
-				yyless(yyleng);
-				return DEDENT;
-			}
+<NEWLINE_CONTEXT><<EOF>>	{ 
+								// std::cout << std::endl << "<NEWLINE_CONTEXT><<EOF>>" << std::endl;
+								yyterminate();
+							}
+
+<EOF_CONTEXT><<EOF>>	{
+							// std::cout << std::endl << "<EOF_CONTEXT><<EOF>>" << std::endl;
+							if (stack.peek() != 0)
+							{
+								stack.pop();
+								return DEDENT;
+							}
+							else
+							{
+								yyterminate();
+							}
+						}
+
+<<EOF>>	{
+			// std::cout << std::endl << "<<EOF>>" << std::endl;
+			// yyterminate();
+			BEGIN(EOF_CONTEXT);
+			return NEWLINE;
 		}
 
 %%
@@ -475,6 +518,11 @@ int main(int argc, char* argv[])
 	}
 
 	do {
+		extern int yydebug;
+		/*yydebug = 1;*/
 		yyparse();
 	} while (!feof(yyin));
+	
+	
+	
 }
