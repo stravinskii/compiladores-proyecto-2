@@ -45,13 +45,11 @@ MAST *asTree = new MAST();
 %token MAS MENOS POR ENTRE MOD DIV POT FALSE CLASS FINALLY IS RETURN NONE CONTINUE FOR LAMBDA TRY TRUE DEF FROM WHILE AND DEL NOT WITH AS ELIF IF OR ELSE IMPORT PASS BREAK EXCEPT IN PRINT COMMA DOT ASSIGN TWODOTS DOTCOMMA BINLEFT  BINRIGHT ANDPAND PIPE EXP TILDE LESSTHAN MORETHAN LESSEQUAL MOREEQUAL EQUALS DIFFERENT PICOPARENTESIS OPENPAR CLOSEPAR OPENCOR CLOSECOR OPENKEY CLOSEKEY AT RIGHT MASIGUAL MENOSIGUAL PORIGUAL ENTREIGUAL DIVIGUAL MODIGUAL ANDIGUAL ORIGUAL EXPIGUAL BINRIGHTIGUAL BINLEFTIGUAL POTIGUAL GLOBAL APOSTROFE
 
 /*Aquí van los tipos*/
-/*
-%type <nodo> file_input filein epsilon test old_test or_test or_andtest and_test and_nottest not_test comparison comp_op_expr_kleene comp_op expr pipexor_expr xor_expr andxor_expr and_expr andpandshift_expr shift_expr leftright_shift_expr arithmetic_expr sign_term term factor_operation factor power trailer_kleene trailer arglist argument_comma argument_multiple comma_argument argument comp_for comp_iter comp_if subscriptlist comma_subscript subscript sliceop exprlist expr_kleene atom boolean dictorsetmaker dictor_set_help dictor_set_help2 testlist1 string_plus listmaker testlist_comp list_for list_iter testlist_safe comma_old_test_plus list_if compound_stmt if_stmt elif_test_td_suite_kleene while_stmt for_stmt suite stmt_plus stmt simple_stmt small_stmt more_simple_stmt expr_stmt expr_stmt_at assign_testlist_kleene augassign print_stmt print_stmt1 comma_test_kleene print_stmt2 comma_one comma_test_plus testlist del_stmt pass_stmt flow_stmt break_stmt continue_stmt return_stmt funcdef parameters varargslist a b d fpdef fplist fpdef_kleene
-*/
-%type <nodo> file_input filein epsilon test old_test or_test or_andtest and_test and_nottest not_test comparison comp_op_expr_kleene comp_op expr pipexor_expr xor_expr andxor_expr and_expr andpandshift_expr shift_expr leftright_shift_expr arithmetic_expr sign_term term factor_operation factor power trailer_kleene trailer arglist argument_comma argument_multiple comma_argument argument comp_for comp_iter comp_if subscriptlist comma_subscript subscript sliceop exprlist expr_kleene atom boolean dictorsetmaker dictor_set_help dictor_set_help2 testlist1 string_plus listmaker testlist_comp list_for list_iter testlist_safe comma_old_test_plus list_if compound_stmt if_stmt elif_test_td_suite_kleene while_stmt for_stmt suite stmt_plus stmt simple_stmt small_stmt more_simple_stmt expr_stmt expr_stmt_at assign_testlist_kleene augassign print_stmt print_stmt1 comma_test_kleene print_stmt2 comma_one comma_test_plus testlist del_stmt pass_stmt flow_stmt break_stmt continue_stmt return_stmt funcdef parameters varargslist d fpdef fplist fpdef_kleene
+/* %type <nodo> file_input filein epsilon test old_test or_test or_andtest and_test and_nottest not_test comparison comp_op_expr_kleene comp_op expr pipexor_expr xor_expr andxor_expr and_expr andpandshift_expr shift_expr leftright_shift_expr arithmetic_expr sign_term term factor_operation factor power trailer_kleene trailer arglist argument_comma argument_multiple comma_argument argument comp_for comp_iter comp_if subscriptlist comma_subscript subscript sliceop exprlist expr_kleene atom boolean dictorsetmaker dictor_set_help dictor_set_help2 testlist1 string_plus listmaker testlist_comp list_for list_iter testlist_safe comma_old_test_plus list_if compound_stmt if_stmt elif_test_td_suite_kleene while_stmt for_stmt suite stmt_plus stmt simple_stmt small_stmt small_stmt_kleene expr_stmt expr_stmt_at assign_testlist_kleene augassign print_stmt print_args comma_test_kleene print_stmt2 comma_one comma_test_plus testlist del_stmt pass_stmt flow_stmt break_stmt continue_stmt return_stmt funcdef parameters varargslist d fpdef fplist fpdef_kleene */
+%type <nodo> file_input filein epsilon test old_test or_test or_andtest and_test and_nottest not_test comparison comp_op_expr_kleene comp_op expr pipexor_expr xor_expr andxor_expr and_expr andpandshift_expr shift_expr leftright_shift_expr arithmetic_expr sign_term term factor_operation factor power trailer_kleene trailer arglist argument_comma argument_multiple comma_argument argument comp_for comp_iter comp_if subscriptlist comma_subscript subscript sliceop exprlist expr_kleene atom boolean testlist1 string_plus listmaker testlist_comp compound_stmt if_stmt elif_test_td_suite_kleene while_stmt for_stmt suite stmt_plus stmt simple_stmt small_stmt_kleene small_stmt expr_stmt expr_stmt_at assign_testlist_kleene augassign print_stmt print_args comma_test_kleene testlist flow_stmt break_stmt continue_stmt return_stmt funcdef parameters varargslist args_kleene comma_one
 
 %%
-file_input: /* (NEWLINE | stmt)* ENDMARKER*/
+file_input: /* (NEWLINE | stmt)* ENDMARKER */
 	filein	{
 				Node *sstmtln = asTree->bSStmtListNode();
 				sstmtln->addFChild($1);
@@ -59,14 +57,16 @@ file_input: /* (NEWLINE | stmt)* ENDMARKER*/
 				cout<<"\nCOMPILATION COMPLETE :)\n";
 			};
 	
-filein:epsilon
-	|filein NEWLINE		{
+filein: /* (filein (NEWLINE | stmt))* */
+	epsilon				{cout << "I WAS HERE... ..." << endl;}
+	| filein NEWLINE		{
 							Node *stmtln = asTree->bStmtListNode();
 							stmtln->addFChild($1);
 							$$ = stmtln;
 							cout<<"\n";
 						}
-	|filein stmt 		{
+	| filein stmt 		{
+							cout << "I'M RIGHT HERE!" << endl;
 							Node *stmtn = asTree->bExprNode();
 							stmtn->addFChild($1);
 
@@ -76,66 +76,71 @@ filein:epsilon
 						};
 	
 /*Aquí va la gramática*/
+
 /* Expresiones aritméticas */
-epsilon:	{/*Nada xD*/};
 
-test:/*or_test ['if' or_test 'else' test] */
+epsilon: 	{/*Nada xD*/};
+
+test: /* or_test ['if' or_test 'else' test] */
 	or_test							{$$ = $1;}
-	|or_test IF or_test ELSE test	{cout<<"IF __ ELSE __ ";};	
+	|or_test IF or_test ELSE test	{cout<<"IF __ ELSE __ ";};
 	
-old_test: or_test 	{$$ = $1;};
+old_test: /* or_test */
+	or_test 	{$$ = $1;};
 
-or_test: 	/*and_test (OR and_test)*		{};*/
-		and_test or_andtest			{
-										if ($2 != NULL)
-										{
-											Node *orn = $2;
-											orn->setFChild($1);
-											$$ = orn;
-										} else {
-											$$ = $1;
-										}
-									};
+or_test: /* and_test ('OR' and_test)* */
+	and_test or_andtest 	{
+								if ($2 != NULL)
+								{
+									Node *orn = $2;
+									orn->setFChild($1);
+									$$ = orn;
+								} else {
+									$$ = $1;
+								}
+							};
 		
-or_andtest:	epsilon 				{}
-		|or_andtest OR and_test		{
-										Node *orn = asTree->bOrNode();
-										orn->setSChild($3);
-										$$ = orn;
-										cout<<"OR";
-									};
+or_andtest: /* ('OR' and_test)* */
+	epsilon
+	| or_andtest OR and_test	{
+									Node *orn = asTree->bOrNode();
+									orn->setSChild($3);
+									$$ = orn;
+									cout<<"OR";
+								};
 		
-and_test: 	/*not_test (AND not_test)*		{};*/
-		not_test and_nottest			{
-											if ($2 != NULL)
-											{
-												Node *andn = $2;
-												andn->setFChild($1);
-												$$ = andn;
-											} else {
-												$$ = $1;
-											}
-										};
+and_test: /* not_test (AND not_test)* */
+	not_test and_nottest	{
+								if ($2 != NULL)
+								{
+									Node *andn = $2;
+									andn->setFChild($1);
+									$$ = andn;
+								} else {
+									$$ = $1;
+								}
+							};
 		
-and_nottest:	epsilon 				{}
-		|and_nottest AND not_test		{
-											Node *andn = asTree->bAndNode();
-											andn->setSChild($3);
-											$$ = andn;
-											cout<<"AND";
-										};
+and_nottest: /* ('AND' not_test)* */
+	epsilon
+	| and_nottest AND not_test	{
+									Node *andn = asTree->bAndNode();
+									andn->setSChild($3);
+									$$ = andn;
+									cout<<"AND";
+								};
 		
-not_test: 	/*'not' not_test | comparison*/
-	NOT not_test			{
-								Node *notn = asTree->bNotNode();
-								notn->setFChild($2);
-								$$ = notn;
-								cout<<"NOT";
-							}
-	|comparison				{$$ = $1;};
+not_test: /* 'not' not_test | comparison*/
+	NOT not_test	{
+						Node *notn = asTree->bNotNode();
+						notn->setFChild($2);
+						$$ = notn;
+						cout<<"NOT";
+					}
+	| comparison	{$$ = $1;};
 
 		
-comparison: /*expr (comp_op expr)*			{};*/
+comparison: /* expr (comp_op expr)* */
 	expr comp_op_expr_kleene 	{
 									if ($2 != NULL)
 									{
@@ -147,50 +152,50 @@ comparison: /*expr (comp_op expr)*			{};*/
 									}
 								};
 
-comp_op_expr_kleene: 
-	comp_op_expr_kleene comp_op expr 	{
+comp_op_expr_kleene: /* (comp_op expr)* */
+	epsilon
+	| comp_op_expr_kleene comp_op expr 	{
 											Node *compn = $2;
 											compn->setSChild($3);
 											$$ = compn;
-										}
-	| epsilon;
+										};
 	
-comp_op: /*'<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'*/
+comp_op: /* ('<' | '>' | '==' | '>=' | '<=' | '<>' | '!=' | 'in' | 'not' 'in' | 'is' | 'is' 'not') */
 	LESSTHAN			{
 							Node *compn = asTree->bLTNode();
 							$$ = compn;
 							cout<<"<";
 						}
-	|MORETHAN			{
+	| MORETHAN			{
 							Node *compn = asTree->bGTNode();
 							$$ = compn;
 							cout<<">";
 						}
-	|EQUALS				{
+	| EQUALS			{
 							Node *compn = asTree->bEqNode();
 							$$ = compn;
 							cout<<"==";
 						}
-	|MOREEQUAL			{
+	| MOREEQUAL			{
 							Node *compn = asTree->bGTEqNode();
 							$$ = compn;
 							cout<<">=";
 						}
-	|LESSEQUAL			{
+	| LESSEQUAL			{
 							Node *compn = asTree->bLTEqNode();
 							$$ = compn;
 							cout<<"<=";
 						}
-	|DIFFERENT			{
+	| DIFFERENT			{
 							Node *compn = asTree->bNEqNode();
 							$$ = compn;
 							cout<<"!=";
 						}
-	|PICOPARENTESIS		{cout<<"<>";}
-	|IN					{cout<<"IN";}
-	|NOT IN				{cout<<"NOT IN";}
-	|IS					{cout<<"IS";}
-	|IS NOT				{cout<<"IS NOT";};
+	| PICOPARENTESIS		{cout<<"<>";}
+	| IN					{cout<<"IN";}
+	| NOT IN				{cout<<"NOT IN";}
+	| IS					{cout<<"IS";}
+	| IS NOT				{cout<<"IS NOT";};
 
 
 expr: /* xor_expr ('|' xor_expr)* */
@@ -205,8 +210,9 @@ expr: /* xor_expr ('|' xor_expr)* */
 									}
 								};
 	
-pipexor_expr: 	epsilon 			{}
-	|pipexor_expr PIPE xor_expr 	{
+pipexor_expr: /* ('|' xor_expr)* */
+	epsilon
+	| pipexor_expr PIPE xor_expr 	{
 										Node *orn = asTree->bOrNode();
 										orn->setFChild($1);
 										orn->setSChild($3);
@@ -225,8 +231,9 @@ xor_expr: /* and_expr ('^' and_expr)* */
 								}
 							};
 
-andxor_expr: 	epsilon 		{}
-	|andxor_expr EXP and_expr 	{
+andxor_expr: /* ('^' and_expr)* */
+	epsilon
+	| andxor_expr EXP and_expr 	{
 									Node *andn = asTree->bAndNode();
 									andn->setFChild($1);
 									andn->setSChild($3);
@@ -234,19 +241,20 @@ andxor_expr: 	epsilon 		{}
 								};
 		
 and_expr: /* shift_expr ('&' shift_expr)* */
-	shift_expr andpandshift_expr			{
-												if ($2 != NULL)
-												{
-													Node *andn = $2;
-													andn->setFChild($1);
-													$$ = andn;
-												} else {
-													$$ = $1;
-												}
-											};
+	shift_expr andpandshift_expr 	{
+										if ($2 != NULL)
+										{
+											Node *andn = $2;
+											andn->setFChild($1);
+											$$ = andn;
+										} else {
+											$$ = $1;
+										}
+									};
 
-andpandshift_expr: epsilon 					{}
-	|andpandshift_expr ANDPAND shift_expr 	{
+andpandshift_expr: /* ('&' shift_expr)* */
+	epsilon
+	| andpandshift_expr ANDPAND shift_expr 	{
 												Node *andn = asTree->bAndNode();
 												andn->setFChild($1);
 												andn->setSChild($3);
@@ -254,27 +262,30 @@ andpandshift_expr: epsilon 					{}
 											};
 
 shift_expr: /* arith_expr (('<<'|'>>') arith_expr)* */
-	arithmetic_expr leftright_shift_expr			{$$ = $1;};
+	arithmetic_expr leftright_shift_expr 	{$$ = $1;};
 
-leftright_shift_expr: epsilon
+leftright_shift_expr: /* (('>>' | '<<') arithmetic_expr)* */
+	epsilon
 	|leftright_shift_expr BINRIGHT arithmetic_expr 	{$$ = $3; cout<<">>";}
 	|leftright_shift_expr BINLEFT arithmetic_expr	{$$ = $3; cout<<"<<";};
 
 arithmetic_expr: /* term ('+' term)* | term ('-' term)* */
-	term sign_term					{
-										// Node *exprn = asTree->bExprNode();
-										if ($2 != NULL)
-										{
-											Node *termn = $2;
-											termn->setFChild($1);
-											$$ = termn;
-										} else {
-											$$ = $1;
-										}
-									};
+	term sign_term	{
+						// Node *exprn = asTree->bExprNode();
+						if ($2 != NULL)
+						{
+							Node *termn = $2;
+							cout << "I'M RIGHT HERE 2!" << endl;
+							termn->setFChild($1);
+							$$ = termn;
+						} else {
+							$$ = $1;
+						}
+					};
 
-sign_term:epsilon				{}
-	|sign_term MAS term			{
+sign_term: /* (('+' | '-') term)* */
+	epsilon
+	| sign_term MAS term		{
 									Node *plusn = asTree->bPlusNode();
 									plusn->setFChild($1);
 									plusn->setSChild($3);
@@ -282,7 +293,7 @@ sign_term:epsilon				{}
 									cout<<"Suma";
 								}
 
-	|sign_term MENOS term		{
+	| sign_term MENOS term		{
 									Node *minusn = asTree->bMinusNode();
 									minusn->setFChild($1);
 									minusn->setSChild($3);
@@ -290,34 +301,32 @@ sign_term:epsilon				{}
 									cout<<"Resta";
 								};
 
-term: /*factor ('*'factor)*;
-	| factor ('/'factor)*;
-	| factor ('%' factor)*;
-	| factor ("//" factor)*; */
+term: /* (factor ('*'factor)* | factor ('/'factor)* | factor ('%' factor)* | factor ("//" factor)*) */
 	factor factor_operation		{
 									Node *exprn = asTree->bExprNode();
 									exprn->addFChild($2);
 								};
 	
-factor_operation: epsilon				{}
-	|factor_operation POR factor 			{
+factor_operation: /* (('*' | '/' | '%') factor)* */
+	epsilon
+	| factor_operation POR factor 			{
 												Node *multn = asTree->bMultNode();
 												multn->setFChild($1);
 												multn->setSChild($3);
 												$$ = multn;
 												cout<<"Multiplicacion"<<endl;
 											}
-	|factor_operation ENTRE factor 			{
+	| factor_operation ENTRE factor 		{
 												Node *divn = asTree->bDiviNode();
 												divn->setFChild($1);
 												divn->setSChild($3);
 												$$ = divn;
 												cout<<"Division"<<endl;
 											}
-	|factor_operation MOD factor 			{
+	| factor_operation MOD factor 			{
 												cout<<"Modulo"<<endl;
 											}
-	|factor_operation DIV factor 			{
+	| factor_operation DIV factor 			{
 												Node *divn = asTree->bDiviNode();
 												divn->setFChild($1);
 												divn->setSChild($3);
@@ -325,64 +334,93 @@ factor_operation: epsilon				{}
 												cout<<"Division Entera"<<endl;
 											};
 
-factor: /*'+' factor;
-	| '-' factor;
-	| '~' factor;
-	| power;*/
+factor: /* (('+' | '-' | '~') factor | power) */
 	MAS factor			{
 							Node *plusn = asTree->bPlusNode();
 							plusn->setSChild($2);
 							$$ = plusn;
 							cout<<"SUMA"<<endl;
 						}
-	|MENOS factor		{
+	| MENOS factor		{
 							Node *minusn = asTree->bMinusNode();
 							minusn->setSChild($2);
 							$$ = minusn;
 							cout<<"RESTA"<<endl;
 						}
-	|TILDE factor 		{$$ = $2;}
-	|power 				{$$ = $1;};
+	| TILDE factor 		{$$ = $2;}
+	| power 			{$$ = $1;};
 
-power: /*atom trailer* ['**' factor];*/
+power: /* atom trailer* ['**' factor] */
 	atom trailer_kleene					{$$ = $1;}
 	|atom trailer_kleene POT factor		{$$ = $1;};
 
-trailer_kleene: epsilon					{}
-	|trailer_kleene trailer 			{};
-	
-trailer: /*'(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME*/
+trailer_kleene: /* trailer* */
+	epsilon
+	|trailer_kleene trailer;
+
+/* FIXTHIS: Falta ver el soporte de esto */	
+trailer: /* '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME */
 	OPENPAR CLOSEPAR					{cout<<"()"<<endl;}
-	|OPENPAR arglist CLOSEPAR			{$$ = $2; cout<<"(ARGLIST)"<<endl;}
-	|OPENCOR subscriptlist CLOSECOR		{$$ = $2; cout<<"(SUBSCRIPTLIST)"<<endl;}
-	|DOT NAME							{Node *identn = asTree->bIdentNode($2); $$=identn; cout<<".NAME"<<endl;};
+	| OPENPAR arglist CLOSEPAR			{$$ = $2; cout<<"(ARGLIST)"<<endl;}
+	| OPENCOR subscriptlist CLOSECOR	{$$ = $2; cout<<"(SUBSCRIPTLIST)"<<endl;}
+	| DOT NAME							{Node *identn = asTree->bIdentNode($2); $$=identn; cout<<".NAME"<<endl;};
 		
-arglist: /*(argument ',')* (argument [','] |'*' test (',' argument)* [',' '**' test] 	|'**' test) */
-	argument_comma argument_multiple 	{$$ = $2;};
+arglist: /* (argument ',')* (argument [','] |'*' test (',' argument)* [',' '**' test] 	|'**' test) */
+	argument_comma argument_multiple 	{
+											if ($1 != NULL)
+											{
+												Node *argsn = $1;
+												argsn->addLChild($2);
+												$$ = argsn;
+											}
+										};
 	
-argument_comma: epsilon
-	|argument_comma argument COMMA 		{$$ = $2; cout<<",";};
+argument_comma: /* (argument ',')* */
+	epsilon								{
+											Node *argsn = asTree->bArgsNode();
+											$$ = argsn;
+										}
+	| argument_comma argument COMMA 	{
+											if ($1 != NULL)
+											{
+												Node *argsn = $1;
+												argsn->addLChild($2);
+												$$ = argsn;
+											}
+										};
 	
-argument_multiple: argument 					{$$ = $1;}
-	|argument COMMA								{$$ = $1; cout<<","<<endl;}
-	|POR test comma_argument					{$$ = $2; cout<<"*"<<endl;}
-	|POR test comma_argument COMMA POT test		{$$ = $2; cout<<"*"<<endl;}
-	|POT test									{$$ = $2; cout<<"**"<<endl;};		
+/* FIXTHIS: Argumentos opcionales y por referencia no tiene soporte (i.e. foo(*bar, **foobar)) */
+argument_multiple: /* (argument [','] | '*' test (',' argument)* [',' '**' test] 	|'**' test) */
+	argument 									{$$ = $1;}
+	| argument COMMA							{$$ = $1;}
+	| POR test comma_argument					{$$ = $2;}
+	| POR test comma_argument COMMA POT test	{$$ = $2;}
+	| POT test									{$$ = $2;};
 	
-comma_argument: epsilon
-	|comma_argument COMMA argument 	{$$ = $3;};
+comma_argument: /* (',' argument)* */
+	epsilon
+	| comma_argument COMMA argument 	{$$ = $3;};
 	
-argument: /*test [comp_for] | test '=' test*/
-	test comp_for 			{$$ = $1;}
-	|test 					{$$ = $1;}
-	|test ASSIGN test 		{
-								Node *assignn = asTree->bAssignNode();
-								assignn->setFChild($1);
-								assignn->setFChild($3);
-								$$ = assignn;
-							};
+/* FIXTHIS: Argumentos con asignacion i.e. foo(x=3) no tiene soporte */
+argument: /* test [comp_for] | test '=' test */
+	test 				{$$ = $1;}
+	| test comp_for 	{
+							cout << "****************************************" << endl;
+							cout << "Argumentos con comp_for no tiene soporte" << endl;
+							cout << "****************************************" << endl;
+							$$ = $1;
+						}
+	| test ASSIGN test 	{
+							cout << "********************************************************" << endl;
+							cout << "Argumentos con asignacion i.e. foo(x=3) no tiene soporte" << endl;
+							cout << "********************************************************" << endl;
+							Node *assignn = asTree->bAssignNode();
+							assignn->setFChild($1);
+							assignn->setFChild($3);
+							$$ = assignn;
+						};
 	
-comp_for: /*'for' exprlist 'in' or_test [comp_iter]*/
+comp_for: /* 'for' exprlist 'in' or_test [comp_iter] */
 	FOR exprlist IN or_test comp_iter	{
 											Node *forn = asTree->bForNode();
 											forn->addFChild($2);
@@ -396,11 +434,11 @@ comp_for: /*'for' exprlist 'in' or_test [comp_iter]*/
 											cout<<"FOR"<<endl;
 										};
 	
-comp_iter: /*comp_for | comp_if */
+comp_iter: /* comp_for | comp_if */
 	comp_for 	{$$ = $1;}
 	| comp_if 	{$$ = $1;};
 	
-comp_if: /*'if' old_test [comp_iter] */
+comp_if: /* 'if' old_test [comp_iter] */
 	IF old_test					{
 									Node *ifn = asTree->bIfNode();
 									ifn->addFChild($2);
@@ -412,14 +450,16 @@ comp_if: /*'if' old_test [comp_iter] */
 									cout<<"IF"<<endl;
 								};
 		
-subscriptlist: /*subscript (',' subscript)* [',']*/
+/* FIXTHIS: No entiendo aún el uso de subscript */
+subscriptlist: /* subscript (',' subscript)* [','] */
 	subscript comma_subscript 			{$$ = $1;}
 	|subscript comma_subscript COMMA 	{$$ = $1;};
 
-comma_subscript: comma_subscript COMMA subscript 	{$$ = $3;}
-	|epsilon;
+comma_subscript: /* (',' subscript)* */
+	epsilon
+	| comma_subscript COMMA subscript 	{$$ = $3;};
 	
-subscript: /*'.' '.' '.' | test | [test] ':' [test] [sliceop] */
+subscript: /* '.' '.' '.' | test | [test] ':' [test] [sliceop] */
 	DOT DOT DOT				{}
 	| test 					{$$ = $1;}
 	| test TWODOTS test sliceop		{$$ = $1;}
@@ -431,164 +471,144 @@ subscript: /*'.' '.' '.' | test | [test] ':' [test] [sliceop] */
 	| TWODOTS sliceop			{$$ = $2;}
 	| TWODOTS				{cout<<":"<<endl;};
 
-sliceop: /*':' [test];*/
-	TWODOTS test				{cout<<":"<<endl;}
-	|TWODOTS				{cout<<":"<<endl;};
+sliceop: /* ':' [test] */
+	TWODOTS			{cout<<":"<<endl;}
+	| TWODOTS test 	{cout<<":"<<endl;};
 	
-exprlist: /*expr (',' expr)* [',']*/
-	expr expr_kleene COMMA
-	|expr expr_kleene;
+exprlist: /* expr (',' expr)* [','] */
+	expr expr_kleene
+	| expr expr_kleene COMMA;
 
-expr_kleene: expr_kleene COMMA expr
-	| epsilon;
+expr_kleene: /* (',' expr)* */
+	epsilon
+	| expr_kleene COMMA expr;
 
-atom:/* ('(' [testlist_comp] ')' 
-	| '[' [listmaker] ']' 
-	| '{' [dictorsetmaker] '}' 
-	|  '`' testlist1 '`' 
-	| NAME | NUMBER | STRING+)*/
-	OPENPAR CLOSEPAR					{$$=NULL;}
-	|OPENCOR CLOSECOR					{$$=NULL;}
-	|OPENPAR testlist_comp CLOSEPAR		{$$=$2;}
-	|OPENCOR listmaker CLOSECOR			{$$=$2;}
-	|OPENKEY CLOSEKEY					{$$=NULL;}
-	|OPENKEY dictorsetmaker CLOSEKEY	{$$=$2;}
-	|APOSTROFE testlist1 APOSTROFE		{$$=$2;}
-	|NAME								{Node *identn = asTree->bIdentNode($1); $$=identn;}
-	|INTEGER							{Node *intn = asTree->bIntNode($1); $$=intn;}
-	|FLOATNUMBER						{Node *floatn = asTree->bFloatNode($1); $$=floatn;}
-	|string_plus						{$$=$1;}
-	|NONE								{$$=NULL;}
-	|boolean							{$$=$1;};
+/* FIXTHIS: No entiendo que es ('`' testlist1 '`') */
+atom: /* ( '(' [testlist_comp] ')' | '[' [listmaker] ']' |  '`' testlist1 '`' | NAME | NUMBER | STRING+ ) */
+	OPENPAR CLOSEPAR					{$$ = NULL;}
+	| OPENPAR testlist_comp CLOSEPAR	{$$ = $2;}
+	| OPENCOR CLOSECOR					{$$ = NULL;}
+	| OPENCOR listmaker CLOSECOR		{$$ = $2;}
+	| APOSTROFE testlist1 APOSTROFE		{$$ = $2;}
+	| string_plus						{$$ = $1s;}
+	| boolean							{$$ = $1;}
+	| NONE								{$$ = NULL;}
+	| NAME			{
+						Node *identn = asTree->bIdentNode($1);
+						$$=identn;
+					}
+	| FLOATNUMBER	{
+						Node *floatn = asTree->bFloatNode($1);
+						$$=floatn;
+					}
+	| INTEGER		{
+						Node *intn = asTree->bIntNode($1);
+						$$=intn;
+					};
 	
-boolean: TRUE {Node *booln = asTree->bIntNode(1); $$=booln;} 
-		| FALSE {Node *booln = asTree->bIntNode(0); $$=booln;};
-	
-dictorsetmaker: /*( (test ':' test (comp_for | (',' test ':' test)* [','])) |
-                  (test (comp_for | (',' test)* [','])) )*/
-                  test TWODOTS test dictor_set_help		{$$ = $1; cout<<":"<<endl<<endl;}
-                  |test comp_for 						{$$ = $1;}
-                  |test comma_test_kleene COMMA 		{$$ = $1;}
-                  |test comma_test_kleene				{$$ = $1;};
-                  
-dictor_set_help: /*(comp_for | (',' test ':' test)* [','])*/
-	comp_for 					{$$ = $1;}
-	|dictor_set_help2 COMMA 	{$$ = $1;}
-	|dictor_set_help2 			{$$ = $1;};
-	
-dictor_set_help2: epsilon 							{$$ = $1;}
-	| dictor_set_help2 COMMA test TWODOTS test		{$$ = $1; cout<<":"<<endl;};
+boolean: /* (TRUE | FALSE) */
+	TRUE 	{
+				Node *booln = asTree->bBoolNode(true);
+				$$ = booln;
+			} 
+	| FALSE {
+				Node *booln = asTree->bBoolNode(false);
+				$$ = booln;
+			};
 
-testlist1: /*test (',' test)**/
+testlist1: /* test (',' test)* */
 	test comma_test_kleene 	{$$ = $1;};
 	
-string_plus: 
-	STRING					{Node *strn = asTree->bStrNode($1); $$=strn;}
-	|STRING string_plus		{$$ = $2;};
+string_plus: /* (STRING)+ */
+	STRING						{Node *strn = asTree->bStrNode($1); $$=strn;}
+	| STRING string_plus		{$$ = $2;};
 
 /*LO QUE ESTA ARRIBA ES DE ARITHMETIC EXP*/
-listmaker: 	/*test ( list_for | (',' test)* [','] )*/
-	test list_for							{$$ = $1;}
-	|test comma_test_kleene comma_one		{$$ = $1;};
+
+/* FIXTHIS: No hay soporte para listas aún */
+listmaker: 	/* test (',' test)* */
+	test comma_test_kleene 	{$$ = $1;};
 		
-testlist_comp: /* test ( comp_for | (',' test)* [','] )*/
+testlist_comp: /* test ( comp_for | (',' test)* [','] ) */
 	test comp_for 						{$$ = $1;}
 	|test comma_test_kleene comma_one 	{$$ = $1;};
 		
-list_for: /* 'for' exprlist 'in' testlist_safe [list_iter]*/
-	FOR exprlist IN testlist_safe 				{
-													Node *forn = asTree->bForNode();
-													forn->addFChild($2);
-													forn->addLChild($4);
-													cout<<"FOR"<<endl;
-												}
-	|FOR exprlist IN testlist_safe list_iter	{
-													Node *forn = asTree->bForNode();
-													forn->addFChild($2);
-													forn->addLChild($4);
-													cout<<"FOR"<<endl;
-												};
-
-list_iter: /*list_for | list_if*/
-	list_for 	{$$ = $1;}
-	|list_if 	{$$ = $1;};
-
-testlist_safe: /*old_test [(',' old_test)+ [',']];*/
+/*testlist_safe: old_test [(',' old_test)+ [',']] */
+/*
 	old_test 								{$$ = $1;}
 	|old_test comma_old_test_plus 			{$$ = $1;}
 	|old_test comma_old_test_plus COMMA 	{$$ = $1;};
-	
-comma_old_test_plus: COMMA old_test 		{$$ = $2;}
+*/	
+/*comma_old_test_plus:  (',' old_test)+ */
+	/*
+	COMMA old_test 							{$$ = $2;}
 	|comma_old_test_plus COMMA old_test 	{$$ = $3;};
+	*/
 
-list_if: /*'if' old_test [list_iter]*/
-	IF old_test					{
-									Node *ifn = asTree->bIfNode();
-									ifn->addFChild($2);
-									$$ = ifn;
-									cout<<"IF___"<<endl;
-								}
-	|IF old_test list_iter		{
-									Node *ifn = asTree->bIfNode();
-									ifn->addFChild($2);
-									$$ = ifn;
-									cout<<"IF___"<<endl;
-								};
-	
-compound_stmt: /*if_stmt | while_stmt | for_stmt | try_stmt | with_stmt | funcdef | classdef | decorated*/
+compound_stmt: /* (if_stmt | while_stmt | for_stmt | funcdef) --deprecated: classdef */
 	if_stmt			{$$ = $1;}
 	| while_stmt	{$$ = $1;}
 	| for_stmt		{$$ = $1;}
 	| funcdef		{$$ = $1;};
 
-if_stmt: /*'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]*/
-	IF test TWODOTS suite elif_test_td_suite_kleene ELSE TWODOTS suite {
-																			Node *ifn = asTree->bIfNode();
-																			ifn->addFChild($2);
-																			ifn->addLChild($4);
-																			ifn->addLChild($5);
-																			ifn->addLChild($8);
-																			$$ = ifn;
-																			cout<<"IF___:___ELSE:"<<endl;
-																		}
-	|IF test TWODOTS suite elif_test_td_suite_kleene 					{
-																			Node *ifn = asTree->bIfNode();
-																			ifn->addFChild($2);
-																			ifn->addLChild($4);
-																			ifn->addLChild($5);
-																			$$ = ifn;
-																			cout<<"IF___:___"<<endl;
-																		};
+if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
+	IF test TWODOTS suite elif_test_td_suite_kleene 						{
+																				cout << "if _ : _" << endl;
+																				Node *ifn = asTree->bIfNode();
+																				ifn->addFChild($2);
+																				ifn->addLChild($4);
+																				ifn->addLChild($5);
+																				$$ = ifn;
+																			}
+	| IF test TWODOTS suite elif_test_td_suite_kleene ELSE TWODOTS suite 	{
+																				cout << "if _ : _ else : _" << endl;
+																				Node *ifn = asTree->bIfNode();
+																				ifn->addFChild($2);
+																				ifn->addLChild($4);
+																				ifn->addLChild($5);
+																				ifn->addLChild($8);
+																				$$ = ifn;
+																			};
 	
-elif_test_td_suite_kleene: epsilon
-	|elif_test_td_suite_kleene ELIF test TWODOTS suite		{
-																Node *ifn = asTree->bIfNode();
-																ifn->addFChild($3);
-																ifn->addLChild($5);
-																ifn->addLChild($1);
-																$$ = ifn;
-																cout<<"ELIF___:"<<endl<<endl;
-															};
+elif_test_td_suite_kleene: /* ('elif' test ':' suite)* */
+	epsilon
+	| elif_test_td_suite_kleene ELIF test TWODOTS suite {
+															cout << "elif _ : _" << endl;
+															Node *ifn = asTree->bIfNode();
+															ifn->addFChild($3);
+															ifn->addLChild($5);
+															ifn->addLChild($1);
+															$$ = ifn;
+														};
 
-while_stmt: /*'while' test ':' suite ['else' ':' suite] */
-	WHILE test TWODOTS suite ELSE TWODOTS suite 	{
+while_stmt: /* 'while' test ':' suite ['else' ':' suite] */
+	WHILE test TWODOTS suite						{
+														cout << "while _ : _" << endl;
+														Node *whilen = asTree->bWhileNode();
+														whilen->addFChild($2);
+														whilen->addLChild($4);
+														$$ = whilen;
+													};
+	| WHILE test TWODOTS suite ELSE TWODOTS suite 	{
+														cout << "while _ : _ else : _" << endl;
 														Node *whilen = asTree->bWhileNode();
 														whilen->addFChild($2);
 														whilen->addLChild($4);
 														whilen->addLChild($7);
 														$$ = whilen;
-														cout<<"WHILE___:___ ELSE :"<<endl;
-													}
-	|WHILE test TWODOTS suite						{
-														Node *whilen = asTree->bWhileNode();
-														whilen->addFChild($2);
-														whilen->addLChild($4);
-														$$ = whilen;
-														cout<<"WHILE___:"<<endl;
 													};
 
-for_stmt: /*'for' exprlist 'in' testlist ':' suite ['else' ':' suite]*/
-	FOR exprlist IN testlist TWODOTS suite ELSE TWODOTS suite 	{
+for_stmt: /* 'for' exprlist 'in' testlist ':' suite ['else' ':' suite] */
+	FOR exprlist IN testlist TWODOTS suite						{
+																	cout << "for _ in _ : _" << endl;
+																	Node *forn = asTree->bForNode();
+																	forn->addFChild($2);
+																	forn->addLChild($4);
+																	forn->addLChild($6);
+																	$$ = forn;
+																}
+	| FOR exprlist IN testlist TWODOTS suite ELSE TWODOTS suite {
+																	cout << "for _ in _ : _ else : _" << endl;
 																	Node *forn = asTree->bForNode();
 																	forn->addFChild($2);
 																	forn->addLChild($4);
@@ -596,77 +616,100 @@ for_stmt: /*'for' exprlist 'in' testlist ':' suite ['else' ':' suite]*/
 																	forn->addLChild($6);
 																	forn->addLChild($9);
 																	$$ = forn;
-																	cout<<"FOR"<<endl;
-																}
-	|FOR exprlist IN testlist TWODOTS suite						{
-																	Node *forn = asTree->bForNode();
-																	forn->addFChild($2);
-																	forn->addLChild($4);
-																	forn->addLChild($6);
-																	$$ = forn;
-																	cout<<"FOR"<<endl;
 																};
 
-suite: /*simple_stmt | NEWLINE INDENT stmt+ DEDENT*/
-	simple_stmt 							{Node* stmtn = asTree->bExprNode(); stmtn->addFChild($1); $$ = stmtn;}
-	|NEWLINE INDENT stmt_plus DEDENT		{$$ = $3; cout<<"\nINDENT___DEDENT"<<endl;};
+suite: /* simple_stmt | NEWLINE INDENT stmt+ DEDENT */
+	simple_stmt 						{
+											Node *stmtln = asTree->bStmtListNode();
+											stmtln->addFChild($1);
+											$$ = stmtln;
+										}
+	| NEWLINE INDENT stmt_plus DEDENT	{$$ = $3;};
 		
-stmt_plus: stmt_plus stmt 	{Node* stmtln = $1; stmtln->addLChild($2); $$ = stmtln;}
-	| stmt 					{Node* stmtln = asTree->bStmtListNode(); stmtln->addFChild($1); $$ = stmtln;};
+stmt_plus: /* (stmt)+ */
+	stmt_plus stmt 	{
+						if ($1 != NULL)
+						{
+							Node *stmtln = $1;
+							stmtln->addLChild($2);
+							$$ = stmtln;
+						}
+						/*
+						StmtListNode* stmtlnc = dynamic_cast<StmtListNode*> ($1);
+						if (stmtlnc != 0)
+						{
+							Node *stmtln = $1;
+							stmtln->addLChild($2);
+							$$ = stmtln;
+						} else {
+							Node *stmtln = asTree->bStmtListNode();
+							stmtln->addLChild($2);
+							$$ = stmtln;
+						}
+						*/
+					}
+	| stmt 			{
+						Node* stmtln = asTree->bStmtListNode();
+						stmtln->addFChild($1);
+						$$ = stmtln;
+					};
 
-stmt: /*simple_stmt | compound_stmt*/
+stmt: /* (simple_stmt | compound_stmt) */
 	simple_stmt 		{$$ = $1;}
 	| compound_stmt 	{$$ = $1;};
 	
-simple_stmt: /*small_stmt (';' small_stmt)* [';'] NEWLINE */
-	small_stmt more_simple_stmt DOTCOMMA NEWLINE	{
+simple_stmt: /* small_stmt (';' small_stmt)* [';'] NEWLINE */
+	small_stmt small_stmt_kleene DOTCOMMA NEWLINE	{
 														if ($2 != NULL)
 														{
 															Node* sstmtln = $2;
 															sstmtln->addFChild($1);
 															$$ = sstmtln;
-														} else {
-															$$ = $1;
 														}
-														cout<<";\n"<<endl;
 													}
 
-	|small_stmt more_simple_stmt NEWLINE			{
-														SStmtListNode* stmtn = dynamic_cast<SStmtListNode*> ($2);
+	| small_stmt small_stmt_kleene NEWLINE			{
 														if ($2 == NULL)
 														{
-															cout << "IM RIGHT HERE!" << endl;
 															Node* sstmtln = $2;
 															sstmtln->addFChild($1);
 															$$ = sstmtln;
-														} else {
-															Node* sstmtln = asTree->bSStmtListNode();
-															sstmtln->addFChild($1);
-															$$ = sstmtln;
-															// $$ = $1;
 														}
-														cout<<"\n"<<endl;
 													};
 
-more_simple_stmt:
-		more_simple_stmt DOTCOMMA small_stmt 	{
+small_stmt_kleene: /* (';' small_tmt)* */
+		epsilon 								{
 													Node* sstmtln = asTree->bSStmtListNode();
-													sstmtln->addLChild($3);
-													$$ = sstmtln;
+													// $$ = sstmtln;
 												}
-		| epsilon 								{};
+		small_stmt_kleene DOTCOMMA small_stmt 	{
+													if ($1 != NULL)
+													{
+														Node* sstmtln = $1;
+														sstmtln->addLChild($3);
+														$$ = sstmtln;
+													}
+												};
 				
-small_stmt: /*(expr_stmt | print_stmt  | del_stmt | pass_stmt | flow_stmt |
-             import_stmt | global_stmt | exec_stmt | assert_stmt)*/
-	expr_stmt 		{$$ = $1;}
-	| print_stmt 	{$$ = $1;}
-	| del_stmt		{$$ = $1;}
-	| pass_stmt 	{$$ = $1;}
-	| flow_stmt 	{$$ = $1;}
-	/*| global_stmt 	{$$ = $1;};*/
+small_stmt: /* (expr_stmt | print_stmt | flow_stmt) */
+	expr_stmt  		{
+						Node *sstmtn = asTree->bSStmtNode();
+						sstmtn->addFChild($1);
+						$$ = sstmtn;
+					}
+	| print_stmt 	{
+						Node *sstmtn = asTree->bSStmtNode();
+						sstmtn->addFChild($1);
+						$$ = sstmtn;
+					}
+	| flow_stmt 	{
+						Node *sstmtn = asTree->bSStmtNode();
+						sstmtn->addFChild($1);
+						$$ = sstmtn;
+					};
 
-
-expr_stmt: /*testlist (augassign (yield_expr|testlist) |('=' (yield_expr|testlist))*)*/
+/* FIXTHIS: Ver comentario de assing_testlist_kleene */
+expr_stmt: /*testlist (augassign testlist | ('=' testlist)*) */
 	testlist expr_stmt_at 	{
 								Node* assignn = $1;
 								assignn->addFChild($1);
@@ -675,215 +718,185 @@ expr_stmt: /*testlist (augassign (yield_expr|testlist) |('=' (yield_expr|testlis
 								$$ = stmtn;
 							};
 
-expr_stmt_at: 
-		augassign testlist 			{Node* assignn = $1; assignn->addLChild($2); $$ = assignn;}
-		|assign_testlist_kleene 	{$$ = $1;};
+/* FIXTHIS: Ver comentario de assing_testlist_kleene */
+expr_stmt_at: /* (augassign testlist | ('=' testlist)*) */
+		augassign testlist 			{
+										if ($1 != NULL)
+										{
+											Node* assignn = $1;
+											assignn->setSChild($2);
+											$$ = assignn;
+										}
+									}
+		| assign_testlist_kleene 	{$$ = $1;};
 
-assign_testlist_kleene: 
-		assign_testlist_kleene ASSIGN testlist	{
+/* FIXTHIS: No sé realmente cómo voy a manejar algo como x, y, z = 1, 2, 3 */
+assign_testlist_kleene: /* ('=' testlist)* */
+		epsilon									{
 													Node* assignn = asTree->bAssignNode();
-													assignn->addFChild($1);
-													// assignn->addLChild($2);
-													assignn->addLChild($3);
 													$$ = assignn;
-													cout<<"="<<endl;
 												}
-		| epsilon								{
-													Node* assignn = asTree->bAssignNode();
-													$$ = assignn;
-												}; 
+		| assign_testlist_kleene ASSIGN testlist	{
+														cout<<"="<<endl;
+														Node* assignn = asTree->bAssignNode();
+														assignn->addFChild($1);
+														// assignn->addLChild($2);
+														assignn->addLChild($3);
+														$$ = assignn;
+													};
 
-augassign: /*('+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' |
-            '<<=' | '>>=' | '**=' | '//=')*/
-	/*MASIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"+=";}*/
-	MASIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"+=";}
-	/*|MENOSIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"-=";}*/
-	|MENOSIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"-=";}
-	/*|PORIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"*=";}*/
-	|PORIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"*=";}
-	/*|ENTREIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"/=";}*/
-	|ENTREIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"/=";}
-	/*|MODIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"%=";}*/
-	|MODIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"%=";}
-	/*|ANDIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"&=";}*/
-	|ANDIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"&=";}
-	/*|ORIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"|=";}*/
-	|ORIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"|=";}
-	/*|EXPIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"^=";}*/
-	|EXPIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"^=";}
-	/*|BINRIGHTIGUAL	{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<">>=";}*/
-	|BINRIGHTIGUAL	{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<">>=";}
-	/*|BINLEFTIGUAL	{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"<<=";}*/
-	|BINLEFTIGUAL	{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"<<=";}
-	/*|POTIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"**=";}*/
-	|POTIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"**=";}
-	/*|DIVIGUAL		{Node* assignn = asTree->bAssignNode(); assignn->addFChild($1); $$ = assignn; cout<<"//=";};*/
-	|DIVIGUAL		{Node* assignn = asTree->bAssignNode(); $$ = assignn; cout<<"//=";};
+augassign: /* ('+=' | '-=' | '*=' | '/=') */
+	MASIGUAL		{
+						cout<<"+=";
+						Node* assignn = asTree->bPlusNode();
+						$$ = assignn;
+					}
+	| MENOSIGUAL	{
+						cout<<"-=";
+						Node* assignn = asTree->bMinusNode();
+						$$ = assignn;
+					}
+	| PORIGUAL		{
+						cout<<"*=";
+						Node* assignn = asTree->bMultNode();
+						$$ = assignn;
+					}
+	| ENTREIGUAL	{
+						cout<<"/=";
+						Node* assignn = asTree->bDiviNode();
+						$$ = assignn;
+					};
 	
-print_stmt: /*'print' ( [ test (',' test)* [','] ] | '>>' test [ (',' test)+ [','] ] )*/
-	PRINT print_stmt1		{$$ = $2; cout<<"PRINT"<<endl;}
-	|PRINT print_stmt2		{$$ = $2; cout<<"PRINT"<<endl;};
+print_stmt: /* 'print' [test (',' test)*] */
+	PRINT print_args 	{
+							cout << "print" << endl;
+							Node *printn = asTree->bPrintNode();
+							if ($2 != NULL)
+							{
+								printn->addFChild($2);
+								$$ = printn;
+							}
+						};
 	
-print_stmt1: epsilon 					{}
-	|test comma_test_kleene comma_one 	{
+print_args: /* [test (',' test)*] */
+	epsilon						{
+									Node *argsn = asTree->bArgsNode();
+									$$ = argsn;
+								}
+	| test comma_test_kleene 	{
+									Node *exprn = asTree->bExprNode($1);
+									if ($2 != NULL)
+									{
+										Node *argsn = $2;
+										argsn->addFChild(exprn);
+										$$ = argsn;
+									}
+								};
+
+comma_test_kleene: /* (',' test)* */
+	epsilon							{
+										Node *argsn = asTree->bArgsNode();
+										$$ = argsn;
+									}
+	| comma_test_kleene COMMA test	{
+										Node* exprn = asTree->bExprNode();
+										exprn->addFChild($3);
+										if ($1 != NULL)
+										{
+											Node *argsn = $1;
+											argsn->addLChild(exprn);
+											$$ = argsn;
+										}
+									};
+
+comma_one: /* [','] */
+	epsilon
+	| COMMA;
+
+testlist: /*test (',' test)* [','];*/
+	test comma_test_kleene comma_one	{
+											Node* exprn = asTree->bExprNode();
+											exprn->addFChild($1);
 											if ($2 != NULL)
 											{
-												Node* stmtn = $2;
-												stmtn->addFChild($1);
-												$$ = stmtn;
-											} else {
-												$$ = $1;
+												Node* argsn = $2;
+												argsn->addFChild(exprn);
+												$$ = argsn;
 											}
 										};
 
-comma_test_kleene: epsilon			{}
-	|comma_test_kleene COMMA test	{
-										Node* stmtn = asTree->bStmtNode();
-										stmtn->addLChild($3);
-										$$ = stmtn;
-										cout<<",";
-									};
-
-print_stmt2: BINRIGHT test		{cout<<">>";}
-	|BINRIGHT test comma_test_plus comma_one {cout<<">>";};
-	
-comma_one: epsilon
-	|COMMA		{cout<<",";};
-
-comma_test_plus: COMMA test 		{Node* stmtn = asTree->bStmtNode(); stmtn->addFChild($2); $$ = stmtn;}
-	| comma_test_plus COMMA test 	{Node* stmtn = $1; stmtn->addLChild($3); $$ = stmtn;};
-
-testlist: /*test (',' test)* [','];*/
-	test comma_test_kleene comma_one	{Node* stmtn = $2; stmtn->addFChild($1); $$ = stmtn;};
-	
-
-/* Quizás estaría bien eliminar del de la gramática */
-del_stmt: DEL exprlist 	{Node* stmtn = asTree->bStmtNode(); stmtn->addFChild($2); $$ = stmtn;};
-
-pass_stmt: PASS 		{Node* stmtn = asTree->bStmtNode(); $$ = stmtn;};
-
-flow_stmt: /*break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt*/
+/* FIXED: 
+	- ¿Estos deberían de estar encapsuladas en un nodo stmt?
+	- NO, se encapsulan más arriba a un SStmtNode
+*/
+flow_stmt: /* break_stmt | continue_stmt | return_stmt */
 	break_stmt 			{$$ = $1;}
 	| continue_stmt 	{$$ = $1;}
 	| return_stmt 		{$$ = $1;}; 
 
-break_stmt: BREAK 			{Node* stmtn = asTree->bStmtNode(); $$ = stmtn;};
+break_stmt: /* 'break' */
+	BREAK 	{Node* breakn = asTree->bBreakNode(); $$ = breakn;};
 
-continue_stmt: CONTINUE 	{Node* stmtn = asTree->bStmtNode(); $$ = stmtn;};
+continue_stmt: /* 'continue' */
+	CONTINUE 	{Node* contn = asTree->bContinueNode(); $$ = contn;};
 
-return_stmt: 
-	RETURN testlist		{Node* stmtn = asTree->bStmtNode(); stmtn->addFChild($2); $$ = stmtn; cout<<"RETURN __"<<endl;}
-	|RETURN				{Node* stmtn = asTree->bStmtNode(); $$ = stmtn; cout<<"RETURN"<<endl;};
-
-/* global me parece innecesario pero en tema de registros plantea algo importante - 'global' NAME (',' NAME) */
-/*
-global_stmt:
-	GLOBAL NAME global_stmt_name 	{Node *identn = asTree->bIdentNode($2); $$=identn;};
-	
-global_stmt_name:
-	global_stmt_name COMMA NAME 	{Node *identn = asTree->bIdentNode($3); $$=identn;}
-	| epsilon;
-*/
+return_stmt: /* 'return' [testlist] */
+	RETURN				{
+							cout << "return" << endl;
+							Node* returnn = asTree->bReturnNode(); 
+							$$ = returnn;
+						}
+	| RETURN testlist	{
+							cout << "return __" << endl;
+							Node* returnn = asTree->bReturnNode();
+							returnn->addFChild($2);
+							$$ = returnn;
+						};
 
 /* Funciones */
 funcdef: /*'def' NAME parameters ':' suite*/
 	DEF NAME parameters TWODOTS suite	{
+											cout << "def name(_):\n" << endl;
 											Node *funcn = asTree->bFuncNode();
 											Node *identn = asTree->bIdentNode($2);
 											funcn->addFChild(identn);
 											funcn->addLChild($3);
 											funcn->addLChild($5);
 											$$ = funcn;
-											cout<<"DEF NAME(_):_\n"<<endl;
 										};
 
 parameters: /*'(' [varargslist] ')'*/
-	OPENPAR CLOSEPAR 				{Node *argsn = asTree->bArgsNode(); $$ = argsn;}
-	| OPENPAR varargslist CLOSEPAR 	{$$ = $2;};
-		
-varargslist: /*
-	  ((fpdef ['=' test] ',')* ('*' NAME [',' '**' NAME] | '**' NAME) | fpdef ['=' test] (',' fpdef ['=' test])* [',']) */
-	/*
-	a b
-	|fpdef ASSIGN test d
-	*/
-	fpdef ASSIGN test d 			{
-										Node *argsn = $4;
-										argsn->addFChild($1);
+	OPENPAR CLOSEPAR 				{
+										Node *argsn = asTree->bArgsNode();
 										$$ = argsn;
 									}
-	|fpdef ASSIGN test d COMMA 		{
-										Node *argsn = $4;
-										Node *identn = $1;
-										identn->setSChild($3);
-										argsn->addFChild(identn);
-										$$ = argsn;
-									}
-	|fpdef d COMMA 					{
-										Node *argsn = $2;
-										argsn->addFChild($1);
-										$$ = argsn;
-									}
-	|fpdef d 						{
-										Node *argsn = $2;
-										argsn->addFChild($1);
-										$$ = argsn;
-									};
-
-/*
-a: a fpdef COMMA
-	|a fpdef ASSIGN test COMMA
-	|epsilon;
-	
-b: POR NAME 
-|POR NAME COMMA POT NAME
-| POT NAME;
-*/
-
-d: d COMMA fpdef 				{
-									Node *argsn = $1;
-									argsn->addLChild($3);
-									$$ = $3;
-								}
-| d COMMA fpdef ASSIGN test 	{
-									Node *argsn = $1;
-									Node *identn = $3;
-									identn->setSChild($5);
-									argsn->addLChild(identn);
-									$$ = argsn;
-								}
-|epsilon						{
-									Node *argsn = asTree->bArgsNode();
-									$$ = argsn;
-								};
-	
-fpdef: 	/*NAME | '(' fplist ')';*/
-	NAME 						{
-									Node *identn = asTree->bIdentNode($1);
-									$$ = identn;
-								}
-	|OPENPAR fplist CLOSEPAR	{$$ = $2;};
-
-fplist: /*fpdef (',' fpdef)* [',']*/
-	fpdef fpdef_kleene COMMA 	{
-									Node *argsn = $2;
-									argsn->addLChild($1);
-									$$ = argsn;
-								}
-	|fpdef fpdef_kleene 		{
-									Node *argsn = $2;
-									argsn->addLChild($1);
-									$$ = argsn;
-								};
-	
-fpdef_kleene: fpdef_kleene COMMA fpdef 	{
-											Node *argsn = $1;
-											argsn->addLChild($3);
-											$$ = argsn;
+	| OPENPAR varargslist CLOSEPAR 	{
+										if ($2 != NULL)
+										{
+											$$ = $2;
 										}
-	| epsilon							{
-											Node *argsn = asTree->bArgsNode();
-											$$ = argsn;
-										};
+									};
+		
+varargslist: /* (NAME (',' NAME)*) */
+	NAME args_kleene	{
+							Node *identn = asTree->bIdentNode($1);
+							if ($2 != NULL)
+							{
+								Node *argsn = $2;
+								argsn->addFChild(identn);
+								$$ = argsn;
+							}
+						};
 
+args_kleene: /* (',' NAME)* */
+	args_kleene COMMA NAME 	{
+								Node *identn = asTree->bIdentNode($3);
+								Node *argsn = $1;
+								argsn->addLChild(identn);
+								$$ = argsn;
+							}
+	| epsilon				{
+								Node *argsn = asTree->bArgsNode();
+								$$ = argsn;
+							};
 %%

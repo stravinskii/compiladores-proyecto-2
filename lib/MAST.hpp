@@ -58,6 +58,12 @@ public:
  	virtual void visit(FloatNode*)=0;
  	virtual void visit(StrNode*)=0;
  	virtual void visit(BoolNode*)=0;
+
+ 	//New Nodes
+ 	virtual void visit(ReturnNode*)=0;
+ 	virtual void visit(PrintNode*)=0;
+ 	virtual void visit(BreakNode*)=0;
+ 	virtual void visit(ContinueNode*)=0;
 	
 protected:
 	Visitor(){};
@@ -466,6 +472,45 @@ public:
  	}
  };
 
+
+ /* Implementación de nuevos nodos */
+
+class ReturnNode : public INode {
+public:
+	~ReturnNode();
+	ReturnNode();
+	void accept(Visitor &v){
+ 		v.visit(this);
+ 	}
+};
+
+class PrintNode : public INode {
+public:
+	~PrintNode();
+	PrintNode();
+	void accept(Visitor &v){
+ 		v.visit(this);
+ 	}
+};
+
+class BreakNode : public LeafNode {
+public:
+	~BreakNode();
+	BreakNode();
+	void accept(Visitor &v){
+ 		v.visit(this);
+ 	}
+};
+
+class ContinueNode : public LeafNode {
+public:
+	~ContinueNode();
+	ContinueNode();
+	void accept(Visitor &v){
+ 		v.visit(this);
+ 	}
+};
+
  class MAST : public AST{
  public:
 	~MAST(){};
@@ -626,6 +671,24 @@ public:
   		cout << "bFuncNode" << endl;
   		return new FuncNode;
   	}
+
+  	/* Implementación del b de nuevos nodos */
+  	ReturnNode* bReturnNode(){
+  		cout << "bReturnNode" << endl;
+  		return new ReturnNode;
+  	}
+ 	PrintNode* bPrintNode(){
+ 		cout << "bPrintNode" << endl;
+ 		return new PrintNode;
+ 	}
+ 	BreakNode* bBreakNode(){
+ 		cout << "bBreakNode" << endl;
+ 		return new BreakNode;
+ 	}
+ 	ContinueNode* bContinueNode(){
+ 		cout << "bContinueNode" << endl;
+ 		return new ContinueNode;
+ 	}
  };
 
 
@@ -694,15 +757,19 @@ public:
 
  	void visit(StmtListNode* node){
 		cout << "(StmtListNode ";
-		Visitor *v=this;
-		node->accept(*v);
+		for (list<Node*>::iterator it= node->getChildren().begin(); it != node->getChildren().end(); ++it){
+			Visitor* v = this;
+			(*it)->accept(*v);
+		}
 		cout << ")";
  	}
 
  	void visit(SStmtListNode* node){
 		cout << "(SStmtListNode ";
-		Visitor *v=this;
-		node->accept(*v);
+		for (list<Node*>::iterator it= node->getChildren().begin(); it != node->getChildren().end(); ++it){
+			Visitor* v = this;
+			(*it)->accept(*v);
+		}
 		cout << ")";
  	}
  	
@@ -943,4 +1010,28 @@ public:
 		// node->accept(*v);
 		cout << ")";
  	}
+
+ 	/* Implementación de visit de nuevos nodos */
+ 	void visit(ReturnNode* node){
+ 		cout << "(ReturnNode ";
+ 		for (list<Node*>::iterator it= node->getChildren().begin(); it != node->getChildren().end(); ++it){
+			Visitor* v = this;
+			(*it)->accept(*v);
+		}
+ 		cout << ")";
+ 	}
+	void visit(PrintNode* node){
+		cout << "(PrintNode ";
+		for (list<Node*>::iterator it= node->getChildren().begin(); it != node->getChildren().end(); ++it){
+			Visitor* v = this;
+			(*it)->accept(*v);
+		}
+		cout << ")";
+	}
+	void visit(BreakNode* node){
+		cout << "(BreakNode)";
+	}
+	void visit(ContinueNode* node){
+		cout << "(ContinueNode)";
+	}
  };

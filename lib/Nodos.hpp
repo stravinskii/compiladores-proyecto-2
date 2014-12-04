@@ -63,7 +63,10 @@ class FloatNode;
 class StrNode;
 class BoolNode;
 
-
+class ReturnNode;
+class PrintNode;
+class BreakNode;
+class ContinueNode;
 
 
 #endif

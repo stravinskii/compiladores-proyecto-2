@@ -204,9 +204,9 @@ protected:
 
  	// BinNode's
  	virtual PlusNode* bPlusNode()=0;
+ 	virtual MinusNode* bMinusNode()=0;
  	virtual MultNode* bMultNode()=0;
  	virtual DiviNode* bDiviNode()=0;
- 	virtual MinusNode* bMinusNode()=0;
  	virtual AssignNode* bAssignNode()=0;
  	virtual AndNode* bAndNode()=0;
  	virtual OrNode* bOrNode()=0;
@@ -232,7 +232,14 @@ protected:
  	virtual WhileNode* bWhileNode()=0;
  	virtual ArgsNode* bArgsNode()=0;
  	virtual FuncNode* bFuncNode()=0;
+
+ 	// New INode's
+ 	virtual ReturnNode* bReturnNode()=0;
+ 	virtual PrintNode* bPrintNode()=0;
  	
+ 	// New LeafNode's
+ 	virtual BreakNode* bBreakNode()=0;
+ 	virtual ContinueNode* bContinueNode()=0;
 
  	// LeafNode's
  	virtual IntNode* bIntNode(int val)=0;
