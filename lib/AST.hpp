@@ -72,6 +72,7 @@ public:
  	}
 
 	list<Node*> getChildren(){
+		cout << "Operation not supported for VNodeList" << endl;
 		throw "Operation not supported for VNodeList";
 	}
  };
@@ -118,10 +119,12 @@ public:
  	}
 
  	void setFChild(Node* first)	{
+ 		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
  	}
 
  	void setSChild(Node* second){
+ 		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
  	}
 
@@ -140,10 +143,12 @@ public:
  	}
 
  	void addFChild(Node* first)	{
+ 		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
  	}
 
  	void addLChild(Node* second){
+ 		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
  	}
 
@@ -170,6 +175,7 @@ public:
  class LeafNode : public Node{
 public:
 	~LeafNode(){};
+	/*
  	union NValue {
  		int i;
  		bool b;
@@ -177,16 +183,21 @@ public:
  		string *str;
  	};
  	NValue value;
+ 	*/
  	virtual void addFChild(Node*){
+ 		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
  	}
 	virtual void addLChild(Node*){
+ 		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
  	}
 	virtual void setFChild(Node*){
+ 		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
  	}
 	virtual void setSChild(Node*){
+ 		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
  	}
  	

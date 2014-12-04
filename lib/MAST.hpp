@@ -387,14 +387,17 @@ public:
 
  class IdentNode : public LeafNode{
  public:
+ 	string value;
 	IdentNode():LeafNode(){};
 	~IdentNode(){};
  	IdentNode(string val) : LeafNode(){
- 		value.str = &val;
+ 		// value.str = &val;
+ 		value = val;
  	}
 
  	string getValue(){
- 		return *value.str;
+ 		// return *value.str;
+ 		return value;
  	}
 
  	void accept(Visitor &v)	{
@@ -405,13 +408,16 @@ public:
 
  class IntNode : public LeafNode{
  public:
+ 	int value;
 	~IntNode(){};
  	IntNode(int i){
- 		value.i = i;
+ 		// value.i = i;
+ 		value = i;
  	}
 
  	int getValue(){
- 		return value.i;
+ 		// return value.i;
+ 		return value;
  	}
 
  	void accept(Visitor &v){
@@ -422,13 +428,16 @@ public:
 
  class FloatNode : public LeafNode{
  public:
+ 	float value;
 	~FloatNode(){};
  	FloatNode(float f){
- 		value.f = f;
+ 		// value.f = f;
+ 		value = f;
  	}
 
  	float getValue(){
- 		return value.f;
+ 		// return value.f;
+ 		return value;
  	}
 
  	void accept(Visitor &v){
@@ -440,13 +449,16 @@ public:
 
  class StrNode : public LeafNode{
  public:
+ 	string value;
 	~StrNode(){};
  	StrNode(string str){
- 		value.str = &str;
+ 		//value.str = &str;
+ 		value = str;
  	}
 
  	string getValue(){
- 		return *value.str;
+ 		return value;
+ 		// return *value.str;
  	}
 
  	void accept(Visitor &v){
@@ -457,13 +469,16 @@ public:
 
  class BoolNode : public LeafNode{
  public:
+ 	bool value;
 	~BoolNode(){};
  	BoolNode(bool boolean) : LeafNode(){
- 		value.b = &boolean;
+ 		// value.b = &boolean;
+ 		value = boolean;
  	}
 
 	bool getValue(){
-		return value.b;
+		// return value.b;
+		return value;
 	}
 
 	void accept(Visitor &v){
@@ -998,7 +1013,7 @@ public:
  	}
 
  	void visit(StrNode* node){
- 		cout << "(StrNode "<<node->getValue();
+ 		cout << "(StrNode " << node->getValue();
  		// Visitor *v=this;
 		// node->accept(*v);
 		cout << ")";
