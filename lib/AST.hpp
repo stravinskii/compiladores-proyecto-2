@@ -60,8 +60,8 @@ public:
  	}
 
  	void setRightChild(Node* node){
- 		cout << "setRightChild en VNodeList" << endl;
- 		children.insert((children.begin())+1, node);
+		cout << "setRightChild en VNodeList" << endl;
+ 		children.insert((children.end()), node);
  	}
  	
  	Node* getLeftChild(){
@@ -177,15 +177,6 @@ public:
  class LeafNode : public Node{
 public:
 	~LeafNode(){};
-	/*
- 	union NValue {
- 		int i;
- 		bool b;
- 		float f;
- 		string *str;
- 	};
- 	NValue value;
- 	*/
  	virtual void addFChild(Node*){
  		cout << "Operation not supported for Node" << endl;
  		throw "Operation not supported for Node";
@@ -258,6 +249,6 @@ protected:
  	virtual IntNode* bIntNode(int val)=0;
  	virtual StrNode* bStrNode(string val)=0;
  	virtual FloatNode* bFloatNode(float val)=0;
- 	virtual IdentNode* bIdentNode(string name)=0;
+ 	virtual IdentNode* bIdentNode(string* name)=0;
  	virtual BoolNode* bBoolNode(bool val)=0;
  };

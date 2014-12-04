@@ -5,7 +5,7 @@
  * @author: Alan Mauricio García García
  */
 
-//#include "SymbolTable.hpp"
+#include "SymbolTable.hpp"
 #include <list>
 #include "AST.hpp"
 #include "Nodos.hpp"
@@ -18,7 +18,7 @@ using namespace std;
 class Visitor{
 public:
 	virtual ~Visitor(){};
-	//SymbolTable* symbolTable;
+	SymbolTable* symbolTable;
 	//Node
 	virtual void visit(Node*)=0;
 
@@ -67,9 +67,107 @@ public:
 	
 protected:
 	Visitor(){};
-	//SymbolTable* symbolTable;
+	
 
 };
+
+
+/**
+  * 
+  * Implementación de los nodos que heredan de LeafNode
+  */
+
+ class IdentNode : public LeafNode{
+ public:
+ 	string* value;
+	IdentNode():LeafNode(){};
+	~IdentNode(){};
+ 	IdentNode(string val) : LeafNode(){
+ 		value = *val;
+ 	}
+
+ 	string getValue(){
+ 		return *value;
+ 	}
+
+ 	void accept(Visitor &v)	{
+ 		v.visit(this);
+ 		//Aguas!
+ 	}
+ };
+
+ class IntNode : public LeafNode{
+ public:
+ 	int value;
+	~IntNode(){};
+ 	IntNode(int i){
+ 		value = i;
+ 	}
+
+ 	int getValue(){
+ 		return value;
+ 	}
+
+ 	void accept(Visitor &v){
+ 		// cout<<"int aceptado"<<endl;
+ 		v.visit(this);
+ 	}
+ };
+
+ class FloatNode : public LeafNode{
+ public:
+ 	float value;
+	~FloatNode(){};
+ 	FloatNode(float f){
+ 		value = f;
+ 	}
+
+ 	float getValue(){
+ 		return value;
+ 	}
+
+ 	void accept(Visitor &v){
+ 		// cout<<"float aceptado"<<endl;
+ 		v.visit(this);
+ 	}
+ };
+
+
+ class StrNode : public LeafNode{
+ public:
+ 	string* value;
+	~StrNode(){};
+ 	StrNode(string str){
+ 		value = *str;
+ 	}
+
+ 	string getValue(){
+ 		return *value;
+ 	}
+
+ 	void accept(Visitor &v){
+ 		// cout<<"String aceptado"<<endl;
+ 		v.visit(this);
+ 	}
+ };
+
+ class BoolNode : public LeafNode{
+ public:
+ 	bool value;
+	~BoolNode(){};
+ 	BoolNode(bool boolean) : LeafNode(){
+ 		value = boolean;
+ 	}
+
+	bool getValue(){
+		return value;
+	}
+
+	void accept(Visitor &v){
+ 		// cout<<"Boolean aceptado"<<endl;
+ 		v.visit(this);
+ 	}
+ };
  
 /**
  * Implementación de los nodos que heredan de INode
@@ -203,6 +301,52 @@ public:
 	
  	void accept(Visitor &v){
  		v.visit(this);
+ 		
+	}
+	
+	void insertInTable(IdentNode* left, Node* right,Visitor* v){
+		string* var;
+		var=new string(left->getValue());
+		Simbolo* s;
+		
+		IntNode* entero = dynamic_cast<IntNode*> (right);
+		FloatNode* flotante = dynamic_cast<FloatNode*> (right);
+		StrNode* cadena = dynamic_cast<StrNode*> (right);
+		BoolNode* booleano = dynamic_cast<BoolNode*> (right);
+		if(entero!=0){
+			cout<<"Es un entero"<<endl;
+			int* val;
+			*val=entero->getValue();
+			s = new Simbolo(var,val);
+			v->symbolTable->insertName(s);
+			
+		}else if(flotante!=0){
+			cout<<"Es un flotante"<<endl;
+			float* val;
+			*val=flotante->getValue();
+			s = new Simbolo(var,val);
+			v->symbolTable->insertName(s);
+		}else if(cadena!=0){
+			cout<<"Es una cadena"<<endl;
+			string* val;
+			*val=cadena->getValue();
+			s = new Simbolo(var,val);
+			v->symbolTable->insertName(s);
+		}else if(booleano!=0){
+			cout<<"Es un booleano"<<endl;
+			int* val;
+			if(booleano->getValue())
+				*val=1;
+			else
+				*val=0;
+			s = new Simbolo(var,val);
+			v->symbolTable->insertName(s);
+		}else{
+			string* val= new string("OPERACION AUN NO EVALUADA, HASTA T. de E.");
+			s= new Simbolo(var,val);
+			v->symbolTable->insertName(s);
+	}
+		
 	}
  };
 
@@ -380,112 +524,7 @@ public:
  
  
  
- /**
-  * 
-  * Implementación de los nodos que heredan de LeafNode
-  */
-
- class IdentNode : public LeafNode{
- public:
- 	string value;
-	IdentNode():LeafNode(){};
-	~IdentNode(){};
- 	IdentNode(string val) : LeafNode(){
- 		// value.str = &val;
- 		value = val;
- 	}
-
- 	string getValue(){
- 		// return *value.str;
- 		return value;
- 	}
-
- 	void accept(Visitor &v)	{
- 		v.visit(this);
- 		//Aguas!
- 	}
- };
-
- class IntNode : public LeafNode{
- public:
- 	int value;
-	~IntNode(){};
- 	IntNode(int i){
- 		// value.i = i;
- 		value = i;
- 	}
-
- 	int getValue(){
- 		// return value.i;
- 		return value;
- 	}
-
- 	void accept(Visitor &v){
- 		// cout<<"int aceptado"<<endl;
- 		v.visit(this);
- 	}
- };
-
- class FloatNode : public LeafNode{
- public:
- 	float value;
-	~FloatNode(){};
- 	FloatNode(float f){
- 		// value.f = f;
- 		value = f;
- 	}
-
- 	float getValue(){
- 		// return value.f;
- 		return value;
- 	}
-
- 	void accept(Visitor &v){
- 		// cout<<"float aceptado"<<endl;
- 		v.visit(this);
- 	}
- };
-
-
- class StrNode : public LeafNode{
- public:
- 	string value;
-	~StrNode(){};
- 	StrNode(string str){
- 		//value.str = &str;
- 		value = str;
- 	}
-
- 	string getValue(){
- 		return value;
- 		// return *value.str;
- 	}
-
- 	void accept(Visitor &v){
- 		// cout<<"String aceptado"<<endl;
- 		v.visit(this);
- 	}
- };
-
- class BoolNode : public LeafNode{
- public:
- 	bool value;
-	~BoolNode(){};
- 	BoolNode(bool boolean) : LeafNode(){
- 		// value.b = &boolean;
- 		value = boolean;
- 	}
-
-	bool getValue(){
-		// return value.b;
-		return value;
-	}
-
-	void accept(Visitor &v){
- 		// cout<<"Boolean aceptado"<<endl;
- 		v.visit(this);
- 	}
- };
+ 
 
 
  /* Implementación de nuevos nodos */
@@ -493,7 +532,7 @@ public:
 class ReturnNode : public INode {
 public:
 	~ReturnNode(){};
-	ReturnNode(){};
+	ReturnNode():INode(){};
 	void accept(Visitor &v){
  		v.visit(this);
  	}
@@ -502,7 +541,7 @@ public:
 class PrintNode : public INode {
 public:
 	~PrintNode(){};
-	PrintNode(){};
+	PrintNode():INode(){};
 	void accept(Visitor &v){
  		v.visit(this);
  	}
@@ -511,7 +550,7 @@ public:
 class BreakNode : public LeafNode {
 public:
 	~BreakNode(){};
-	BreakNode(){};
+	BreakNode():LeafNode(){};
 	void accept(Visitor &v){
  		v.visit(this);
  	}
@@ -520,7 +559,7 @@ public:
 class ContinueNode : public LeafNode {
 public:
 	~ContinueNode(){};
-	ContinueNode(){};
+	ContinueNode():LeafNode(){};
 	void accept(Visitor &v){
  		v.visit(this);
  	}
@@ -529,7 +568,9 @@ public:
  class MAST : public AST{
  public:
 	~MAST(){};
-	MAST():AST(){cout<<"MAST creado"<<endl;};
+	MAST():AST(){
+		cout<<"MAST creado"<<endl;
+	}
 	//LeafNode
  	IntNode* bIntNode(int val){
  		cout << "bIntNode" << endl;
@@ -551,7 +592,7 @@ public:
  		return new BoolNode(val);
  	}
 
- 	IdentNode* bIdentNode(string name){
+ 	IdentNode* bIdentNode(string* name){
  		cout << "bIdentNode" << endl;
  		return new IdentNode(name);
  	}
@@ -657,6 +698,7 @@ public:
  		cout << "bSStmtListNode" << endl;
  		return new SStmtListNode;
  	}
+ 	
   	ExprNode* bExprNode(){
   		cout << "bExprNode" << endl;
  		return new ExprNode;
@@ -692,14 +734,17 @@ public:
   		cout << "bReturnNode" << endl;
   		return new ReturnNode;
   	}
+  	
  	PrintNode* bPrintNode(){
  		cout << "bPrintNode" << endl;
  		return new PrintNode;
  	}
+ 	
  	BreakNode* bBreakNode(){
  		cout << "bBreakNode" << endl;
  		return new BreakNode;
  	}
+ 	
  	ContinueNode* bContinueNode(){
  		cout << "bContinueNode" << endl;
  		return new ContinueNode;
@@ -711,12 +756,12 @@ class VisitorNode : public Visitor{
 public:
 	~VisitorNode(){};
 	VisitorNode():Visitor(){
-		// symbolTable= new SymbolTable;
+		 symbolTable= new SymbolTable;
 	}
 	
-	// VisitorNode(SymbolTable *ts):Visitor(){
-		// symbolTable=ts;
-	// }
+	 VisitorNode(SymbolTable *ts):Visitor(){
+		 symbolTable=ts;
+	 }
  
  	void visit(Node* node){
 	 	cout << "(Node ";
@@ -754,20 +799,21 @@ public:
 
  	void visit(AssignNode* node){
 		cout << "(AssignNode ";
-		// cout << "visite un assignode" << endl;
-		IdentNode* c = dynamic_cast<IdentNode*> (node->getLeftChild());
-		if(c != 0){
-			Node *left = node->getLeftChild();
-			Node *right = node->getRightChild();
+		//cout << "visite un assignode" << endl;
+		IdentNode* left = dynamic_cast<IdentNode*> (node->getLeftChild());
+		if(left != 0){
+			Node* right = node->getLeftChild();
 			Visitor *v=this;
-			left->accept(*v);
-			right->accept(*v);
+			node->insertInTable(left,right,v);
+			
 		}else{
+			cout<<endl<<"ERROR: Assignment operation is only for variables"<<endl;
 			throw "Assignment operation is only for variables";
-			cout<<"Assignment operation is only for variables"<<endl;
 		}
 			
 		cout << ")";
+		cout<<endl<<"Insertando nueva variable en la tabla"<<endl;
+		symbolTable->printTable();
  	}
 
  	void visit(StmtListNode* node){
@@ -983,17 +1029,18 @@ public:
  	 */
 
  	void visit(IdentNode* node){
-		cout << "(IdentNode "<<node->getValue();
-		// cout << "visite una variable" << endl;
-		string name = node->getValue();
-		// Simbolo *s = symbolTable->lookUp(&name);
-		// if(s==0){
-		// 	cout<<"Es nulo"<<endl;
-		// 	string cad = "";
-		// 	s=new Simbolo(name,&cad);
-		// 	symbolTable->insertName(s);
-		// 	symbolTable->printTable();
-		// }
+		cout << "(IdentNode ";//node->getValue();
+		string* name = new string();
+		*name= node->getValue();
+		cout<<name<<endl;
+		Simbolo *s = symbolTable->lookUp(*name);
+		if(s==0){
+			cout<<"Insertando nueva variable en la tabla"<<endl;
+		 	string *cad = new string();
+		 	s=new Simbolo(name,cad);
+		 	symbolTable->insertName(s);
+		 	symbolTable->printTable();
+		 }
 		cout << ")";
  	}
 
@@ -1013,7 +1060,7 @@ public:
  	}
 
  	void visit(StrNode* node){
- 		cout << "(StrNode " << node->getValue();
+ 		cout << "(StrNode "<<node->getValue();
  		// Visitor *v=this;
 		// node->accept(*v);
 		cout << ")";
