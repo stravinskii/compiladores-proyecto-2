@@ -1,0 +1,118 @@
+MAST creado
+filein epsilon...
+ STRING: Este programa es una prueba
+:::Este programa es una prueba:::
+bStrNode
+epsilon trailer_kleene
+atom trailer_kleene
+power
+factor factor_operation
+term sign_term
+bArgsNode
+bExprNode
+print
+bPrintNode
+bSStmtNode
+bSStmtListNode
+filein stmt
+NAME:yylval
+;;;yylval;;;
+bIdentNode
+(IdentNode yylval)epsilon trailer_kleene
+atom trailer_kleene
+power
+factor factor_operation
+term sign_term
+bArgsNode
+bExprNode
+bIntNode
+(IntNode 0)epsilon trailer_kleene
+atom trailer_kleene
+power
+factor factor_operation
+term sign_term
+bArgsNode
+bExprNode
+=
+bAssignNode
+Its not an expression node
+Se agrego hijo izq
+bSStmtNode
+bSStmtListNode
+filein stmt
+NAME:x
+;;;x;;;
+bIdentNode
+(IdentNode x)epsilon trailer_kleene
+atom trailer_kleene
+power
+factor factor_operation
+term sign_term
+bArgsNode
+bExprNode
+bIntNode
+(IntNode 1)epsilon trailer_kleene
+atom trailer_kleene
+power
+factor factor_operation
+NAME:y
+;;;y;;;
+bIdentNode
+(IdentNode y)epsilon trailer_kleene
+atom trailer_kleene
+power
+factor factor_operation
+bPlusNode
+Se agrego hijo izq
+Se agrego hijo der
+Sumaterm sign_term
+I'M RIGHT HERE 2!
+Se agrego hijo izq
+Se agrego hijo izq
+Se agrego hijo izq
+Se agrego hijo izq
+Se agrego hijo izq
+Se agrego hijo izq
+Se agrego hijo izq
+bArgsNode
+bExprNode
+=
+bAssignNode
+Its not an expression node
+Se agrego hijo izq
+bSStmtNode
+bSStmtListNode
+filein stmt
+ NAME:x
+;;;x;;;
+bIdentNode
+(IdentNode x)epsilon trailer_kleene
+atom trailer_kleene
+power
+factor factor_operation
+term sign_term
+bArgsNode
+bExprNode
+print
+bPrintNode
+bSStmtNode
+bSStmtListNode
+filein stmt
+ NAME:y
+;;;y;;;
+bIdentNode
+(IdentNode y)epsilon trailer_kleene
+atom trailer_kleene
+power
+factor factor_operation
+term sign_term
+bArgsNode
+bExprNode
+print
+bPrintNode
+bSStmtNode
+bSStmtListNode
+filein stmt
+ÿbSStmtListNode
+
+COMPILATION COMPLETE :)

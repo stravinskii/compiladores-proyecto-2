@@ -60,6 +60,7 @@ public:
  	}
 
  	void setRightChild(Node* node){
+ 		cout << "setRightChild en VNodeList" << endl;
  		children.insert((children.begin())+1, node);
  	}
  	
@@ -158,6 +159,7 @@ public:
  	}
 
  	void setSChild(Node* second){
+ 		cout<<"Agregando hijo der..."<<endl;
  		children->setRightChild(second);
  		cout<<"Se agrego hijo der"<<endl;
  	}

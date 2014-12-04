@@ -593,6 +593,8 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "pylex.l"
 #line 2 "pylex.l"
+#include <string>
+#include <vector>
 #include <iostream>
 #include "../lib/Stack.h"
 #include "pysin.hpp"
@@ -613,7 +615,7 @@ extern int yyparse();
 
 
 
-#line 617 "pylex.cpp"
+#line 619 "pylex.cpp"
 
 #define INITIAL 0
 #define START 1
@@ -804,10 +806,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 125 "pylex.l"
+#line 127 "pylex.l"
 
 
-#line 811 "pylex.cpp"
+#line 813 "pylex.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -892,377 +894,377 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 127 "pylex.l"
+#line 129 "pylex.l"
 { BEGIN(INITIAL); return APOSTROFE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 128 "pylex.l"
+#line 130 "pylex.l"
 { BEGIN(INITIAL); return EXP; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 129 "pylex.l"
+#line 131 "pylex.l"
 { BEGIN(INITIAL); return OPENCOR; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 130 "pylex.l"
+#line 132 "pylex.l"
 { BEGIN(INITIAL); return CLOSECOR; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 131 "pylex.l"
+#line 133 "pylex.l"
 { BEGIN(INITIAL); return MAS; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 132 "pylex.l"
+#line 134 "pylex.l"
 { BEGIN(INITIAL); return MENOS; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 133 "pylex.l"
+#line 135 "pylex.l"
 { BEGIN(INITIAL); return POR; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 134 "pylex.l"
+#line 136 "pylex.l"
 { BEGIN(INITIAL); return ENTRE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 135 "pylex.l"
+#line 137 "pylex.l"
 { BEGIN(INITIAL); return MOD; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 136 "pylex.l"
+#line 138 "pylex.l"
 { BEGIN(INITIAL); return DIV; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 137 "pylex.l"
+#line 139 "pylex.l"
 { BEGIN(INITIAL); return POT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 138 "pylex.l"
+#line 140 "pylex.l"
 { BEGIN(INITIAL); return GLOBAL; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 139 "pylex.l"
+#line 141 "pylex.l"
 { BEGIN(INITIAL); return FALSE; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 140 "pylex.l"
+#line 142 "pylex.l"
 { BEGIN(INITIAL); return CLASS; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 141 "pylex.l"
+#line 143 "pylex.l"
 { BEGIN(INITIAL); return FINALLY; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 142 "pylex.l"
+#line 144 "pylex.l"
 { BEGIN(INITIAL); return IS; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 143 "pylex.l"
+#line 145 "pylex.l"
 { BEGIN(INITIAL); return NONE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 144 "pylex.l"
+#line 146 "pylex.l"
 { BEGIN(INITIAL); return RETURN; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 145 "pylex.l"
+#line 147 "pylex.l"
 { BEGIN(INITIAL); return CONTINUE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 146 "pylex.l"
+#line 148 "pylex.l"
 { BEGIN(INITIAL); return FOR; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 147 "pylex.l"
+#line 149 "pylex.l"
 { BEGIN(INITIAL); return LAMBDA; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 148 "pylex.l"
+#line 150 "pylex.l"
 { BEGIN(INITIAL); return TRY; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 149 "pylex.l"
+#line 151 "pylex.l"
 { BEGIN(INITIAL); return TRUE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 150 "pylex.l"
+#line 152 "pylex.l"
 { BEGIN(INITIAL); return DEF; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 151 "pylex.l"
+#line 153 "pylex.l"
 { BEGIN(INITIAL); return FROM; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 152 "pylex.l"
+#line 154 "pylex.l"
 { BEGIN(INITIAL); return WHILE; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 153 "pylex.l"
+#line 155 "pylex.l"
 { BEGIN(INITIAL); return AND; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 154 "pylex.l"
+#line 156 "pylex.l"
 { BEGIN(INITIAL); return DEL; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 155 "pylex.l"
+#line 157 "pylex.l"
 { BEGIN(INITIAL); return NOT; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 156 "pylex.l"
+#line 158 "pylex.l"
 { BEGIN(INITIAL); return WITH; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 157 "pylex.l"
+#line 159 "pylex.l"
 { BEGIN(INITIAL); return AS; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 158 "pylex.l"
+#line 160 "pylex.l"
 { BEGIN(INITIAL); return ELIF; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 159 "pylex.l"
+#line 161 "pylex.l"
 { BEGIN(INITIAL); return IF; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 160 "pylex.l"
+#line 162 "pylex.l"
 { BEGIN(INITIAL); return OR; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 161 "pylex.l"
+#line 163 "pylex.l"
 { BEGIN(INITIAL); return ELSE; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 162 "pylex.l"
+#line 164 "pylex.l"
 { BEGIN(INITIAL); return IMPORT; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 163 "pylex.l"
+#line 165 "pylex.l"
 { BEGIN(INITIAL); return PASS; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 164 "pylex.l"
+#line 166 "pylex.l"
 { BEGIN(INITIAL); return BREAK; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 165 "pylex.l"
+#line 167 "pylex.l"
 { BEGIN(INITIAL); return EXCEPT; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 166 "pylex.l"
+#line 168 "pylex.l"
 { BEGIN(INITIAL); return IN; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 167 "pylex.l"
+#line 169 "pylex.l"
 { BEGIN(INITIAL); return PRINT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 169 "pylex.l"
+#line 171 "pylex.l"
 { BEGIN(INITIAL); return COMMA; } 
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 170 "pylex.l"
+#line 172 "pylex.l"
 { BEGIN(INITIAL); return DOT; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 171 "pylex.l"
+#line 173 "pylex.l"
 { BEGIN(INITIAL); return ASSIGN; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 172 "pylex.l"
+#line 174 "pylex.l"
 { BEGIN(INITIAL); return TWODOTS; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 173 "pylex.l"
+#line 175 "pylex.l"
 { BEGIN(INITIAL); return DOTCOMMA; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 175 "pylex.l"
+#line 177 "pylex.l"
 { BEGIN(INITIAL); return BINLEFT; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 176 "pylex.l"
+#line 178 "pylex.l"
 { BEGIN(INITIAL); return BINRIGHT; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 177 "pylex.l"
+#line 179 "pylex.l"
 { BEGIN(INITIAL); return ANDPAND; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 178 "pylex.l"
+#line 180 "pylex.l"
 { BEGIN(INITIAL); return PIPE; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 180 "pylex.l"
+#line 182 "pylex.l"
 { BEGIN(INITIAL); return TILDE; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 181 "pylex.l"
+#line 183 "pylex.l"
 { BEGIN(INITIAL); return LESSTHAN; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 182 "pylex.l"
+#line 184 "pylex.l"
 { BEGIN(INITIAL); return MORETHAN; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 183 "pylex.l"
+#line 185 "pylex.l"
 { BEGIN(INITIAL); return LESSEQUAL; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 184 "pylex.l"
+#line 186 "pylex.l"
 { BEGIN(INITIAL); return MOREEQUAL; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 185 "pylex.l"
+#line 187 "pylex.l"
 { BEGIN(INITIAL); return EQUALS; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 187 "pylex.l"
+#line 189 "pylex.l"
 { BEGIN(INITIAL); return OPENPAR; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 188 "pylex.l"
+#line 190 "pylex.l"
 { BEGIN(INITIAL); return CLOSEPAR; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 189 "pylex.l"
+#line 191 "pylex.l"
 { BEGIN(INITIAL); return OPENKEY; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 190 "pylex.l"
+#line 192 "pylex.l"
 { BEGIN(INITIAL); return CLOSEKEY; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 191 "pylex.l"
+#line 193 "pylex.l"
 { BEGIN(INITIAL); return AT; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 192 "pylex.l"
+#line 194 "pylex.l"
 { BEGIN(INITIAL); return RIGHT; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 193 "pylex.l"
+#line 195 "pylex.l"
 { BEGIN(INITIAL); return MASIGUAL; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 194 "pylex.l"
+#line 196 "pylex.l"
 { BEGIN(INITIAL); return MENOSIGUAL; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 195 "pylex.l"
+#line 197 "pylex.l"
 { BEGIN(INITIAL); return PORIGUAL; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 196 "pylex.l"
+#line 198 "pylex.l"
 { BEGIN(INITIAL); return ENTREIGUAL; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 197 "pylex.l"
+#line 199 "pylex.l"
 { BEGIN(INITIAL); return DIVIGUAL; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 198 "pylex.l"
+#line 200 "pylex.l"
 { BEGIN(INITIAL); return MODIGUAL; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 199 "pylex.l"
+#line 201 "pylex.l"
 { BEGIN(INITIAL); return ANDIGUAL; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 200 "pylex.l"
+#line 202 "pylex.l"
 { BEGIN(INITIAL); return ORIGUAL; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 201 "pylex.l"
+#line 203 "pylex.l"
 { BEGIN(INITIAL); return EXPIGUAL; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 202 "pylex.l"
+#line 204 "pylex.l"
 { BEGIN(INITIAL); return BINRIGHTIGUAL; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 203 "pylex.l"
+#line 205 "pylex.l"
 { BEGIN(INITIAL); return BINLEFTIGUAL; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 204 "pylex.l"
+#line 206 "pylex.l"
 { BEGIN(INITIAL); return POTIGUAL; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 206 "pylex.l"
+#line 208 "pylex.l"
 { 
 					yylval.flotante = atof(yytext);
 					BEGIN(INITIAL);
@@ -1271,7 +1273,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 211 "pylex.l"
+#line 213 "pylex.l"
 { 
 					yylval.entero = atoi(yytext);
 					BEGIN(INITIAL);
@@ -1280,8 +1282,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 217 "pylex.l"
+#line 219 "pylex.l"
 {
+				std::cout << "NAME:" << yytext << std::endl;
 				yylval.cadena = yytext;
 				BEGIN(INITIAL);
 				return NAME;
@@ -1289,11 +1292,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 223 "pylex.l"
+#line 226 "pylex.l"
 {
-				int in = yyinput();
+				char in = yyinput();
+				std::string str;
 				while (in != '"')
 				{
+					/* Concatenate char to string for bison token */
+					str += in;
 					/* Python doesnt allow multi-line strings */
 					in = yyinput();
 					if (in == '\n' || in == EOF)
@@ -1303,7 +1309,25 @@ YY_RULE_SETUP
 						yyterminate();
 					}
 				}
-				yylval.cadena = yytext;
+
+				/*
+				*/
+				char* cstr = new char[str.size() + 1];
+				std::copy(str.begin(), str.end(), cstr);
+				cstr[str.size()] = '\0';
+				std::cout << "STRING: " << cstr << std::endl;
+				yylval.cadena = cstr;
+				/*
+				delete[] cstr;
+				std::vector<char> cstr(str.begin(), str.end());
+				cstr.push_back('\0');
+				std::cout << "STRING: " << &*cstr.begin() << std::endl;
+				yylval.cadena = &*cstr.begin();
+				*/
+
+				/*yylval.cadena = yytext;*/
+				
+
 				BEGIN(INITIAL);
 				return STRING;
 			}
@@ -1311,7 +1335,7 @@ YY_RULE_SETUP
 case 79:
 /* rule 79 can match eol */
 YY_RULE_SETUP
-#line 241 "pylex.l"
+#line 265 "pylex.l"
 {
 						new_line++;
 						int in = yyinput();
@@ -1336,7 +1360,7 @@ YY_RULE_SETUP
 case 80:
 /* rule 80 can match eol */
 YY_RULE_SETUP
-#line 262 "pylex.l"
+#line 286 "pylex.l"
 {
 								char in = yyinput();
 								/* if it's an indent */
@@ -1410,7 +1434,7 @@ YY_RULE_SETUP
 case 81:
 /* rule 81 can match eol */
 YY_RULE_SETUP
-#line 332 "pylex.l"
+#line 356 "pylex.l"
 {
 				new_line++;
 				int in = yyinput();
@@ -1433,7 +1457,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 352 "pylex.l"
+#line 376 "pylex.l"
 {
 						int in = yyinput();
 						while (in != '\n')
@@ -1453,7 +1477,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 369 "pylex.l"
+#line 393 "pylex.l"
 {
 								int in = yyinput();
 								while (in != '\n')
@@ -1475,7 +1499,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 388 "pylex.l"
+#line 412 "pylex.l"
 {
 				int in = yyinput();
 				while(in != '\n')
@@ -1489,7 +1513,7 @@ YY_RULE_SETUP
 case 85:
 /* rule 85 can match eol */
 YY_RULE_SETUP
-#line 398 "pylex.l"
+#line 422 "pylex.l"
 {
 									for (int i = 0; i < yyleng; i++)
 									{
@@ -1505,7 +1529,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 411 "pylex.l"
+#line 435 "pylex.l"
 {
 								int indent = 0;
 								if (yytext == "\t")
@@ -1575,14 +1599,14 @@ YY_RULE_SETUP
 							}
 	YY_BREAK
 case YY_STATE_EOF(NEWLINE_CONTEXT):
-#line 479 "pylex.l"
+#line 503 "pylex.l"
 { 
 								// std::cout << std::endl << "<NEWLINE_CONTEXT><<EOF>>" << std::endl;
 								yyterminate();
 							}
 	YY_BREAK
 case YY_STATE_EOF(EOF_CONTEXT):
-#line 484 "pylex.l"
+#line 508 "pylex.l"
 {
 							// std::cout << std::endl << "<EOF_CONTEXT><<EOF>>" << std::endl;
 							if (stack.peek() != 0)
@@ -1599,7 +1623,7 @@ case YY_STATE_EOF(EOF_CONTEXT):
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(START):
 case YY_STATE_EOF(DEDENT_CONTEXT):
-#line 497 "pylex.l"
+#line 521 "pylex.l"
 {
 			// std::cout << std::endl << "<<EOF>>" << std::endl;
 			// yyterminate();
@@ -1609,10 +1633,10 @@ case YY_STATE_EOF(DEDENT_CONTEXT):
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 504 "pylex.l"
+#line 528 "pylex.l"
 ECHO;
 	YY_BREAK
-#line 1616 "pylex.cpp"
+#line 1640 "pylex.cpp"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2608,7 +2632,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 504 "pylex.l"
+#line 528 "pylex.l"
 
 
 

@@ -33,7 +33,7 @@
 /* "%code requires" blocks.  */
 
 /* Line 2068 of yacc.c  */
-#line 25 "pysin.y"
+#line 23 "pysin.y"
 
 #include "../lib/Nodos.hpp"
 
@@ -142,7 +142,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 31 "pysin.y"
+#line 29 "pysin.y"
 
 	int entero;
 	double flotante;

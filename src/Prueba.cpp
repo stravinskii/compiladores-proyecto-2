@@ -13,7 +13,7 @@ int main(){
 
 	Node* id1 = asTree->bIdentNode(s);
 	Node* id2 = asTree->bIdentNode(x);
-	Node* id3 = asTree->bIdentNode(y);
+	Node* id3 = asTree->bStrNode(y);
 
 	Node* m1 = asTree->bMultNode();
 	Node* i1 = asTree->bIntNode(1);
@@ -25,7 +25,12 @@ int main(){
 
 	Node* a = asTree->bAssignNode();	
 	a->setFChild(id1);
-	a->setSChild(m1);
+	a->setSChild(id3);
+
+	Node* b = asTree->bAssignNode();
+	Node* exprn = asTree->bExprNode();
+	b->setFChild(id1);
+	b->setSChild(exprn);
 	
 	a->accept(*visitor);
 	std::cout<<std::endl;

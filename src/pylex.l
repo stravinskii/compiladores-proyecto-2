@@ -1,4 +1,6 @@
 %{
+#include <string>
+#include <vector>
 #include <iostream>
 #include "../lib/Stack.h"
 #include "pysin.hpp"
@@ -215,15 +217,19 @@ RIGHT		"->"
 				}
 
 {NAME}		{
+				std::cout << "NAME:" << yytext << std::endl;
 				yylval.cadena = yytext;
 				BEGIN(INITIAL);
 				return NAME;
 			}
 
 {STRING}	{
-				int in = yyinput();
+				char in = yyinput();
+				std::string str;
 				while (in != '"')
 				{
+					/* Concatenate char to string for bison token */
+					str += in;
 					/* Python doesnt allow multi-line strings */
 					in = yyinput();
 					if (in == '\n' || in == EOF)
@@ -233,7 +239,25 @@ RIGHT		"->"
 						yyterminate();
 					}
 				}
-				yylval.cadena = yytext;
+
+				/*
+				*/
+				char* cstr = new char[str.size() + 1];
+				std::copy(str.begin(), str.end(), cstr);
+				cstr[str.size()] = '\0';
+				std::cout << "STRING: " << cstr << std::endl;
+				yylval.cadena = cstr;
+				/*
+				delete[] cstr;
+				std::vector<char> cstr(str.begin(), str.end());
+				cstr.push_back('\0');
+				std::cout << "STRING: " << &*cstr.begin() << std::endl;
+				yylval.cadena = &*cstr.begin();
+				*/
+
+				/*yylval.cadena = yytext;*/
+				
+
 				BEGIN(INITIAL);
 				return STRING;
 			}
