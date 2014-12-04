@@ -477,8 +477,8 @@ public:
 
 class ReturnNode : public INode {
 public:
-	~ReturnNode();
-	ReturnNode();
+	~ReturnNode(){};
+	ReturnNode(){};
 	void accept(Visitor &v){
  		v.visit(this);
  	}
@@ -486,8 +486,8 @@ public:
 
 class PrintNode : public INode {
 public:
-	~PrintNode();
-	PrintNode();
+	~PrintNode(){};
+	PrintNode(){};
 	void accept(Visitor &v){
  		v.visit(this);
  	}
@@ -495,8 +495,8 @@ public:
 
 class BreakNode : public LeafNode {
 public:
-	~BreakNode();
-	BreakNode();
+	~BreakNode(){};
+	BreakNode(){};
 	void accept(Visitor &v){
  		v.visit(this);
  	}
@@ -504,8 +504,8 @@ public:
 
 class ContinueNode : public LeafNode {
 public:
-	~ContinueNode();
-	ContinueNode();
+	~ContinueNode(){};
+	ContinueNode(){};
 	void accept(Visitor &v){
  		v.visit(this);
  	}

@@ -46,7 +46,7 @@ MAST *asTree = new MAST();
 
 /*Aquí van los tipos*/
 /* %type <nodo> file_input filein epsilon test old_test or_test or_andtest and_test and_nottest not_test comparison comp_op_expr_kleene comp_op expr pipexor_expr xor_expr andxor_expr and_expr andpandshift_expr shift_expr leftright_shift_expr arithmetic_expr sign_term term factor_operation factor power trailer_kleene trailer arglist argument_comma argument_multiple comma_argument argument comp_for comp_iter comp_if subscriptlist comma_subscript subscript sliceop exprlist expr_kleene atom boolean dictorsetmaker dictor_set_help dictor_set_help2 testlist1 string_plus listmaker testlist_comp list_for list_iter testlist_safe comma_old_test_plus list_if compound_stmt if_stmt elif_test_td_suite_kleene while_stmt for_stmt suite stmt_plus stmt simple_stmt small_stmt small_stmt_kleene expr_stmt expr_stmt_at assign_testlist_kleene augassign print_stmt print_args comma_test_kleene print_stmt2 comma_one comma_test_plus testlist del_stmt pass_stmt flow_stmt break_stmt continue_stmt return_stmt funcdef parameters varargslist d fpdef fplist fpdef_kleene */
-%type <nodo> file_input filein epsilon test old_test or_test or_andtest and_test and_nottest not_test comparison comp_op_expr_kleene comp_op expr pipexor_expr xor_expr andxor_expr and_expr andpandshift_expr shift_expr leftright_shift_expr arithmetic_expr sign_term term factor_operation factor power trailer_kleene trailer arglist argument_comma argument_multiple comma_argument argument comp_for comp_iter comp_if subscriptlist comma_subscript subscript sliceop exprlist expr_kleene atom boolean testlist1 string_plus listmaker testlist_comp compound_stmt if_stmt elif_test_td_suite_kleene while_stmt for_stmt suite stmt_plus stmt simple_stmt small_stmt_kleene small_stmt expr_stmt expr_stmt_at assign_testlist_kleene augassign print_stmt print_args comma_test_kleene testlist flow_stmt break_stmt continue_stmt return_stmt funcdef parameters varargslist args_kleene comma_one
+%type <nodo> file_input filein epsilon test or_test or_andtest and_test and_nottest not_test comparison comp_op_expr_kleene comp_op expr pipexor_expr xor_expr andxor_expr and_expr andpandshift_expr shift_expr leftright_shift_expr arithmetic_expr sign_term term factor_operation factor power trailer_kleene trailer arglist argument_comma argument_multiple comma_argument argument subscriptlist comma_subscript subscript sliceop exprlist expr_kleene atom boolean testlist1 string_plus listmaker testlist_comp compound_stmt if_stmt elif_test_td_suite_kleene while_stmt for_stmt suite stmt_plus stmt simple_stmt small_stmt_kleene small_stmt expr_stmt expr_stmt_at assign_testlist_kleene augassign print_stmt print_args comma_test_kleene testlist flow_stmt break_stmt continue_stmt return_stmt funcdef parameters varargslist args_kleene comma_one
 
 %%
 file_input: /* (NEWLINE | stmt)* ENDMARKER */
@@ -83,10 +83,13 @@ epsilon: 	{/*Nada xD*/};
 
 test: /* or_test ['if' or_test 'else' test] */
 	or_test							{$$ = $1;}
-	|or_test IF or_test ELSE test	{cout<<"IF __ ELSE __ ";};
+	| or_test IF or_test ELSE test	{cout<<"IF __ ELSE __ ";};
 	
-old_test: /* or_test */
+/* or_test */
+/*
+old_test: 
 	or_test 	{$$ = $1;};
+*/
 
 or_test: /* and_test ('OR' and_test)* */
 	and_test or_andtest 	{
@@ -153,12 +156,12 @@ comparison: /* expr (comp_op expr)* */
 								};
 
 comp_op_expr_kleene: /* (comp_op expr)* */
-	epsilon
-	| comp_op_expr_kleene comp_op expr 	{
+	comp_op_expr_kleene comp_op expr 	{
 											Node *compn = $2;
 											compn->setSChild($3);
 											$$ = compn;
-										};
+										}
+	| epsilon;
 	
 comp_op: /* ('<' | '>' | '==' | '>=' | '<=' | '<>' | '!=' | 'in' | 'not' 'in' | 'is' | 'is' 'not') */
 	LESSTHAN			{
@@ -266,8 +269,8 @@ shift_expr: /* arith_expr (('<<'|'>>') arith_expr)* */
 
 leftright_shift_expr: /* (('>>' | '<<') arithmetic_expr)* */
 	epsilon
-	|leftright_shift_expr BINRIGHT arithmetic_expr 	{$$ = $3; cout<<">>";}
-	|leftright_shift_expr BINLEFT arithmetic_expr	{$$ = $3; cout<<"<<";};
+	| leftright_shift_expr BINRIGHT arithmetic_expr {$$ = $3; cout<<">>";}
+	| leftright_shift_expr BINLEFT arithmetic_expr	{$$ = $3; cout<<"<<";};
 
 arithmetic_expr: /* term ('+' term)* | term ('-' term)* */
 	term sign_term	{
@@ -404,12 +407,6 @@ comma_argument: /* (',' argument)* */
 /* FIXTHIS: Argumentos con asignacion i.e. foo(x=3) no tiene soporte */
 argument: /* test [comp_for] | test '=' test */
 	test 				{$$ = $1;}
-	| test comp_for 	{
-							cout << "****************************************" << endl;
-							cout << "Argumentos con comp_for no tiene soporte" << endl;
-							cout << "****************************************" << endl;
-							$$ = $1;
-						}
 	| test ASSIGN test 	{
 							cout << "********************************************************" << endl;
 							cout << "Argumentos con asignacion i.e. foo(x=3) no tiene soporte" << endl;
@@ -419,45 +416,15 @@ argument: /* test [comp_for] | test '=' test */
 							assignn->setFChild($3);
 							$$ = assignn;
 						};
-	
-comp_for: /* 'for' exprlist 'in' or_test [comp_iter] */
-	FOR exprlist IN or_test comp_iter	{
-											Node *forn = asTree->bForNode();
-											forn->addFChild($2);
-											forn->addFChild($4);
-											cout<<"FOR"<<endl;
-										}
-	| FOR exprlist IN or_test			{
-											Node *forn = asTree->bForNode();
-											forn->addFChild($2);
-											forn->addFChild($4);
-											cout<<"FOR"<<endl;
-										};
-	
-comp_iter: /* comp_for | comp_if */
-	comp_for 	{$$ = $1;}
-	| comp_if 	{$$ = $1;};
-	
-comp_if: /* 'if' old_test [comp_iter] */
-	IF old_test					{
-									Node *ifn = asTree->bIfNode();
-									ifn->addFChild($2);
-									cout<<"IF"<<endl;
-								}
-	|IF old_test comp_iter 		{
-									Node *ifn = asTree->bIfNode();
-									ifn->addFChild($2);
-									cout<<"IF"<<endl;
-								};
-		
+			
 /* FIXTHIS: No entiendo aún el uso de subscript */
 subscriptlist: /* subscript (',' subscript)* [','] */
-	subscript comma_subscript 			{$$ = $1;}
-	|subscript comma_subscript COMMA 	{$$ = $1;};
+	subscript comma_subscript 			{$$ = $1;};
+	| subscript comma_subscript COMMA 	{$$ = $1;};
 
 comma_subscript: /* (',' subscript)* */
-	epsilon
-	| comma_subscript COMMA subscript 	{$$ = $3;};
+	comma_subscript COMMA subscript 	{$$ = $3;}
+	| epsilon;
 	
 subscript: /* '.' '.' '.' | test | [test] ':' [test] [sliceop] */
 	DOT DOT DOT				{}
@@ -472,16 +439,16 @@ subscript: /* '.' '.' '.' | test | [test] ':' [test] [sliceop] */
 	| TWODOTS				{cout<<":"<<endl;};
 
 sliceop: /* ':' [test] */
-	TWODOTS			{cout<<":"<<endl;}
-	| TWODOTS test 	{cout<<":"<<endl;};
+	TWODOTS test 	{cout<<":"<<endl;}
+	| TWODOTS		{cout<<":"<<endl;};
 	
 exprlist: /* expr (',' expr)* [','] */
-	expr expr_kleene
-	| expr expr_kleene COMMA;
+	expr expr_kleene COMMA
+	| expr expr_kleene;
 
 expr_kleene: /* (',' expr)* */
-	epsilon
-	| expr_kleene COMMA expr;
+	expr_kleene COMMA expr
+	| epsilon;
 
 /* FIXTHIS: No entiendo que es ('`' testlist1 '`') */
 atom: /* ( '(' [testlist_comp] ')' | '[' [listmaker] ']' |  '`' testlist1 '`' | NAME | NUMBER | STRING+ ) */
@@ -490,7 +457,7 @@ atom: /* ( '(' [testlist_comp] ')' | '[' [listmaker] ']' |  '`' testlist1 '`' | 
 	| OPENCOR CLOSECOR					{$$ = NULL;}
 	| OPENCOR listmaker CLOSECOR		{$$ = $2;}
 	| APOSTROFE testlist1 APOSTROFE		{$$ = $2;}
-	| string_plus						{$$ = $1s;}
+	| string_plus						{$$ = $1;}
 	| boolean							{$$ = $1;}
 	| NONE								{$$ = NULL;}
 	| NAME			{
@@ -530,8 +497,7 @@ listmaker: 	/* test (',' test)* */
 	test comma_test_kleene 	{$$ = $1;};
 		
 testlist_comp: /* test ( comp_for | (',' test)* [','] ) */
-	test comp_for 						{$$ = $1;}
-	|test comma_test_kleene comma_one 	{$$ = $1;};
+	test comma_test_kleene comma_one 	{$$ = $1;};
 		
 /*testlist_safe: old_test [(',' old_test)+ [',']] */
 /*
@@ -552,23 +518,23 @@ compound_stmt: /* (if_stmt | while_stmt | for_stmt | funcdef) --deprecated: clas
 	| funcdef		{$$ = $1;};
 
 if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
-	IF test TWODOTS suite elif_test_td_suite_kleene 						{
-																				cout << "if _ : _" << endl;
-																				Node *ifn = asTree->bIfNode();
-																				ifn->addFChild($2);
-																				ifn->addLChild($4);
-																				ifn->addLChild($5);
-																				$$ = ifn;
-																			}
-	| IF test TWODOTS suite elif_test_td_suite_kleene ELSE TWODOTS suite 	{
-																				cout << "if _ : _ else : _" << endl;
-																				Node *ifn = asTree->bIfNode();
-																				ifn->addFChild($2);
-																				ifn->addLChild($4);
-																				ifn->addLChild($5);
-																				ifn->addLChild($8);
-																				$$ = ifn;
-																			};
+	IF test TWODOTS suite elif_test_td_suite_kleene ELSE TWODOTS suite 	{
+																			cout << "if _ : _ else : _" << endl;
+																			Node *ifn = asTree->bIfNode();
+																			ifn->addFChild($2);
+																			ifn->addLChild($4);
+																			ifn->addLChild($5);
+																			ifn->addLChild($8);
+																			$$ = ifn;
+																		}
+	| IF test TWODOTS suite elif_test_td_suite_kleene 					{
+																			cout << "if _ : _" << endl;
+																			Node *ifn = asTree->bIfNode();
+																			ifn->addFChild($2);
+																			ifn->addLChild($4);
+																			ifn->addLChild($5);
+																			$$ = ifn;
+																		};
 	
 elif_test_td_suite_kleene: /* ('elif' test ':' suite)* */
 	epsilon
@@ -582,32 +548,24 @@ elif_test_td_suite_kleene: /* ('elif' test ':' suite)* */
 														};
 
 while_stmt: /* 'while' test ':' suite ['else' ':' suite] */
-	WHILE test TWODOTS suite						{
-														cout << "while _ : _" << endl;
-														Node *whilen = asTree->bWhileNode();
-														whilen->addFChild($2);
-														whilen->addLChild($4);
-														$$ = whilen;
-													};
-	| WHILE test TWODOTS suite ELSE TWODOTS suite 	{
+	WHILE test TWODOTS suite ELSE TWODOTS suite 	{
 														cout << "while _ : _ else : _" << endl;
 														Node *whilen = asTree->bWhileNode();
 														whilen->addFChild($2);
 														whilen->addLChild($4);
 														whilen->addLChild($7);
 														$$ = whilen;
+													}
+	| WHILE test TWODOTS suite						{
+														cout << "while _ : _" << endl;
+														Node *whilen = asTree->bWhileNode();
+														whilen->addFChild($2);
+														whilen->addLChild($4);
+														$$ = whilen;
 													};
 
 for_stmt: /* 'for' exprlist 'in' testlist ':' suite ['else' ':' suite] */
-	FOR exprlist IN testlist TWODOTS suite						{
-																	cout << "for _ in _ : _" << endl;
-																	Node *forn = asTree->bForNode();
-																	forn->addFChild($2);
-																	forn->addLChild($4);
-																	forn->addLChild($6);
-																	$$ = forn;
-																}
-	| FOR exprlist IN testlist TWODOTS suite ELSE TWODOTS suite {
+	FOR exprlist IN testlist TWODOTS suite ELSE TWODOTS suite 	{
 																	cout << "for _ in _ : _ else : _" << endl;
 																	Node *forn = asTree->bForNode();
 																	forn->addFChild($2);
@@ -615,6 +573,14 @@ for_stmt: /* 'for' exprlist 'in' testlist ':' suite ['else' ':' suite] */
 																	forn->addLChild($6);
 																	forn->addLChild($6);
 																	forn->addLChild($9);
+																	$$ = forn;
+																}
+	| FOR exprlist IN testlist TWODOTS suite					{
+																	cout << "for _ in _ : _" << endl;
+																	Node *forn = asTree->bForNode();
+																	forn->addFChild($2);
+																	forn->addLChild($4);
+																	forn->addLChild($6);
 																	$$ = forn;
 																};
 
@@ -678,10 +644,6 @@ simple_stmt: /* small_stmt (';' small_stmt)* [';'] NEWLINE */
 													};
 
 small_stmt_kleene: /* (';' small_tmt)* */
-		epsilon 								{
-													Node* sstmtln = asTree->bSStmtListNode();
-													// $$ = sstmtln;
-												}
 		small_stmt_kleene DOTCOMMA small_stmt 	{
 													if ($1 != NULL)
 													{
@@ -689,6 +651,10 @@ small_stmt_kleene: /* (';' small_tmt)* */
 														sstmtln->addLChild($3);
 														$$ = sstmtln;
 													}
+												}
+		| epsilon 								{
+													Node* sstmtln = asTree->bSStmtListNode();
+													// $$ = sstmtln;
 												};
 				
 small_stmt: /* (expr_stmt | print_stmt | flow_stmt) */
@@ -732,18 +698,18 @@ expr_stmt_at: /* (augassign testlist | ('=' testlist)*) */
 
 /* FIXTHIS: No sé realmente cómo voy a manejar algo como x, y, z = 1, 2, 3 */
 assign_testlist_kleene: /* ('=' testlist)* */
-		epsilon									{
+		assign_testlist_kleene ASSIGN testlist	{
+													cout<<"="<<endl;
 													Node* assignn = asTree->bAssignNode();
+													assignn->addFChild($1);
+													// assignn->addLChild($2);
+													assignn->addLChild($3);
 													$$ = assignn;
 												}
-		| assign_testlist_kleene ASSIGN testlist	{
-														cout<<"="<<endl;
-														Node* assignn = asTree->bAssignNode();
-														assignn->addFChild($1);
-														// assignn->addLChild($2);
-														assignn->addLChild($3);
-														$$ = assignn;
-													};
+		| epsilon								{
+													Node* assignn = asTree->bAssignNode();
+													$$ = assignn;
+												};
 
 augassign: /* ('+=' | '-=' | '*=' | '/=') */
 	MASIGUAL		{
@@ -784,7 +750,8 @@ print_args: /* [test (',' test)*] */
 									$$ = argsn;
 								}
 	| test comma_test_kleene 	{
-									Node *exprn = asTree->bExprNode($1);
+									Node *exprn = asTree->bExprNode();
+									exprn->addFChild($1);
 									if ($2 != NULL)
 									{
 										Node *argsn = $2;
@@ -841,17 +808,17 @@ continue_stmt: /* 'continue' */
 	CONTINUE 	{Node* contn = asTree->bContinueNode(); $$ = contn;};
 
 return_stmt: /* 'return' [testlist] */
-	RETURN				{
-							cout << "return" << endl;
-							Node* returnn = asTree->bReturnNode(); 
-							$$ = returnn;
-						}
-	| RETURN testlist	{
-							cout << "return __" << endl;
-							Node* returnn = asTree->bReturnNode();
-							returnn->addFChild($2);
-							$$ = returnn;
-						};
+	RETURN testlist	{
+						cout << "return __" << endl;
+						Node* returnn = asTree->bReturnNode();
+						returnn->addFChild($2);
+						$$ = returnn;
+					}
+	| RETURN		{
+						cout << "return" << endl;
+						Node* returnn = asTree->bReturnNode(); 
+						$$ = returnn;
+					};
 
 /* Funciones */
 funcdef: /*'def' NAME parameters ':' suite*/
@@ -876,7 +843,7 @@ parameters: /*'(' [varargslist] ')'*/
 											$$ = $2;
 										}
 									};
-		
+
 varargslist: /* (NAME (',' NAME)*) */
 	NAME args_kleene	{
 							Node *identn = asTree->bIdentNode($1);
@@ -887,7 +854,6 @@ varargslist: /* (NAME (',' NAME)*) */
 								$$ = argsn;
 							}
 						};
-
 args_kleene: /* (',' NAME)* */
 	args_kleene COMMA NAME 	{
 								Node *identn = asTree->bIdentNode($3);
