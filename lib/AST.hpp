@@ -247,7 +247,7 @@ protected:
 
  	// LeafNode's
  	virtual IntNode* bIntNode(int val)=0;
- 	virtual StrNode* bStrNode(string val)=0;
+ 	virtual StrNode* bStrNode(string* val)=0;
  	virtual FloatNode* bFloatNode(float val)=0;
  	virtual IdentNode* bIdentNode(string* name)=0;
  	virtual BoolNode* bBoolNode(bool val)=0;

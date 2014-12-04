@@ -5,7 +5,7 @@
  * @author: Alan Mauricio García García
  */
 
-#include "SymbolTable.hpp"
+// #include "SymbolTable.hpp"
 #include <list>
 #include "AST.hpp"
 #include "Nodos.hpp"
@@ -18,7 +18,7 @@ using namespace std;
 class Visitor{
 public:
 	virtual ~Visitor(){};
-	SymbolTable* symbolTable;
+	// SymbolTable* symbolTable;
 	//Node
 	virtual void visit(Node*)=0;
 
@@ -79,15 +79,15 @@ protected:
 
  class IdentNode : public LeafNode{
  public:
- 	string* value;
+ 	string value;
 	IdentNode():LeafNode(){};
 	~IdentNode(){};
- 	IdentNode(string val) : LeafNode(){
+ 	IdentNode(string* val) : LeafNode(){
  		value = *val;
  	}
 
  	string getValue(){
- 		return *value;
+ 		return value;
  	}
 
  	void accept(Visitor &v)	{
@@ -135,14 +135,14 @@ protected:
 
  class StrNode : public LeafNode{
  public:
- 	string* value;
+ 	string value;
 	~StrNode(){};
- 	StrNode(string str){
+ 	StrNode(string* str){
  		value = *str;
  	}
 
  	string getValue(){
- 		return *value;
+ 		return value;
  	}
 
  	void accept(Visitor &v){
@@ -305,48 +305,47 @@ public:
 	}
 	
 	void insertInTable(IdentNode* left, Node* right,Visitor* v){
-		string* var;
-		var=new string(left->getValue());
-		Simbolo* s;
+		// string* var;
+		// var=new string(left->getValue());
+		// Simbolo* s;
 		
-		IntNode* entero = dynamic_cast<IntNode*> (right);
-		FloatNode* flotante = dynamic_cast<FloatNode*> (right);
-		StrNode* cadena = dynamic_cast<StrNode*> (right);
-		BoolNode* booleano = dynamic_cast<BoolNode*> (right);
-		if(entero!=0){
-			cout<<"Es un entero"<<endl;
-			int* val;
-			*val=entero->getValue();
-			s = new Simbolo(var,val);
-			v->symbolTable->insertName(s);
+		// IntNode* entero = dynamic_cast<IntNode*> (right);
+		// FloatNode* flotante = dynamic_cast<FloatNode*> (right);
+		// StrNode* cadena = dynamic_cast<StrNode*> (right);
+		// BoolNode* booleano = dynamic_cast<BoolNode*> (right);
+		// if(entero!=0){
+		// 	cout<<"Es un entero"<<endl;
+		// 	int* val;
+		// 	*val=entero->getValue();
+		// 	s = new Simbolo(var,val);
+		// 	v->symbolTable->insertName(s);
 			
-		}else if(flotante!=0){
-			cout<<"Es un flotante"<<endl;
-			float* val;
-			*val=flotante->getValue();
-			s = new Simbolo(var,val);
-			v->symbolTable->insertName(s);
-		}else if(cadena!=0){
-			cout<<"Es una cadena"<<endl;
-			string* val;
-			*val=cadena->getValue();
-			s = new Simbolo(var,val);
-			v->symbolTable->insertName(s);
-		}else if(booleano!=0){
-			cout<<"Es un booleano"<<endl;
-			int* val;
-			if(booleano->getValue())
-				*val=1;
-			else
-				*val=0;
-			s = new Simbolo(var,val);
-			v->symbolTable->insertName(s);
-		}else{
-			string* val= new string("OPERACION AUN NO EVALUADA, HASTA T. de E.");
-			s= new Simbolo(var,val);
-			v->symbolTable->insertName(s);
-	}
-		
+		// }else if(flotante!=0){
+		// 	cout<<"Es un flotante"<<endl;
+		// 	float* val;
+		// 	*val=flotante->getValue();
+		// 	s = new Simbolo(var,val);
+		// 	v->symbolTable->insertName(s);
+		// }else if(cadena!=0){
+		// 	cout<<"Es una cadena"<<endl;
+		// 	string* val;
+		// 	*val=cadena->getValue();
+		// 	s = new Simbolo(var,val);
+		// 	v->symbolTable->insertName(s);
+		// }else if(booleano!=0){
+		// 	cout<<"Es un booleano"<<endl;
+		// 	int* val;
+		// 	if(booleano->getValue())
+		// 		*val=1;
+		// 	else
+		// 		*val=0;
+		// 	s = new Simbolo(var,val);
+		// 	v->symbolTable->insertName(s);
+		// }else{
+		// 	string* val= new string("OPERACION AUN NO EVALUADA, HASTA T. de E.");
+		// 	s= new Simbolo(var,val);
+		// 	v->symbolTable->insertName(s);
+		// }
 	}
  };
 
@@ -577,7 +576,7 @@ public:
  		return new IntNode(val);
  	}
 
- 	StrNode* bStrNode(string val){
+ 	StrNode* bStrNode(string* val){
  		cout << "bStrNode" << endl;
  		return new StrNode(val);
  	}
@@ -756,12 +755,12 @@ class VisitorNode : public Visitor{
 public:
 	~VisitorNode(){};
 	VisitorNode():Visitor(){
-		 symbolTable= new SymbolTable;
+		 // symbolTable= new SymbolTable;
 	}
 	
-	 VisitorNode(SymbolTable *ts):Visitor(){
-		 symbolTable=ts;
-	 }
+	 // VisitorNode(SymbolTable *ts):Visitor(){
+		//  symbolTable=ts;
+	 // }
  
  	void visit(Node* node){
 	 	cout << "(Node ";
@@ -801,19 +800,18 @@ public:
 		cout << "(AssignNode ";
 		//cout << "visite un assignode" << endl;
 		IdentNode* left = dynamic_cast<IdentNode*> (node->getLeftChild());
-		if(left != 0){
+		if (left != 0) {
 			Node* right = node->getLeftChild();
 			Visitor *v=this;
-			node->insertInTable(left,right,v);
-			
-		}else{
+			// node->insertInTable(left,right,v);
+		} else {
 			cout<<endl<<"ERROR: Assignment operation is only for variables"<<endl;
 			throw "Assignment operation is only for variables";
 		}
 			
 		cout << ")";
 		cout<<endl<<"Insertando nueva variable en la tabla"<<endl;
-		symbolTable->printTable();
+		// symbolTable->printTable();
  	}
 
  	void visit(StmtListNode* node){
@@ -1029,18 +1027,18 @@ public:
  	 */
 
  	void visit(IdentNode* node){
-		cout << "(IdentNode ";//node->getValue();
+		cout << "(IdentNode " << node->getValue();
 		string* name = new string();
-		*name= node->getValue();
-		cout<<name<<endl;
-		Simbolo *s = symbolTable->lookUp(*name);
-		if(s==0){
-			cout<<"Insertando nueva variable en la tabla"<<endl;
-		 	string *cad = new string();
-		 	s=new Simbolo(name,cad);
-		 	symbolTable->insertName(s);
-		 	symbolTable->printTable();
-		 }
+		*name = node->getValue();
+		// cout<<name<<endl;
+		// Simbolo *s = symbolTable->lookUp(*name);
+		// if(s==0){
+		// 	cout<<"Insertando nueva variable en la tabla"<<endl;
+		//  	string *cad = new string();
+		//  	s=new Simbolo(name,cad);
+		//  	symbolTable->insertName(s);
+		//  	symbolTable->printTable();
+		//  }
 		cout << ")";
  	}
 
