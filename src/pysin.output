@@ -225,10 +225,10 @@ Grammar
   138           | print_stmt
   139           | flow_stmt
 
-  140 expr_stmt: testlist expr_stmt_at
+  140 expr_stmt: test expr_stmt_at
 
-  141 expr_stmt_at: augassign testlist
-  142             | ASSIGN testlist
+  141 expr_stmt_at: augassign test
+  142             | ASSIGN test
 
   143 augassign: MASIGUAL
   144          | MENOSIGUAL
@@ -373,7 +373,7 @@ epsilon (89)
     121 136 148 150 152 167
 test (90)
     on left: 6 7, on right: 7 70 71 72 75 76 82 83 84 85 86 87 88 91
-    110 113 114 119 120 122 123 124 149 151 154
+    110 113 114 119 120 122 123 124 140 141 142 149 151 154
 or_test (91)
     on left: 8, on right: 6 7
 or_andtest (92)
@@ -494,7 +494,7 @@ comma_test_kleene (148)
 comma_one (149)
     on left: 152 153, on right: 114 154
 testlist (150)
-    on left: 154, on right: 125 126 140 141 142 160
+    on left: 154, on right: 125 126 160
 flow_stmt (151)
     on left: 155 156 157, on right: 139
 break_stmt (152)
@@ -588,12 +588,11 @@ state 2
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
-    funcdef          go to state 58
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
+    funcdef          go to state 57
 
 
 state 3
@@ -633,7 +632,7 @@ state 7
 
     $default  reduce using rule 111 (string_plus)
 
-    string_plus  go to state 59
+    string_plus  go to state 58
 
 
 state 8
@@ -668,7 +667,7 @@ state 10
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    factor       go to state 60
+    factor       go to state 59
     power        go to state 40
     atom         go to state 41
     boolean      go to state 42
@@ -693,7 +692,7 @@ state 11
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    factor       go to state 61
+    factor       go to state 60
     power        go to state 40
     atom         go to state 41
     boolean      go to state 42
@@ -729,7 +728,7 @@ state 13
 
     $default  reduce using rule 161 (return_stmt)
 
-    test             go to state 28
+    test             go to state 61
     or_test          go to state 29
     and_test         go to state 30
     not_test         go to state 31
@@ -1112,12 +1111,16 @@ state 27
 
 state 28
 
-  154 testlist: test . comma_test_kleene comma_one
+  140 expr_stmt: test . expr_stmt_at
 
-    $default  reduce using rule 5 (epsilon)
+    ASSIGN      shift, and go to state 81
+    MASIGUAL    shift, and go to state 82
+    MENOSIGUAL  shift, and go to state 83
+    PORIGUAL    shift, and go to state 84
+    ENTREIGUAL  shift, and go to state 85
 
-    epsilon            go to state 81
-    comma_test_kleene  go to state 82
+    expr_stmt_at  go to state 86
+    augassign     go to state 87
 
 
 state 29
@@ -1125,7 +1128,7 @@ state 29
     6 test: or_test .
     7     | or_test . IF or_test ELSE test
 
-    IF  shift, and go to state 83
+    IF  shift, and go to state 88
 
     $default  reduce using rule 6 (test)
 
@@ -1136,8 +1139,8 @@ state 30
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon     go to state 84
-    or_andtest  go to state 85
+    epsilon     go to state 89
+    or_andtest  go to state 90
 
 
 state 31
@@ -1146,8 +1149,8 @@ state 31
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon      go to state 86
-    and_nottest  go to state 87
+    epsilon      go to state 91
+    and_nottest  go to state 92
 
 
 state 32
@@ -1163,8 +1166,8 @@ state 33
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon              go to state 88
-    comp_op_expr_kleene  go to state 89
+    epsilon              go to state 93
+    comp_op_expr_kleene  go to state 94
 
 
 state 34
@@ -1173,8 +1176,8 @@ state 34
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon       go to state 90
-    pipexor_expr  go to state 91
+    epsilon       go to state 95
+    pipexor_expr  go to state 96
 
 
 state 35
@@ -1183,8 +1186,8 @@ state 35
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon      go to state 92
-    andxor_expr  go to state 93
+    epsilon      go to state 97
+    andxor_expr  go to state 98
 
 
 state 36
@@ -1193,8 +1196,8 @@ state 36
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon            go to state 94
-    andpandshift_expr  go to state 95
+    epsilon            go to state 99
+    andpandshift_expr  go to state 100
 
 
 state 37
@@ -1203,8 +1206,8 @@ state 37
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon               go to state 96
-    leftright_shift_expr  go to state 97
+    epsilon               go to state 101
+    leftright_shift_expr  go to state 102
 
 
 state 38
@@ -1213,8 +1216,8 @@ state 38
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon    go to state 98
-    sign_term  go to state 99
+    epsilon    go to state 103
+    sign_term  go to state 104
 
 
 state 39
@@ -1223,8 +1226,8 @@ state 39
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon           go to state 100
-    factor_operation  go to state 101
+    epsilon           go to state 105
+    factor_operation  go to state 106
 
 
 state 40
@@ -1241,8 +1244,8 @@ state 41
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon         go to state 102
-    trailer_kleene  go to state 103
+    epsilon         go to state 107
+    trailer_kleene  go to state 108
 
 
 state 42
@@ -1308,8 +1311,8 @@ state 50
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon            go to state 104
-    small_stmt_kleene  go to state 105
+    epsilon            go to state 109
+    small_stmt_kleene  go to state 110
 
 
 state 51
@@ -1328,72 +1331,68 @@ state 52
 
 state 53
 
-  140 expr_stmt: testlist . expr_stmt_at
-
-    ASSIGN      shift, and go to state 106
-    MASIGUAL    shift, and go to state 107
-    MENOSIGUAL  shift, and go to state 108
-    PORIGUAL    shift, and go to state 109
-    ENTREIGUAL  shift, and go to state 110
-
-    expr_stmt_at  go to state 111
-    augassign     go to state 112
-
-
-state 54
-
   139 small_stmt: flow_stmt .
 
     $default  reduce using rule 139 (small_stmt)
 
 
-state 55
+state 54
 
   155 flow_stmt: break_stmt .
 
     $default  reduce using rule 155 (flow_stmt)
 
 
-state 56
+state 55
 
   156 flow_stmt: continue_stmt .
 
     $default  reduce using rule 156 (flow_stmt)
 
 
-state 57
+state 56
 
   157 flow_stmt: return_stmt .
 
     $default  reduce using rule 157 (flow_stmt)
 
 
-state 58
+state 57
 
   118 compound_stmt: funcdef .
 
     $default  reduce using rule 118 (compound_stmt)
 
 
-state 59
+state 58
 
   112 string_plus: STRING string_plus .
 
     $default  reduce using rule 112 (string_plus)
 
 
-state 60
+state 59
 
    53 factor: MAS factor .
 
     $default  reduce using rule 53 (factor)
 
 
-state 61
+state 60
 
    54 factor: MENOS factor .
 
     $default  reduce using rule 54 (factor)
+
+
+state 61
+
+  154 testlist: test . comma_test_kleene comma_one
+
+    $default  reduce using rule 5 (epsilon)
+
+    epsilon            go to state 111
+    comma_test_kleene  go to state 112
 
 
 state 62
@@ -1467,7 +1466,7 @@ state 70
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon            go to state 81
+    epsilon            go to state 111
     comma_test_kleene  go to state 120
 
 
@@ -1498,7 +1497,7 @@ state 74
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon            go to state 81
+    epsilon            go to state 111
     comma_test_kleene  go to state 121
 
 
@@ -1522,7 +1521,7 @@ state 77
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon            go to state 81
+    epsilon            go to state 111
     comma_test_kleene  go to state 123
 
 
@@ -1539,7 +1538,7 @@ state 79
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon            go to state 81
+    epsilon            go to state 111
     comma_test_kleene  go to state 125
 
 
@@ -1552,25 +1551,114 @@ state 80
 
 state 81
 
-  150 comma_test_kleene: epsilon .
+  142 expr_stmt_at: ASSIGN . test
 
-    $default  reduce using rule 150 (comma_test_kleene)
+    FLOATNUMBER  shift, and go to state 5
+    INTEGER      shift, and go to state 6
+    STRING       shift, and go to state 7
+    NAME         shift, and go to state 8
+    MAS          shift, and go to state 10
+    MENOS        shift, and go to state 11
+    FALSE        shift, and go to state 12
+    NONE         shift, and go to state 14
+    TRUE         shift, and go to state 17
+    NOT          shift, and go to state 20
+    TILDE        shift, and go to state 24
+    OPENPAR      shift, and go to state 25
+    OPENCOR      shift, and go to state 26
+    APOSTROFE    shift, and go to state 27
+
+    test             go to state 127
+    or_test          go to state 29
+    and_test         go to state 30
+    not_test         go to state 31
+    comparison       go to state 32
+    expr             go to state 33
+    xor_expr         go to state 34
+    and_expr         go to state 35
+    shift_expr       go to state 36
+    arithmetic_expr  go to state 37
+    term             go to state 38
+    factor           go to state 39
+    power            go to state 40
+    atom             go to state 41
+    boolean          go to state 42
+    string_plus      go to state 43
 
 
 state 82
 
-  151 comma_test_kleene: comma_test_kleene . COMMA test
-  154 testlist: test comma_test_kleene . comma_one
+  143 augassign: MASIGUAL .
 
-    COMMA  shift, and go to state 127
-
-    $default  reduce using rule 5 (epsilon)
-
-    epsilon    go to state 128
-    comma_one  go to state 129
+    $default  reduce using rule 143 (augassign)
 
 
 state 83
+
+  144 augassign: MENOSIGUAL .
+
+    $default  reduce using rule 144 (augassign)
+
+
+state 84
+
+  145 augassign: PORIGUAL .
+
+    $default  reduce using rule 145 (augassign)
+
+
+state 85
+
+  146 augassign: ENTREIGUAL .
+
+    $default  reduce using rule 146 (augassign)
+
+
+state 86
+
+  140 expr_stmt: test expr_stmt_at .
+
+    $default  reduce using rule 140 (expr_stmt)
+
+
+state 87
+
+  141 expr_stmt_at: augassign . test
+
+    FLOATNUMBER  shift, and go to state 5
+    INTEGER      shift, and go to state 6
+    STRING       shift, and go to state 7
+    NAME         shift, and go to state 8
+    MAS          shift, and go to state 10
+    MENOS        shift, and go to state 11
+    FALSE        shift, and go to state 12
+    NONE         shift, and go to state 14
+    TRUE         shift, and go to state 17
+    NOT          shift, and go to state 20
+    TILDE        shift, and go to state 24
+    OPENPAR      shift, and go to state 25
+    OPENCOR      shift, and go to state 26
+    APOSTROFE    shift, and go to state 27
+
+    test             go to state 128
+    or_test          go to state 29
+    and_test         go to state 30
+    not_test         go to state 31
+    comparison       go to state 32
+    expr             go to state 33
+    xor_expr         go to state 34
+    and_expr         go to state 35
+    shift_expr       go to state 36
+    arithmetic_expr  go to state 37
+    term             go to state 38
+    factor           go to state 39
+    power            go to state 40
+    atom             go to state 41
+    boolean          go to state 42
+    string_plus      go to state 43
+
+
+state 88
 
     7 test: or_test IF . or_test ELSE test
 
@@ -1589,7 +1677,7 @@ state 83
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    or_test          go to state 130
+    or_test          go to state 129
     and_test         go to state 30
     not_test         go to state 31
     comparison       go to state 32
@@ -1606,165 +1694,165 @@ state 83
     string_plus      go to state 43
 
 
-state 84
+state 89
 
     9 or_andtest: epsilon .
 
     $default  reduce using rule 9 (or_andtest)
 
 
-state 85
+state 90
 
     8 or_test: and_test or_andtest .
    10 or_andtest: or_andtest . OR and_test
 
-    OR  shift, and go to state 131
+    OR  shift, and go to state 130
 
     $default  reduce using rule 8 (or_test)
 
 
-state 86
+state 91
 
    12 and_nottest: epsilon .
 
     $default  reduce using rule 12 (and_nottest)
 
 
-state 87
+state 92
 
    11 and_test: not_test and_nottest .
    13 and_nottest: and_nottest . AND not_test
 
-    AND  shift, and go to state 132
+    AND  shift, and go to state 131
 
     $default  reduce using rule 11 (and_test)
 
 
-state 88
+state 93
 
    18 comp_op_expr_kleene: epsilon .
 
     $default  reduce using rule 18 (comp_op_expr_kleene)
 
 
-state 89
+state 94
 
    16 comparison: expr comp_op_expr_kleene .
    17 comp_op_expr_kleene: comp_op_expr_kleene . comp_op expr
 
-    IS              shift, and go to state 133
-    NOT             shift, and go to state 134
-    IN              shift, and go to state 135
-    LESSTHAN        shift, and go to state 136
-    MORETHAN        shift, and go to state 137
-    LESSEQUAL       shift, and go to state 138
-    MOREEQUAL       shift, and go to state 139
-    EQUALS          shift, and go to state 140
-    DIFFERENT       shift, and go to state 141
-    PICOPARENTESIS  shift, and go to state 142
+    IS              shift, and go to state 132
+    NOT             shift, and go to state 133
+    IN              shift, and go to state 134
+    LESSTHAN        shift, and go to state 135
+    MORETHAN        shift, and go to state 136
+    LESSEQUAL       shift, and go to state 137
+    MOREEQUAL       shift, and go to state 138
+    EQUALS          shift, and go to state 139
+    DIFFERENT       shift, and go to state 140
+    PICOPARENTESIS  shift, and go to state 141
 
     $default  reduce using rule 16 (comparison)
 
-    comp_op  go to state 143
+    comp_op  go to state 142
 
 
-state 90
+state 95
 
    31 pipexor_expr: epsilon .
 
     $default  reduce using rule 31 (pipexor_expr)
 
 
-state 91
+state 96
 
    30 expr: xor_expr pipexor_expr .
    32 pipexor_expr: pipexor_expr . PIPE xor_expr
 
-    PIPE  shift, and go to state 144
+    PIPE  shift, and go to state 143
 
     $default  reduce using rule 30 (expr)
 
 
-state 92
+state 97
 
    34 andxor_expr: epsilon .
 
     $default  reduce using rule 34 (andxor_expr)
 
 
-state 93
+state 98
 
    33 xor_expr: and_expr andxor_expr .
    35 andxor_expr: andxor_expr . EXP and_expr
 
-    EXP  shift, and go to state 145
+    EXP  shift, and go to state 144
 
     $default  reduce using rule 33 (xor_expr)
 
 
-state 94
+state 99
 
    37 andpandshift_expr: epsilon .
 
     $default  reduce using rule 37 (andpandshift_expr)
 
 
-state 95
+state 100
 
    36 and_expr: shift_expr andpandshift_expr .
    38 andpandshift_expr: andpandshift_expr . ANDPAND shift_expr
 
-    ANDPAND  shift, and go to state 146
+    ANDPAND  shift, and go to state 145
 
     $default  reduce using rule 36 (and_expr)
 
 
-state 96
+state 101
 
    40 leftright_shift_expr: epsilon .
 
     $default  reduce using rule 40 (leftright_shift_expr)
 
 
-state 97
+state 102
 
    39 shift_expr: arithmetic_expr leftright_shift_expr .
    41 leftright_shift_expr: leftright_shift_expr . BINRIGHT arithmetic_expr
    42                     | leftright_shift_expr . BINLEFT arithmetic_expr
 
-    BINLEFT   shift, and go to state 147
-    BINRIGHT  shift, and go to state 148
+    BINLEFT   shift, and go to state 146
+    BINRIGHT  shift, and go to state 147
 
     $default  reduce using rule 39 (shift_expr)
 
 
-state 98
+state 103
 
    44 sign_term: epsilon .
 
     $default  reduce using rule 44 (sign_term)
 
 
-state 99
+state 104
 
    43 arithmetic_expr: term sign_term .
    45 sign_term: sign_term . MAS term
    46          | sign_term . MENOS term
 
-    MAS    shift, and go to state 149
-    MENOS  shift, and go to state 150
+    MAS    shift, and go to state 148
+    MENOS  shift, and go to state 149
 
     $default  reduce using rule 43 (arithmetic_expr)
 
 
-state 100
+state 105
 
    48 factor_operation: epsilon .
 
     $default  reduce using rule 48 (factor_operation)
 
 
-state 101
+state 106
 
    47 term: factor factor_operation .
    49 factor_operation: factor_operation . POR factor
@@ -1772,163 +1860,72 @@ state 101
    51                 | factor_operation . MOD factor
    52                 | factor_operation . DIV factor
 
-    POR    shift, and go to state 151
-    ENTRE  shift, and go to state 152
-    MOD    shift, and go to state 153
-    DIV    shift, and go to state 154
+    POR    shift, and go to state 150
+    ENTRE  shift, and go to state 151
+    MOD    shift, and go to state 152
+    DIV    shift, and go to state 153
 
     $default  reduce using rule 47 (term)
 
 
-state 102
+state 107
 
    59 trailer_kleene: epsilon .
 
     $default  reduce using rule 59 (trailer_kleene)
 
 
-state 103
+state 108
 
    57 power: atom trailer_kleene .
    58      | atom trailer_kleene . POT factor
    60 trailer_kleene: trailer_kleene . trailer
 
-    POT      shift, and go to state 155
-    DOT      shift, and go to state 156
-    OPENPAR  shift, and go to state 157
-    OPENCOR  shift, and go to state 158
+    POT      shift, and go to state 154
+    DOT      shift, and go to state 155
+    OPENPAR  shift, and go to state 156
+    OPENCOR  shift, and go to state 157
 
     $default  reduce using rule 57 (power)
 
-    trailer  go to state 159
+    trailer  go to state 158
 
 
-state 104
+state 109
 
   136 small_stmt_kleene: epsilon .
 
     $default  reduce using rule 136 (small_stmt_kleene)
 
 
-state 105
+state 110
 
   133 simple_stmt: small_stmt small_stmt_kleene . DOTCOMMA NEWLINE
   134            | small_stmt small_stmt_kleene . NEWLINE
   135 small_stmt_kleene: small_stmt_kleene . DOTCOMMA small_stmt
 
-    NEWLINE   shift, and go to state 160
-    DOTCOMMA  shift, and go to state 161
-
-
-state 106
-
-  142 expr_stmt_at: ASSIGN . testlist
-
-    FLOATNUMBER  shift, and go to state 5
-    INTEGER      shift, and go to state 6
-    STRING       shift, and go to state 7
-    NAME         shift, and go to state 8
-    MAS          shift, and go to state 10
-    MENOS        shift, and go to state 11
-    FALSE        shift, and go to state 12
-    NONE         shift, and go to state 14
-    TRUE         shift, and go to state 17
-    NOT          shift, and go to state 20
-    TILDE        shift, and go to state 24
-    OPENPAR      shift, and go to state 25
-    OPENCOR      shift, and go to state 26
-    APOSTROFE    shift, and go to state 27
-
-    test             go to state 28
-    or_test          go to state 29
-    and_test         go to state 30
-    not_test         go to state 31
-    comparison       go to state 32
-    expr             go to state 33
-    xor_expr         go to state 34
-    and_expr         go to state 35
-    shift_expr       go to state 36
-    arithmetic_expr  go to state 37
-    term             go to state 38
-    factor           go to state 39
-    power            go to state 40
-    atom             go to state 41
-    boolean          go to state 42
-    string_plus      go to state 43
-    testlist         go to state 162
-
-
-state 107
-
-  143 augassign: MASIGUAL .
-
-    $default  reduce using rule 143 (augassign)
-
-
-state 108
-
-  144 augassign: MENOSIGUAL .
-
-    $default  reduce using rule 144 (augassign)
-
-
-state 109
-
-  145 augassign: PORIGUAL .
-
-    $default  reduce using rule 145 (augassign)
-
-
-state 110
-
-  146 augassign: ENTREIGUAL .
-
-    $default  reduce using rule 146 (augassign)
+    NEWLINE   shift, and go to state 159
+    DOTCOMMA  shift, and go to state 160
 
 
 state 111
 
-  140 expr_stmt: testlist expr_stmt_at .
+  150 comma_test_kleene: epsilon .
 
-    $default  reduce using rule 140 (expr_stmt)
+    $default  reduce using rule 150 (comma_test_kleene)
 
 
 state 112
 
-  141 expr_stmt_at: augassign . testlist
+  151 comma_test_kleene: comma_test_kleene . COMMA test
+  154 testlist: test comma_test_kleene . comma_one
 
-    FLOATNUMBER  shift, and go to state 5
-    INTEGER      shift, and go to state 6
-    STRING       shift, and go to state 7
-    NAME         shift, and go to state 8
-    MAS          shift, and go to state 10
-    MENOS        shift, and go to state 11
-    FALSE        shift, and go to state 12
-    NONE         shift, and go to state 14
-    TRUE         shift, and go to state 17
-    NOT          shift, and go to state 20
-    TILDE        shift, and go to state 24
-    OPENPAR      shift, and go to state 25
-    OPENCOR      shift, and go to state 26
-    APOSTROFE    shift, and go to state 27
+    COMMA  shift, and go to state 161
 
-    test             go to state 28
-    or_test          go to state 29
-    and_test         go to state 30
-    not_test         go to state 31
-    comparison       go to state 32
-    expr             go to state 33
-    xor_expr         go to state 34
-    and_expr         go to state 35
-    shift_expr       go to state 36
-    arithmetic_expr  go to state 37
-    term             go to state 38
-    factor           go to state 39
-    power            go to state 40
-    atom             go to state 41
-    boolean          go to state 42
-    string_plus      go to state 43
-    testlist         go to state 163
+    $default  reduce using rule 5 (epsilon)
+
+    epsilon    go to state 162
+    comma_one  go to state 163
 
 
 state 113
@@ -1969,7 +1966,7 @@ state 115
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    test             go to state 28
+    test             go to state 61
     or_test          go to state 29
     and_test         go to state 30
     not_test         go to state 31
@@ -2052,11 +2049,10 @@ state 118
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
 
 
 state 119
@@ -2105,11 +2101,10 @@ state 119
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
 
 
 state 120
@@ -2127,11 +2122,11 @@ state 121
   114 testlist_comp: test comma_test_kleene . comma_one
   151 comma_test_kleene: comma_test_kleene . COMMA test
 
-    COMMA  shift, and go to state 127
+    COMMA  shift, and go to state 161
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon    go to state 128
+    epsilon    go to state 162
     comma_one  go to state 175
 
 
@@ -2178,66 +2173,26 @@ state 126
 
 state 127
 
-  151 comma_test_kleene: comma_test_kleene COMMA . test
-  153 comma_one: COMMA .
+  142 expr_stmt_at: ASSIGN test .
 
-    FLOATNUMBER  shift, and go to state 5
-    INTEGER      shift, and go to state 6
-    STRING       shift, and go to state 7
-    NAME         shift, and go to state 8
-    MAS          shift, and go to state 10
-    MENOS        shift, and go to state 11
-    FALSE        shift, and go to state 12
-    NONE         shift, and go to state 14
-    TRUE         shift, and go to state 17
-    NOT          shift, and go to state 20
-    TILDE        shift, and go to state 24
-    OPENPAR      shift, and go to state 25
-    OPENCOR      shift, and go to state 26
-    APOSTROFE    shift, and go to state 27
-
-    $default  reduce using rule 153 (comma_one)
-
-    test             go to state 176
-    or_test          go to state 29
-    and_test         go to state 30
-    not_test         go to state 31
-    comparison       go to state 32
-    expr             go to state 33
-    xor_expr         go to state 34
-    and_expr         go to state 35
-    shift_expr       go to state 36
-    arithmetic_expr  go to state 37
-    term             go to state 38
-    factor           go to state 39
-    power            go to state 40
-    atom             go to state 41
-    boolean          go to state 42
-    string_plus      go to state 43
+    $default  reduce using rule 142 (expr_stmt_at)
 
 
 state 128
 
-  152 comma_one: epsilon .
+  141 expr_stmt_at: augassign test .
 
-    $default  reduce using rule 152 (comma_one)
+    $default  reduce using rule 141 (expr_stmt_at)
 
 
 state 129
 
-  154 testlist: test comma_test_kleene comma_one .
+    7 test: or_test IF or_test . ELSE test
 
-    $default  reduce using rule 154 (testlist)
+    ELSE  shift, and go to state 176
 
 
 state 130
-
-    7 test: or_test IF or_test . ELSE test
-
-    ELSE  shift, and go to state 177
-
-
-state 131
 
    10 or_andtest: or_andtest OR . and_test
 
@@ -2256,7 +2211,7 @@ state 131
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    and_test         go to state 178
+    and_test         go to state 177
     not_test         go to state 31
     comparison       go to state 32
     expr             go to state 33
@@ -2272,7 +2227,7 @@ state 131
     string_plus      go to state 43
 
 
-state 132
+state 131
 
    13 and_nottest: and_nottest AND . not_test
 
@@ -2291,7 +2246,7 @@ state 132
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    not_test         go to state 179
+    not_test         go to state 178
     comparison       go to state 32
     expr             go to state 33
     xor_expr         go to state 34
@@ -2306,80 +2261,80 @@ state 132
     string_plus      go to state 43
 
 
-state 133
+state 132
 
    28 comp_op: IS .
    29        | IS . NOT
 
-    NOT  shift, and go to state 180
+    NOT  shift, and go to state 179
 
     $default  reduce using rule 28 (comp_op)
 
 
-state 134
+state 133
 
    27 comp_op: NOT . IN
 
-    IN  shift, and go to state 181
+    IN  shift, and go to state 180
 
 
-state 135
+state 134
 
    26 comp_op: IN .
 
     $default  reduce using rule 26 (comp_op)
 
 
-state 136
+state 135
 
    19 comp_op: LESSTHAN .
 
     $default  reduce using rule 19 (comp_op)
 
 
-state 137
+state 136
 
    20 comp_op: MORETHAN .
 
     $default  reduce using rule 20 (comp_op)
 
 
-state 138
+state 137
 
    23 comp_op: LESSEQUAL .
 
     $default  reduce using rule 23 (comp_op)
 
 
-state 139
+state 138
 
    22 comp_op: MOREEQUAL .
 
     $default  reduce using rule 22 (comp_op)
 
 
-state 140
+state 139
 
    21 comp_op: EQUALS .
 
     $default  reduce using rule 21 (comp_op)
 
 
-state 141
+state 140
 
    24 comp_op: DIFFERENT .
 
     $default  reduce using rule 24 (comp_op)
 
 
-state 142
+state 141
 
    25 comp_op: PICOPARENTESIS .
 
     $default  reduce using rule 25 (comp_op)
 
 
-state 143
+state 142
 
    17 comp_op_expr_kleene: comp_op_expr_kleene comp_op . expr
 
@@ -2397,7 +2352,7 @@ state 143
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    expr             go to state 182
+    expr             go to state 181
     xor_expr         go to state 34
     and_expr         go to state 35
     shift_expr       go to state 36
@@ -2410,7 +2365,7 @@ state 143
     string_plus      go to state 43
 
 
-state 144
+state 143
 
    32 pipexor_expr: pipexor_expr PIPE . xor_expr
 
@@ -2428,7 +2383,7 @@ state 144
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    xor_expr         go to state 183
+    xor_expr         go to state 182
     and_expr         go to state 35
     shift_expr       go to state 36
     arithmetic_expr  go to state 37
@@ -2440,7 +2395,7 @@ state 144
     string_plus      go to state 43
 
 
-state 145
+state 144
 
    35 andxor_expr: andxor_expr EXP . and_expr
 
@@ -2458,7 +2413,7 @@ state 145
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    and_expr         go to state 184
+    and_expr         go to state 183
     shift_expr       go to state 36
     arithmetic_expr  go to state 37
     term             go to state 38
@@ -2469,7 +2424,7 @@ state 145
     string_plus      go to state 43
 
 
-state 146
+state 145
 
    38 andpandshift_expr: andpandshift_expr ANDPAND . shift_expr
 
@@ -2487,8 +2442,35 @@ state 146
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    shift_expr       go to state 185
+    shift_expr       go to state 184
     arithmetic_expr  go to state 37
+    term             go to state 38
+    factor           go to state 39
+    power            go to state 40
+    atom             go to state 41
+    boolean          go to state 42
+    string_plus      go to state 43
+
+
+state 146
+
+   42 leftright_shift_expr: leftright_shift_expr BINLEFT . arithmetic_expr
+
+    FLOATNUMBER  shift, and go to state 5
+    INTEGER      shift, and go to state 6
+    STRING       shift, and go to state 7
+    NAME         shift, and go to state 8
+    MAS          shift, and go to state 10
+    MENOS        shift, and go to state 11
+    FALSE        shift, and go to state 12
+    NONE         shift, and go to state 14
+    TRUE         shift, and go to state 17
+    TILDE        shift, and go to state 24
+    OPENPAR      shift, and go to state 25
+    OPENCOR      shift, and go to state 26
+    APOSTROFE    shift, and go to state 27
+
+    arithmetic_expr  go to state 185
     term             go to state 38
     factor           go to state 39
     power            go to state 40
@@ -2499,7 +2481,7 @@ state 146
 
 state 147
 
-   42 leftright_shift_expr: leftright_shift_expr BINLEFT . arithmetic_expr
+   41 leftright_shift_expr: leftright_shift_expr BINRIGHT . arithmetic_expr
 
     FLOATNUMBER  shift, and go to state 5
     INTEGER      shift, and go to state 6
@@ -2526,7 +2508,7 @@ state 147
 
 state 148
 
-   41 leftright_shift_expr: leftright_shift_expr BINRIGHT . arithmetic_expr
+   45 sign_term: sign_term MAS . term
 
     FLOATNUMBER  shift, and go to state 5
     INTEGER      shift, and go to state 6
@@ -2542,18 +2524,17 @@ state 148
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    arithmetic_expr  go to state 187
-    term             go to state 38
-    factor           go to state 39
-    power            go to state 40
-    atom             go to state 41
-    boolean          go to state 42
-    string_plus      go to state 43
+    term         go to state 187
+    factor       go to state 39
+    power        go to state 40
+    atom         go to state 41
+    boolean      go to state 42
+    string_plus  go to state 43
 
 
 state 149
 
-   45 sign_term: sign_term MAS . term
+   46 sign_term: sign_term MENOS . term
 
     FLOATNUMBER  shift, and go to state 5
     INTEGER      shift, and go to state 6
@@ -2579,7 +2560,7 @@ state 149
 
 state 150
 
-   46 sign_term: sign_term MENOS . term
+   49 factor_operation: factor_operation POR . factor
 
     FLOATNUMBER  shift, and go to state 5
     INTEGER      shift, and go to state 6
@@ -2595,8 +2576,7 @@ state 150
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    term         go to state 189
-    factor       go to state 39
+    factor       go to state 189
     power        go to state 40
     atom         go to state 41
     boolean      go to state 42
@@ -2605,7 +2585,7 @@ state 150
 
 state 151
 
-   49 factor_operation: factor_operation POR . factor
+   50 factor_operation: factor_operation ENTRE . factor
 
     FLOATNUMBER  shift, and go to state 5
     INTEGER      shift, and go to state 6
@@ -2630,7 +2610,7 @@ state 151
 
 state 152
 
-   50 factor_operation: factor_operation ENTRE . factor
+   51 factor_operation: factor_operation MOD . factor
 
     FLOATNUMBER  shift, and go to state 5
     INTEGER      shift, and go to state 6
@@ -2655,7 +2635,7 @@ state 152
 
 state 153
 
-   51 factor_operation: factor_operation MOD . factor
+   52 factor_operation: factor_operation DIV . factor
 
     FLOATNUMBER  shift, and go to state 5
     INTEGER      shift, and go to state 6
@@ -2680,7 +2660,7 @@ state 153
 
 state 154
 
-   52 factor_operation: factor_operation DIV . factor
+   58 power: atom trailer_kleene POT . factor
 
     FLOATNUMBER  shift, and go to state 5
     INTEGER      shift, and go to state 6
@@ -2705,51 +2685,26 @@ state 154
 
 state 155
 
-   58 power: atom trailer_kleene POT . factor
+   64 trailer: DOT . NAME
 
-    FLOATNUMBER  shift, and go to state 5
-    INTEGER      shift, and go to state 6
-    STRING       shift, and go to state 7
-    NAME         shift, and go to state 8
-    MAS          shift, and go to state 10
-    MENOS        shift, and go to state 11
-    FALSE        shift, and go to state 12
-    NONE         shift, and go to state 14
-    TRUE         shift, and go to state 17
-    TILDE        shift, and go to state 24
-    OPENPAR      shift, and go to state 25
-    OPENCOR      shift, and go to state 26
-    APOSTROFE    shift, and go to state 27
-
-    factor       go to state 194
-    power        go to state 40
-    atom         go to state 41
-    boolean      go to state 42
-    string_plus  go to state 43
+    NAME  shift, and go to state 194
 
 
 state 156
 
-   64 trailer: DOT . NAME
-
-    NAME  shift, and go to state 195
-
-
-state 157
-
    61 trailer: OPENPAR . CLOSEPAR
    62        | OPENPAR . arglist CLOSEPAR
 
-    CLOSEPAR  shift, and go to state 196
+    CLOSEPAR  shift, and go to state 195
 
     $default  reduce using rule 5 (epsilon)
 
-    epsilon         go to state 197
-    arglist         go to state 198
-    argument_comma  go to state 199
+    epsilon         go to state 196
+    arglist         go to state 197
+    argument_comma  go to state 198
 
 
-state 158
+state 157
 
    63 trailer: OPENCOR . subscriptlist CLOSECOR
 
@@ -2763,14 +2718,14 @@ state 158
     NONE         shift, and go to state 14
     TRUE         shift, and go to state 17
     NOT          shift, and go to state 20
-    DOT          shift, and go to state 200
-    TWODOTS      shift, and go to state 201
+    DOT          shift, and go to state 199
+    TWODOTS      shift, and go to state 200
     TILDE        shift, and go to state 24
     OPENPAR      shift, and go to state 25
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    test             go to state 202
+    test             go to state 201
     or_test          go to state 29
     and_test         go to state 30
     not_test         go to state 31
@@ -2783,28 +2738,28 @@ state 158
     term             go to state 38
     factor           go to state 39
     power            go to state 40
-    subscriptlist    go to state 203
-    subscript        go to state 204
+    subscriptlist    go to state 202
+    subscript        go to state 203
     atom             go to state 41
     boolean          go to state 42
     string_plus      go to state 43
 
 
-state 159
+state 158
 
    60 trailer_kleene: trailer_kleene trailer .
 
     $default  reduce using rule 60 (trailer_kleene)
 
 
-state 160
+state 159
 
   134 simple_stmt: small_stmt small_stmt_kleene NEWLINE .
 
     $default  reduce using rule 134 (simple_stmt)
 
 
-state 161
+state 160
 
   133 simple_stmt: small_stmt small_stmt_kleene DOTCOMMA . NEWLINE
   135 small_stmt_kleene: small_stmt_kleene DOTCOMMA . small_stmt
@@ -2813,7 +2768,7 @@ state 161
     INTEGER      shift, and go to state 6
     STRING       shift, and go to state 7
     NAME         shift, and go to state 8
-    NEWLINE      shift, and go to state 205
+    NEWLINE      shift, and go to state 204
     MAS          shift, and go to state 10
     MENOS        shift, and go to state 11
     FALSE        shift, and go to state 12
@@ -2845,28 +2800,67 @@ state 161
     atom             go to state 41
     boolean          go to state 42
     string_plus      go to state 43
-    small_stmt       go to state 206
+    small_stmt       go to state 205
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
+
+
+state 161
+
+  151 comma_test_kleene: comma_test_kleene COMMA . test
+  153 comma_one: COMMA .
+
+    FLOATNUMBER  shift, and go to state 5
+    INTEGER      shift, and go to state 6
+    STRING       shift, and go to state 7
+    NAME         shift, and go to state 8
+    MAS          shift, and go to state 10
+    MENOS        shift, and go to state 11
+    FALSE        shift, and go to state 12
+    NONE         shift, and go to state 14
+    TRUE         shift, and go to state 17
+    NOT          shift, and go to state 20
+    TILDE        shift, and go to state 24
+    OPENPAR      shift, and go to state 25
+    OPENCOR      shift, and go to state 26
+    APOSTROFE    shift, and go to state 27
+
+    $default  reduce using rule 153 (comma_one)
+
+    test             go to state 206
+    or_test          go to state 29
+    and_test         go to state 30
+    not_test         go to state 31
+    comparison       go to state 32
+    expr             go to state 33
+    xor_expr         go to state 34
+    and_expr         go to state 35
+    shift_expr       go to state 36
+    arithmetic_expr  go to state 37
+    term             go to state 38
+    factor           go to state 39
+    power            go to state 40
+    atom             go to state 41
+    boolean          go to state 42
+    string_plus      go to state 43
 
 
 state 162
 
-  142 expr_stmt_at: ASSIGN testlist .
+  152 comma_one: epsilon .
 
-    $default  reduce using rule 142 (expr_stmt_at)
+    $default  reduce using rule 152 (comma_one)
 
 
 state 163
 
-  141 expr_stmt_at: augassign testlist .
+  154 testlist: test comma_test_kleene comma_one .
 
-    $default  reduce using rule 141 (expr_stmt_at)
+    $default  reduce using rule 154 (testlist)
 
 
 state 164
@@ -2980,11 +2974,10 @@ state 169
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
 
 
 state 170
@@ -3041,7 +3034,7 @@ state 174
     OPENCOR      shift, and go to state 26
     APOSTROFE    shift, and go to state 27
 
-    test             go to state 176
+    test             go to state 206
     or_test          go to state 29
     and_test         go to state 30
     not_test         go to state 31
@@ -3067,13 +3060,6 @@ state 175
 
 
 state 176
-
-  151 comma_test_kleene: comma_test_kleene COMMA test .
-
-    $default  reduce using rule 151 (comma_test_kleene)
-
-
-state 177
 
     7 test: or_test IF or_test ELSE . test
 
@@ -3110,154 +3096,154 @@ state 177
     string_plus      go to state 43
 
 
-state 178
+state 177
 
    10 or_andtest: or_andtest OR and_test .
 
     $default  reduce using rule 10 (or_andtest)
 
 
-state 179
+state 178
 
    13 and_nottest: and_nottest AND not_test .
 
     $default  reduce using rule 13 (and_nottest)
 
 
-state 180
+state 179
 
    29 comp_op: IS NOT .
 
     $default  reduce using rule 29 (comp_op)
 
 
-state 181
+state 180
 
    27 comp_op: NOT IN .
 
     $default  reduce using rule 27 (comp_op)
 
 
-state 182
+state 181
 
    17 comp_op_expr_kleene: comp_op_expr_kleene comp_op expr .
 
     $default  reduce using rule 17 (comp_op_expr_kleene)
 
 
-state 183
+state 182
 
    32 pipexor_expr: pipexor_expr PIPE xor_expr .
 
     $default  reduce using rule 32 (pipexor_expr)
 
 
-state 184
+state 183
 
    35 andxor_expr: andxor_expr EXP and_expr .
 
     $default  reduce using rule 35 (andxor_expr)
 
 
-state 185
+state 184
 
    38 andpandshift_expr: andpandshift_expr ANDPAND shift_expr .
 
     $default  reduce using rule 38 (andpandshift_expr)
 
 
-state 186
+state 185
 
    42 leftright_shift_expr: leftright_shift_expr BINLEFT arithmetic_expr .
 
     $default  reduce using rule 42 (leftright_shift_expr)
 
 
-state 187
+state 186
 
    41 leftright_shift_expr: leftright_shift_expr BINRIGHT arithmetic_expr .
 
     $default  reduce using rule 41 (leftright_shift_expr)
 
 
-state 188
+state 187
 
    45 sign_term: sign_term MAS term .
 
     $default  reduce using rule 45 (sign_term)
 
 
-state 189
+state 188
 
    46 sign_term: sign_term MENOS term .
 
     $default  reduce using rule 46 (sign_term)
 
 
-state 190
+state 189
 
    49 factor_operation: factor_operation POR factor .
 
     $default  reduce using rule 49 (factor_operation)
 
 
-state 191
+state 190
 
    50 factor_operation: factor_operation ENTRE factor .
 
     $default  reduce using rule 50 (factor_operation)
 
 
-state 192
+state 191
 
    51 factor_operation: factor_operation MOD factor .
 
     $default  reduce using rule 51 (factor_operation)
 
 
-state 193
+state 192
 
    52 factor_operation: factor_operation DIV factor .
 
     $default  reduce using rule 52 (factor_operation)
 
 
-state 194
+state 193
 
    58 power: atom trailer_kleene POT factor .
 
     $default  reduce using rule 58 (power)
 
 
-state 195
+state 194
 
    64 trailer: DOT NAME .
 
     $default  reduce using rule 64 (trailer)
 
 
-state 196
+state 195
 
    61 trailer: OPENPAR CLOSEPAR .
 
     $default  reduce using rule 61 (trailer)
 
 
-state 197
+state 196
 
    66 argument_comma: epsilon .
 
     $default  reduce using rule 66 (argument_comma)
 
 
-state 198
+state 197
 
    62 trailer: OPENPAR arglist . CLOSEPAR
 
     CLOSEPAR  shift, and go to state 218
 
 
-state 199
+state 198
 
    65 arglist: argument_comma . argument_multiple
    67 argument_comma: argument_comma . argument COMMA
@@ -3299,14 +3285,14 @@ state 199
     string_plus        go to state 43
 
 
-state 200
+state 199
 
    81 subscript: DOT . DOT DOT
 
     DOT  shift, and go to state 224
 
 
-state 201
+state 200
 
    87 subscript: TWODOTS . test sliceop
    88          | TWODOTS . test
@@ -3350,7 +3336,7 @@ state 201
     string_plus      go to state 43
 
 
-state 202
+state 201
 
    82 subscript: test .
    83          | test . TWODOTS test sliceop
@@ -3363,14 +3349,14 @@ state 202
     $default  reduce using rule 82 (subscript)
 
 
-state 203
+state 202
 
    63 trailer: OPENCOR subscriptlist . CLOSECOR
 
     CLOSECOR  shift, and go to state 229
 
 
-state 204
+state 203
 
    77 subscriptlist: subscript . comma_subscript
    78              | subscript . comma_subscript COMMA
@@ -3381,18 +3367,25 @@ state 204
     comma_subscript  go to state 231
 
 
-state 205
+state 204
 
   133 simple_stmt: small_stmt small_stmt_kleene DOTCOMMA NEWLINE .
 
     $default  reduce using rule 133 (simple_stmt)
 
 
-state 206
+state 205
 
   135 small_stmt_kleene: small_stmt_kleene DOTCOMMA small_stmt .
 
     $default  reduce using rule 135 (small_stmt_kleene)
+
+
+state 206
+
+  151 comma_test_kleene: comma_test_kleene COMMA test .
+
+    $default  reduce using rule 151 (comma_test_kleene)
 
 
 state 207
@@ -3448,11 +3441,10 @@ state 208
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
 
 
 state 209
@@ -3539,12 +3531,11 @@ state 213
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
-    funcdef          go to state 58
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
+    funcdef          go to state 57
 
 
 state 214
@@ -3896,12 +3887,11 @@ state 234
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
-    funcdef          go to state 58
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
+    funcdef          go to state 57
 
 
 state 235
@@ -3956,11 +3946,10 @@ state 236
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
 
 
 state 237
@@ -4126,8 +4115,8 @@ state 248
     NONE         shift, and go to state 14
     TRUE         shift, and go to state 17
     NOT          shift, and go to state 20
-    DOT          shift, and go to state 200
-    TWODOTS      shift, and go to state 201
+    DOT          shift, and go to state 199
+    TWODOTS      shift, and go to state 200
     TILDE        shift, and go to state 24
     OPENPAR      shift, and go to state 25
     OPENCOR      shift, and go to state 26
@@ -4135,7 +4124,7 @@ state 248
 
     $default  reduce using rule 78 (subscriptlist)
 
-    test             go to state 202
+    test             go to state 201
     or_test          go to state 29
     and_test         go to state 30
     not_test         go to state 31
@@ -4241,11 +4230,10 @@ state 255
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
 
 
 state 256
@@ -4332,11 +4320,10 @@ state 261
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
 
 
 state 262
@@ -4384,11 +4371,10 @@ state 262
     small_stmt       go to state 50
     expr_stmt        go to state 51
     print_stmt       go to state 52
-    testlist         go to state 53
-    flow_stmt        go to state 54
-    break_stmt       go to state 55
-    continue_stmt    go to state 56
-    return_stmt      go to state 57
+    flow_stmt        go to state 53
+    break_stmt       go to state 54
+    continue_stmt    go to state 55
+    return_stmt      go to state 56
 
 
 state 263
