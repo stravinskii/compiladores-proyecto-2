@@ -9,7 +9,7 @@ int new_line = 1;
 int newline_dedent = 0;
 
 extern int yyparse();
-
+extern int yydebug;
 
 
 %}
@@ -217,7 +217,7 @@ RIGHT		"->"
 				}
 
 {NAME}		{
-				std::cout << "NAME:" << yytext << std::endl;
+				std::cout << std::endl << "NAME: {" << yytext << "}" << std::endl;
 				yylval.cadena = yytext;
 				BEGIN(INITIAL);
 				return NAME;

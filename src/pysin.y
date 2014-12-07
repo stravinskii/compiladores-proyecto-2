@@ -16,7 +16,8 @@ extern "C" FILE *yyin;
 
 //SymbolTable *st = new SymbolTable();
 MAST *asTree = new MAST();
-VisitorNode *visitor = new VisitorNode;
+// VisitorNode *visitor = new VisitorNode;
+OolongVisitor *visitor = new OolongVisitor;
 
 %}
 
@@ -644,7 +645,10 @@ if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
 	IF test TWODOTS suite elif_test_td_suite_kleene ELSE TWODOTS suite 	{
 																			cout << "if _ : _ else : _" << endl;
 																			Node *ifn = asTree->bIfNode();
-																			ifn->addFChild($2);
+																			Node* exprn = asTree->bExprNode();
+																			exprn->addFChild($2);
+
+																			ifn->addFChild(exprn);
 																			ifn->addLChild($4);
 																			if ($5 != NULL)
 																			{
@@ -657,7 +661,10 @@ if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
 	| IF test TWODOTS suite elif_test_td_suite_kleene 					{
 																			cout << "if _ : _" << endl;
 																			Node *ifn = asTree->bIfNode();
-																			ifn->addFChild($2);
+																			Node* exprn = asTree->bExprNode();
+																			exprn->addFChild($2);
+
+																			ifn->addFChild(exprn);
 																			ifn->addLChild($4);
 																			if ($5 != NULL)
 																			{
@@ -672,7 +679,10 @@ elif_test_td_suite_kleene: /* ('elif' test ':' suite)* */
 	| elif_test_td_suite_kleene ELIF test TWODOTS suite {
 															cout << "elif _ : _" << endl;
 															Node *ifn = asTree->bIfNode();
-															ifn->addFChild($3);
+															Node* exprn = asTree->bExprNode();
+															exprn->addFChild($3);
+
+															ifn->addFChild(exprn);
 															ifn->addLChild($5);
 															ifn->addLChild($1);
 															ifn->accept(*visitor); cout << endl;
@@ -683,7 +693,10 @@ while_stmt: /* 'while' test ':' suite ['else' ':' suite] */
 	WHILE test TWODOTS suite ELSE TWODOTS suite 	{
 														cout << "while _ : _ else : _" << endl;
 														Node *whilen = asTree->bWhileNode();
-														whilen->addFChild($2);
+														Node* exprn = asTree->bExprNode();
+														exprn->addFChild($2);
+
+														whilen->addFChild(exprn);
 														whilen->addLChild($4);
 														whilen->addLChild($7);
 														whilen->accept(*visitor); cout << endl;
@@ -692,7 +705,10 @@ while_stmt: /* 'while' test ':' suite ['else' ':' suite] */
 	| WHILE test TWODOTS suite						{
 														cout << "while _ : _" << endl;
 														Node *whilen = asTree->bWhileNode();
-														whilen->addFChild($2);
+														Node* exprn = asTree->bExprNode();
+														exprn->addFChild($2);
+
+														whilen->addFChild(exprn);
 														whilen->addLChild($4);
 														whilen->accept(*visitor); cout << endl;
 														$$ = whilen;
@@ -1026,11 +1042,12 @@ return_stmt: /* 'return' [testlist] */
 
 /* Funciones */
 funcdef: /*'def' NAME parameters ':' suite*/
-	DEF NAME parameters TWODOTS suite	{
-											cout << "def name(_):\n" << endl;
+	DEF NAME parameters TWODOTS suite	{ 	cout << "DEF NAME parameters TWODOTS suite" << endl;
 											Node *funcn = asTree->bFuncNode();
-											string* id = new string($2);
-											Node *identn = asTree->bIdentNode(id);
+											/* FIXED: Bison recibe el NAME extrañamente */
+											string name ($2);
+											name = name.substr(0, name.find_first_of('('));
+											Node *identn = asTree->bIdentNode(&name);
 											identn->accept(*visitor); cout << endl;
 											funcn->addFChild(identn);
 											funcn->addLChild($3);
@@ -1041,11 +1058,13 @@ funcdef: /*'def' NAME parameters ':' suite*/
 
 parameters: /*'(' [varargslist] ')'*/
 	OPENPAR CLOSEPAR 				{
+										cout << "OPENPAR CLOSEPAR" << endl;
 										Node *argsn = asTree->bArgsNode();
 										argsn->accept(*visitor); cout << endl;
 										$$ = argsn;
 									}
 	| OPENPAR varargslist CLOSEPAR 	{
+										cout << "OPENPAR varargslist CLOSEPAR" << endl;
 										if ($2 != NULL)
 										{
 											Node* node = $2;
@@ -1056,8 +1075,11 @@ parameters: /*'(' [varargslist] ')'*/
 
 varargslist: /* (NAME (',' NAME)*) */
 	NAME args_kleene	{
-							string* id = new string($1);
-							Node *identn = asTree->bIdentNode(id);
+							cout << "NAME args_kleene" << endl;
+							/* FIXED: Bison recibe el NAME extrañamente */
+							string name ($1);
+							name = name.substr(0, name.find_first_of(' '));
+							Node *identn = asTree->bIdentNode(&name);
 							identn->accept(*visitor); cout << endl;
 							if ($2 != NULL)
 							{
@@ -1067,10 +1089,11 @@ varargslist: /* (NAME (',' NAME)*) */
 								$$ = argsn;
 							}
 						};
+
 args_kleene: /* (',' NAME)* */
 	args_kleene COMMA NAME 	{
-								string* id = new string($3);
-								Node *identn = asTree->bIdentNode(id);
+								cout << "args_kleene COMMA NAME" << endl;
+								Node *identn = asTree->bIdentNode(new string($3));
 								identn->accept(*visitor); cout << endl;
 								Node *argsn = $1;
 								argsn->addLChild(identn);
@@ -1078,6 +1101,7 @@ args_kleene: /* (',' NAME)* */
 								$$ = argsn;
 							}
 	| epsilon				{
+								cout << "args_kleene epsilon" << endl;
 								Node *argsn = asTree->bArgsNode();
 								argsn->accept(*visitor); cout << endl;
 								$$ = argsn;

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Python Paar Compiler
+# @version: 1.0
+# @author: García García Alan Mauricio
+# @author: Hernández Mora Alejandro
+
+if [ ! -f src/pylex ];
+then
+	echo "pythonpc: fatal error: compiler files not found"
+	exit
+fi
+
+if [ -z "$1" ];
+then
+	echo "pythonpc: fatal error: no input files"
+	exit
+fi
+
+FILE=$1
+#./src/pylex $FILE && \
+#java lib/Oolong.class src/oolong.j
+#if [ ! -f src/output.j ];
+#then
+	#java lib/Oolong.class src/oolong.j
+#fi
