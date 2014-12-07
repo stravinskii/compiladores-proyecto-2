@@ -296,10 +296,15 @@ arithmetic_expr: /* term ('+' term)* | term ('-' term)* */
 						termn->accept(*visitor); cout << endl;
 						if ($2 != NULL)
 						{
-							Node *termn = $2;
-							termn->setFChild($1);
+							BinNode* node = dynamic_cast<BinNode*> ($2);
+							while(node->getLeftChild() != NULL) {
+								node = dynamic_cast<BinNode*> (node->getLeftChild());
+							}
+							node->setFChild($1);
+
+							Node* termn = $2;
 							termn->accept(*visitor); cout << endl;
-							$$ = termn;
+							$$ = $2;
 						} else {
 							$$ = $1;
 						}
@@ -311,9 +316,15 @@ sign_term: /* (('+' | '-') term)* */
 	| sign_term MAS term		{
 									cout<<"Suma"<<endl;
 									Node *plusn = asTree->bPlusNode();
+									Node* right = $3;
+									cout << "right operand" << endl;
+									right->accept(*visitor); cout << endl;
 									plusn->setSChild($3);
 									if ($1 != NULL)
 									{
+										Node* left = $1;
+										cout << "left operand" << endl;
+										left->accept(*visitor); cout << endl;
 										plusn->setFChild($1);
 									}
 									plusn->accept(*visitor);
@@ -339,8 +350,13 @@ term: /* (factor ('*'factor)* | factor ('/'factor)* | factor ('%' factor)* | fac
 									node->accept(*visitor); cout << endl;
 									if ($2 != NULL)
 									{
+										BinNode* node = dynamic_cast<BinNode*> ($2);
+										while(node->getLeftChild() != NULL) {
+											node = dynamic_cast<BinNode*> (node->getLeftChild());
+										}
+										node->setFChild($1);
+
 										Node* factorn = $2;
-										factorn->setFChild($1);
 										factorn->accept(*visitor); cout << endl;
 										$$ = factorn;
 									} else {
@@ -630,7 +646,10 @@ if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
 																			Node *ifn = asTree->bIfNode();
 																			ifn->addFChild($2);
 																			ifn->addLChild($4);
-																			ifn->addLChild($5);
+																			if ($5 != NULL)
+																			{
+																				ifn->addLChild($5);
+																			}
 																			ifn->addLChild($8);
 																			ifn->accept(*visitor); cout << endl;
 																			$$ = ifn;
@@ -640,13 +659,16 @@ if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
 																			Node *ifn = asTree->bIfNode();
 																			ifn->addFChild($2);
 																			ifn->addLChild($4);
-																			ifn->addLChild($5);
+																			if ($5 != NULL)
+																			{
+																				ifn->addLChild($5);
+																			}
 																			ifn->accept(*visitor); cout << endl;
 																			$$ = ifn;
 																		};
 	
 elif_test_td_suite_kleene: /* ('elif' test ':' suite)* */
-	epsilon
+	epsilon 											{ $$ = NULL; }
 	| elif_test_td_suite_kleene ELIF test TWODOTS suite {
 															cout << "elif _ : _" << endl;
 															Node *ifn = asTree->bIfNode();

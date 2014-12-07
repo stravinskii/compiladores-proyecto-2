@@ -750,7 +750,7 @@ public:
 		}
 
 		cout << ")";
-		cout<<endl<<"Insertando nueva variable en la tabla"<<endl;
+		// cout<<endl<<"Insertando nueva variable en la tabla"<<endl;
 		// symbolTable->printTable();
  	}
 
