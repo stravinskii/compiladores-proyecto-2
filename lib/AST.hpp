@@ -239,6 +239,9 @@ protected:
  	virtual FuncNode* bFuncNode()=0;
 
  	// New INode's
+ 	virtual FileNode* bFileNode()=0;
+ 	virtual CallNode* bCallNode()=0;
+ 	virtual ExprListNode* bExprListNode()=0;
  	virtual ReturnNode* bReturnNode()=0;
  	virtual PrintNode* bPrintNode()=0;
  	

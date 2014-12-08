@@ -65,6 +65,10 @@ public:
  	virtual void visit(PrintNode*)=0;
  	virtual void visit(BreakNode*)=0;
  	virtual void visit(ContinueNode*)=0;
+ 	
+ 	virtual void visit(FileNode*)=0;
+ 	virtual void visit(CallNode*)=0;
+ 	virtual void visit(ExprListNode*)=0;
 	
 protected:
 	Visitor(){};
@@ -503,6 +507,34 @@ public:
  	}
 };
 
+class FileNode : public INode {
+public:
+	~FileNode(){};
+	FileNode():INode(){};
+	void accept(Visitor &v){
+ 		v.visit(this);
+ 	}
+};
+
+class CallNode : public INode {
+public:
+	~CallNode(){};
+	CallNode():INode(){};
+
+	void accept(Visitor &v) {
+		v.visit(this);
+	}
+};
+
+class ExprListNode : public INode {
+public:
+	ExprListNode():INode(){};
+	~ExprListNode(){};
+	void accept(Visitor &v) {
+		v.visit(this);
+	}
+};
+
  class MAST : public AST{
  public:
 	~MAST(){};
@@ -686,6 +718,21 @@ public:
  	ContinueNode* bContinueNode(){
  		cout << "bContinueNode" << endl;
  		return new ContinueNode;
+ 	}
+
+ 	FileNode* bFileNode() {
+ 		cout << "bFileNode" << endl;
+ 		return new FileNode;
+ 	}
+
+ 	CallNode* bCallNode() {
+ 		cout << "bCallNode" << endl;
+ 		return new CallNode;
+ 	}
+
+ 	ExprListNode* bExprListNode() {
+ 		cout << "bExprListNode" << endl;
+ 		return new ExprListNode;
  	}
  };
 
@@ -1469,5 +1516,35 @@ public:
 
 	void visit(ContinueNode* node){
 		cout << "(ContinueNode)";
+	}
+
+	void visit(FileNode* node) {
+		cout << "(FileNode ";
+ 		list<Node*> children = node->getChildren();
+ 		for (list<Node*>::iterator it = children.begin(); it != children.end(); it++){
+			Visitor* v = this;
+			(*it)->accept(*v);
+		}
+ 		cout << ")";
+	}
+
+	void visit(CallNode* node) {
+		cout << "(CallNode ";
+ 		list<Node*> children = node->getChildren();
+ 		for (list<Node*>::iterator it = children.begin(); it != children.end(); it++){
+			Visitor* v = this;
+			(*it)->accept(*v);
+		}
+ 		cout << ")";
+	}
+
+	void visit(ExprListNode* node) {
+		cout << "(ExprListNode ";
+ 		list<Node*> children = node->getChildren();
+ 		for (list<Node*>::iterator it = children.begin(); it != children.end(); it++){
+			Visitor* v = this;
+			(*it)->accept(*v);
+		}
+ 		cout << ")";	
 	}
  };
