@@ -97,21 +97,13 @@ public:
 
  	void visit(IntNode* node){
 		cout << "(IntNode " << node->getValue() << ")";
-		char istr[21];
-		sprintf(istr, "%d", node->getValue());
-		instruction = "bipush ";
-		instruction += istr;
-		emit(instruction);
+		emit("bipush " + to_string(node->getValue()));
 		currentType = 'I';
  	}
 
  	void visit(FloatNode* node){
  		cout << "(FloatNode "<< node->getValue() << ")";
- 		char fstr[21];
-		sprintf(fstr, "%f", node->getValue());
- 		instruction = "ldc ";
- 		instruction += fstr;
-		emit(instruction);
+		emit("ldc " + to_string(node->getValue()));
 		currentType = 'F';
  	}
 
