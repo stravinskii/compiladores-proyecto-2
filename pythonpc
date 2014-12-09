@@ -18,8 +18,10 @@ then
 fi
 
 FILE=$1
-#./src/pylex $FILE && \
-#java lib/Oolong.class src/oolong.j
+./src/pylex $FILE && \
+cd lib/oolong/ && \
+java Oolong ../../src/prueba.j && \
+java prueba
 #if [ ! -f src/output.j ];
 #then
 	#java lib/Oolong.class src/oolong.j

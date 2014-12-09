@@ -9,6 +9,7 @@
 // #include "Nodos.hpp"
 // #include "MAST.hpp"
 // #include <string>
+#include <map>
 #include <fstream>
 
 using namespace std;
@@ -18,12 +19,17 @@ public:
 
 	ofstream output;
 	char currentType;
+	bool inAssignation;
 	string instruction;
+	int currentVariable;
 	bool inMainFunction;
 	string mainOutputQueue;
+	string currentAssignation;
+	map<string, string> variables;
 	
 	~OolongVisitor(){};
 	OolongVisitor() {
+		inAssignation = false;
 		inMainFunction = true;
 		output.open("prueba.j");
 	};
@@ -70,16 +76,22 @@ public:
 
  	void visit(IdentNode* node){
 		cout << "(IdentNode " << node->getValue();
-		// string* name = new string();
-		// *name = node->getValue();
-		// Simbolo *s = symbolTable->lookUp(*name);
-		// if(s == 0) {
-			// cout<<"Insertando nueva variable en la tabla"<<endl;
-			// string *cad = new string();
-			// s=new Simbolo(name,cad);
-			// symbolTable->insertName(s);
-			// symbolTable->printTable();
-		// }
+		string name = node->getValue();
+		if (variables.count(name) > 0) {
+			string id = variables[name];
+			if (inAssignation) {
+				currentAssignation = id;
+			} else {
+				emit("iload_" + id);
+			}
+		} else {
+			if (inAssignation) {
+				currentAssignation = to_string(currentVariable);
+			} else {
+				throw "Undeclared variable";
+			}
+			variables.insert(pair<string, string>(name, to_string(currentVariable++)));
+		}
 		cout << ")";
  	}
 
@@ -170,8 +182,11 @@ public:
  	/* BinNode's */
  	void visit(AssignNode* node){
 		cout << "(AssignNode ";
+		inAssignation = true;
 		node->getLeftChild()->accept(*this);
+		inAssignation = false;
 		node->getRightChild()->accept(*this);
+		emit("istore_" + currentAssignation);
 		cout << ")";
  	}
 
