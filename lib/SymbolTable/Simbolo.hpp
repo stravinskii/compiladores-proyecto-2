@@ -34,6 +34,7 @@ class Simbolo{
 		Simbolo(string *n){
 			valor= (tipo*)malloc(sizeof(tipo));
 			name=n;
+			type=3;
 		}
 	
 		Simbolo(string *n, int *val){
@@ -54,7 +55,6 @@ class Simbolo{
 			valor=(tipo*) new string;
 			name=n;
 			valor->cadena =*val;
-			
 			type=2;
 		}
 		
@@ -66,16 +66,34 @@ class Simbolo{
 			return name;
 		}
 		
+		void setValue(int val){
+			this->type=0;
+			valor->integer=val;
+		}
+		
+		void setValue(float val){
+			this->type=1;
+			valor->float_number=val;
+		}
+		
+		void setValue(string *val){
+			this->type=2;
+			valor->cadena =*val;
+		}
+		
 		int getType(){
 			return type;
 		}
 		
 		void imprime(){
-			if(type==1)
-				cout<<*name<<" = "<<(*valor).float_number<<"\n";
 			if(type==0)
-				cout<<*name<<" = "<<(*valor).integer<<"\n";
+				cout<<*name<<" = "<<(*valor).integer<<" | int"<<endl;
+			if(type==1)
+				cout<<*name<<" = "<<(*valor).float_number<<" | float"<<endl;
 			if(type==2)
-				cout<<*name<<" = "<<(*valor).cadena<<"\n";
+				cout<<*name<<" = "<<(*valor).cadena<<" | string"<<endl;
+			if(type==3)
+				cout<<*name<<" =   | dynamic type"<<endl;
+			
 		}
 };

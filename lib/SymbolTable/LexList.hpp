@@ -9,6 +9,7 @@
  */
 
 #include <unordered_map>
+#include <vector>
 #include "Simbolo.hpp"
 
 using namespace std;
@@ -113,8 +114,22 @@ class LexList{
 		if(lookUp(*name)==NULL){
 			pair<string,Simbolo> nuevo (*name,*s);
 			head->tabla->insert(nuevo);
-		}else
-			cout<<"Error: variable ya declarada"<<endl;
+		}else{
+			if(!declaredLocally(*name)){
+				pair<string,Simbolo> nuevo (*name,*s);
+				head->tabla->insert(nuevo);
+			}else
+				cout<<"Error: variable ya declarada"<<endl;
+		}
+	}
+	
+	void deleteName(Simbolo *s){
+		string *name=s->getName();
+		if(lookUp(*name)==NULL){
+			cout<<"Error: la variable no se encuentra en la tabla"<<endl;
+		}else{
+			head->tabla->erase(*name);
+		}
 	}
 	
 	void printTable(){
@@ -133,6 +148,35 @@ class LexList{
 			sim.imprime();
 		}		
 	}
+	
+	int tamanio(){
+		LexNode *temp= head;
+		int tamanio=0;
+		while(temp!=NULL){
+			tamanio=tamanio+temp->tabla->size();
+			temp=temp->next;
+			cout<<tamanio<<endl;
+		}
+		return tamanio;
+	}
+	
+	vector<Simbolo> getOrderedTable(){
+		vector<Simbolo> arr;
+		int tam= tamanio();
+		arr.reserve(tam);
+		LexNode* temp=head;
+		tam=0;
+		while(temp!=NULL){
+			for (auto& x: *temp->tabla){
+				arr[tam]=x.second;
+				x.second.imprime();
+				tam++;
+			}
+			temp=temp->next;
+		}
+		return arr;
+	}
+	
 	
 
 };

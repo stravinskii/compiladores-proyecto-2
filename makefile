@@ -5,10 +5,8 @@ all:
 	g++ pylex.cpp pysin.cpp -o pylex -std=c++0x
 install:
 	pwd=`pwd` && \
-	echo "export PATH=$$PATH:$$pwd"
-	echo ">> ~/.bashrc"
-	echo "cp src/pythonpc ."
-	echo "chmod +x pythonpc"
+	echo "export 'PATH=$$PATH:$$pwd'" >> ~/.bashrc
+	chmod +x pythonpc
 clean:
 	rm pylex.cpp
 	rm pylex

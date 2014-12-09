@@ -17,11 +17,16 @@ then
 	exit
 fi
 
+XPATH="`dirname \"$0\"`"
+XPATH="`( cd \"$MY_PATH\" && pwd )`"
 FILE=$1
-./src/pylex $FILE && \
-cd lib/oolong/ && \
-java Oolong ../../src/prueba.j && \
-java prueba
+./src/pylex $FILE &&
+echo $FILE &&
+cp -rv src/prueba.j lib/oolong/ &&
+cd lib/oolong/ &&
+java Oolong prueba.j &&
+cp prueba.class "$XPATH"
+
 #if [ ! -f src/output.j ];
 #then
 	#java lib/Oolong.class src/oolong.j

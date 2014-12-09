@@ -7,6 +7,7 @@
  */
  
 #include "LexList.hpp"
+#include <vector>
 
 class SymbolTable{
 	/**
@@ -33,6 +34,10 @@ class SymbolTable{
 		symbolTable->insertName(record);
 	 }
 	 
+	void deleteName(Simbolo *record){
+		symbolTable->deleteName(record);
+	}
+	 
 	 /**
 	  * openScope() abre un nuevo alcance en la tabla de símbolos. Los símbolos nuevos
 	  * se ingresarán en el alcance resultante.
@@ -56,6 +61,14 @@ class SymbolTable{
 	 */
 	int declaredLocally(string name){
 		return symbolTable->declaredLocally(name);
+	}
+	
+	vector<Simbolo> getOrderedTable(){
+		return symbolTable->getOrderedTable();
+	}
+	
+	int tamanio(){
+		return symbolTable->tamanio();
 	}
 	
 	void printTable(){
