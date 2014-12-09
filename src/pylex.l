@@ -217,7 +217,6 @@ RIGHT		"->"
 				}
 
 {NAME}		{
-				std::cout << std::endl << "NAME: {" << yytext << "}" << std::endl;
 				yylval.cadena = yytext;
 				BEGIN(INITIAL);
 				return NAME;
@@ -240,23 +239,10 @@ RIGHT		"->"
 					}
 				}
 
-				/*
-				*/
 				char* cstr = new char[str.size() + 1];
 				std::copy(str.begin(), str.end(), cstr);
 				cstr[str.size()] = '\0';
-				std::cout << "STRING: " << cstr << std::endl;
-				yylval.cadena = cstr;
-				/*
-				delete[] cstr;
-				std::vector<char> cstr(str.begin(), str.end());
-				cstr.push_back('\0');
-				std::cout << "STRING: " << &*cstr.begin() << std::endl;
-				yylval.cadena = &*cstr.begin();
-				*/
-
-				/*yylval.cadena = yytext;*/
-				
+				yylval.cadena = cstr;				
 
 				BEGIN(INITIAL);
 				return STRING;
@@ -463,11 +449,7 @@ RIGHT		"->"
 
 								/* push back last unmatched char */
 								unput(in);
-								/*if(in =='\n'){
-									std::cout<<"Aqui hay algo chueco\n";
-									
-									
-								}*/
+
 								/* if indent level matches stack peek there's nothing to do */
 
 								if (stack.peek() < indent)

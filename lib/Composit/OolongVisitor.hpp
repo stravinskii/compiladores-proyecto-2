@@ -1,5 +1,5 @@
 /**
- * Visitor generar código en lenguaje Oolong
+ * Visitor concreto para generar código en lenguaje Oolong
  *
  * @author: Alejandro Hernández Mora
  * @author: Alan Mauricio García García
@@ -51,7 +51,7 @@ public:
 	 */
 	map<string, string> variables;
 
-	VisitorNode* tableVisitor;
+	TableVisitor* tableVisitor;
 	SymbolTable* symbolTable;
 	vector<Simbolo>* arreglo_de_variables;
 	
@@ -62,8 +62,8 @@ public:
 		output.open("prueba.j");
 	};
 
-	OolongVisitor(VisitorNode *tv) {
-		tableVisitor = new VisitorNode(*tv);
+	OolongVisitor(TableVisitor *tv) {
+		tableVisitor = new TableVisitor(*tv);
 		symbolTable = tv->symbolTable;
 		arreglo_de_variables = new vector<Simbolo>(symbolTable->getOrderedTable());
 		//cout<<"CREADO EL OOLONG VISITOR\ntamanio = "<<endl<<tableVisitor->symbolTable->tamanio()<<endl;
@@ -134,7 +134,7 @@ public:
 		cout << "(IdentNode " << node->getValue();
 		string name = node->getValue();
 		// if (variables.count(name) > 0) {
-		if (symbolTable->lookup(name) != NULL) {
+		if (symbolTable->lookUp(name) != NULL) {
 			// string id = variables[name];
 			string idtable = to_string(getIndice(0, name));
 			if (inAssignation) {

@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-// #include "../lib/MAST.hpp"
+// #include "../lib/Composit/MAST.hpp"
 #include "../lib/Composit/TableVisitor.hpp"
-#include "../lib/Composit/OolongVisitor.hpp"
+#include "../lib/Composit/PrintVisitor.hpp"
+// #include "../lib/Composit/OolongVisitor.hpp"
 #include <string>
-
 
 using namespace std;
 #define YYDEBUG 1
@@ -15,16 +15,15 @@ int yyerror(const char *s) { printf ("\nError: %s\n", s); }
 
 extern "C" FILE *yyin;
 
-
 //SymbolTable *st = new SymbolTable();
 MAST *asTree = new MAST();
-// VisitorNode *visitor = new VisitorNode;
-OolongVisitor *visitor = new OolongVisitor;
+// TableVisitor *visitor = new TableVisitor;
+PrintVisitor *visitor = new PrintVisitor;
+// OolongVisitor *visitor = new OolongVisitor;
 
 %}
 
 %code requires{
-// #include "../lib/Nodos.hpp"
 #include "../lib/Composit/Nodos.hpp"
 }
 
@@ -51,30 +50,32 @@ OolongVisitor *visitor = new OolongVisitor;
 %%
 file_input: /* (NEWLINE | stmt)* ENDMARKER */
 	filein	{
-				cout << endl << "file_input" << endl;
+				// cout << endl << "file_input" << endl;
 				if ($1 != NULL)
 				{
 					Node* node = $1;
-					node->accept(*visitor); cout << endl;
+					cout << endl;
+					node->accept(*visitor);
+					cout << endl;
 				}
-				cout<<"\nCOMPILATION COMPLETE :)\n";
+				// cout<<"\nCOMPILATION COMPLETE :)\n";
 			};
 
 /*  FIXTHIS: stmt es (simple_stmt | compound_stmt)	donde simple_stmt es un SStmtListNode. ¿Debería suponer que stmt es una lista? */
 filein: /* (filein (NEWLINE | stmt))* */
 	epsilon				{
-							cout << "filein epsilon..." << endl;
+							// cout << "filein epsilon..." << endl;
 							Node* stmtln = asTree->bFileNode();
 							// Node* stmtln = asTree->bStmtListNode();
 							// stmtln->accept(*visitor);
 							$$ = stmtln;
 						}
 	| filein NEWLINE	{
-							cout << "filein newline" << endl;
+							// cout << "filein newline" << endl;
 							$$ = $1;
 						}
 	| filein stmt 		{
-							cout << "filein stmt" << endl;
+							// cout << "filein stmt" << endl;
 							if ($1 != NULL)
 							{
 								Node *stmtln = $1;
@@ -89,11 +90,11 @@ epsilon: 	{/*Nada xD*/};
 
 test: /* or_test ['if' or_test 'else' test] */
 	or_test							{
-										cout<<"test"<<endl;
+										// cout<<"test"<<endl;
 										$$ = $1;
 										// Node* node = $1; node->accept(*visitor); cout << endl;
 									}
-	| or_test IF or_test ELSE test	{cout<<"IF __ ELSE __ ";};
+	| or_test IF or_test ELSE test	{};
 
 or_test: /* and_test ('OR' and_test)* */
 	and_test or_andtest 	{
@@ -113,7 +114,7 @@ or_andtest: /* ('OR' and_test)* */
 									Node *orn = asTree->bOrNode();
 									orn->setSChild($3);
 									$$ = orn;
-									cout<<"OR";
+									// cout<<"OR";
 								};
 		
 and_test: /* not_test (AND not_test)* */
@@ -134,7 +135,7 @@ and_nottest: /* ('AND' not_test)* */
 									Node *andn = asTree->bAndNode();
 									andn->setSChild($3);
 									$$ = andn;
-									cout<<"AND";
+									// cout<<"AND";
 								};
 		
 not_test: /* 'not' not_test | comparison*/
@@ -142,23 +143,23 @@ not_test: /* 'not' not_test | comparison*/
 						Node *notn = asTree->bNotNode();
 						notn->setFChild($2);
 						$$ = notn;
-						cout<<"NOT";
+						// cout<<"NOT";
 					}
 	| comparison	{$$ = $1;};
 
 		
 comparison: /* expr (comp_op expr)* */
 	expr comp_op_expr_kleene 	{
-									cout << "expr comp_op_expr_kleene" << endl;
+									// cout << "expr comp_op_expr_kleene" << endl;
 									if ($2 != NULL)
 									{
-										cout << "($2 != NULL)" << endl;
+										// cout << "($2 != NULL)" << endl;
 										Node *compn = $2;
 										compn->setFChild($1);
 										// compn->accept(*visitor); cout << endl;
 										$$ = compn;
 									} else {
-										cout << "($2 == NULL)" << endl;
+										// cout << "($2 == NULL)" << endl;
 										Node* node = $1;
 										// node->accept(*visitor); cout << endl;
 										$$ = $1;
@@ -178,38 +179,48 @@ comp_op: /* ('<' | '>' | '==' | '>=' | '<=' | '<>' | '!=' | 'in' | 'not' 'in' | 
 	LESSTHAN			{
 							Node *compn = asTree->bLTNode();
 							$$ = compn;
-							cout<<"<";
+							// cout<<"<";
 						}
 	| MORETHAN			{
 							Node *compn = asTree->bGTNode();
 							$$ = compn;
-							cout<<">";
+							// cout<<">";
 						}
 	| EQUALS			{
 							Node *compn = asTree->bEqNode();
 							$$ = compn;
-							cout<<"==";
+							// cout<<"==";
 						}
 	| MOREEQUAL			{
 							Node *compn = asTree->bGTEqNode();
 							$$ = compn;
-							cout<<">=";
+							// cout<<">=";
 						}
 	| LESSEQUAL			{
 							Node *compn = asTree->bLTEqNode();
 							$$ = compn;
-							cout<<"<=";
+							// cout<<"<=";
 						}
 	| DIFFERENT			{
 							Node *compn = asTree->bNEqNode();
 							$$ = compn;
-							cout<<"!=";
+							// cout<<"!=";
 						}
-	| PICOPARENTESIS		{cout<<"<>";}
-	| IN					{cout<<"IN";}
-	| NOT IN				{cout<<"NOT IN";}
-	| IS					{cout<<"IS";}
-	| IS NOT				{cout<<"IS NOT";};
+	| PICOPARENTESIS		{
+								// cout<<"<>";
+							}
+	| IN					{
+								// cout<<"IN";
+							}
+	| NOT IN				{
+								// cout<<"NOT IN";
+							}
+	| IS					{
+								// cout<<"IS";
+							}
+	| IS NOT				{
+								// cout<<"IS NOT";
+							};
 
 
 expr: /* xor_expr ('|' xor_expr)* */
@@ -289,17 +300,17 @@ shift_expr: /* arith_expr (('<<'|'>>') arith_expr)* */
 leftright_shift_expr: /* (('>>' | '<<') arithmetic_expr)* */
 	epsilon 										{ $$ = NULL; }
 	| leftright_shift_expr BINRIGHT arithmetic_expr {
-														cout<<">>";
+														// cout<<">>";
 														$$ = $3;
 													}
 	| leftright_shift_expr BINLEFT arithmetic_expr	{
-														cout<<"<<";
+														// cout<<"<<";
 														$$ = $3;
 													};
 
 arithmetic_expr: /* term ('+' term)* | term ('-' term)* */
 	term sign_term	{
-						cout << "term sign_term" << endl;
+						// cout << "term sign_term" << endl;
 						Node *termn = $1;
 						// termn->accept(*visitor); cout << endl;
 						if ($2 != NULL)
@@ -316,32 +327,32 @@ arithmetic_expr: /* term ('+' term)* | term ('-' term)* */
 						} else {
 							$$ = $1;
 						}
-						cout << "END < arithmetic_expr" << endl;
+						// cout << "END < arithmetic_expr" << endl;
 					};
 
 sign_term: /* (('+' | '-') term)* */
 	epsilon 					{ $$ = NULL; }
 	| sign_term MAS term		{
-									cout<<"Suma"<<endl;
+									// cout<<"Suma"<<endl;
 									Node *plusn = asTree->bPlusNode();
 									Node* right = $3;
-									cout << "right operand" << endl;
+									// cout << "right operand" << endl;
 									// right->accept(*visitor); cout << endl;
 									plusn->setSChild($3);
 									if ($1 != NULL)
 									{
 										Node* left = $1;
-										cout << "left operand" << endl;
+										// cout << "left operand" << endl;
 										// left->accept(*visitor); cout << endl;
 										plusn->setFChild($1);
 									}
 									// plusn->accept(*visitor);
-									cout << "IM RIGHT HERE" << endl;
+									// cout << "IM RIGHT HERE" << endl;
 									$$ = plusn;
 								}
 
 	| sign_term MENOS term		{
-									cout<<"Resta"<<endl;
+									// cout<<"Resta"<<endl;
 									Node *minusn = asTree->bMinusNode();
 									minusn->setSChild($3);
 									if ($1 != NULL)
@@ -354,7 +365,7 @@ sign_term: /* (('+' | '-') term)* */
 
 term: /* (factor ('*'factor)* | factor ('/'factor)* | factor ('%' factor)* | factor ("//" factor)*) */
 	factor factor_operation		{
-									cout << "factor factor_operation" << endl;
+									// cout << "factor factor_operation" << endl;
 									Node* node = $1;
 									// node->accept(*visitor); cout << endl;
 									if ($2 != NULL)
@@ -376,7 +387,7 @@ term: /* (factor ('*'factor)* | factor ('/'factor)* | factor ('%' factor)* | fac
 factor_operation: /* (('*' | '/' | '%') factor)* */
 	epsilon 								{ $$=NULL; }
 	| factor_operation POR factor 			{
-												cout<<"Multiplicacion"<<endl;
+												// cout<<"Multiplicacion"<<endl;
 												Node *multn = asTree->bMultNode();
 												multn->setSChild($3);
 												if ($1 != NULL)
@@ -387,7 +398,7 @@ factor_operation: /* (('*' | '/' | '%') factor)* */
 												$$ = multn;
 											}
 	| factor_operation ENTRE factor 		{
-												cout<<"Division"<<endl;
+												// cout<<"Division"<<endl;
 												Node *divn = asTree->bDiviNode();
 												divn->setSChild($3);
 												if ($1 != NULL)
@@ -398,10 +409,10 @@ factor_operation: /* (('*' | '/' | '%') factor)* */
 												$$ = divn;
 											}
 	| factor_operation MOD factor 			{
-												cout<<"Modulo"<<endl;
+												// cout<<"Modulo"<<endl;
 											}
 	| factor_operation DIV factor 			{
-												cout<<"Division Entera"<<endl;
+												// cout<<"Division Entera"<<endl;
 												Node *divn = asTree->bDiviNode();
 												divn->setSChild($3);
 												if ($1 != NULL)
@@ -414,27 +425,29 @@ factor_operation: /* (('*' | '/' | '%') factor)* */
 
 factor: /* (('+' | '-' | '~') factor | power) */
 	MAS factor			{
-							cout<<"SUMA"<<endl;
+							// cout<<"SUMA"<<endl;
 							Node *plusn = asTree->bPlusNode();
 							plusn->setSChild($2);
 							// plusn->accept(*visitor); cout << endl;
 							$$ = plusn;
 						}
 	| MENOS factor		{
-							cout<<"RESTA"<<endl;
+							// cout<<"RESTA"<<endl;
 							Node *minusn = asTree->bMinusNode();
 							minusn->setSChild($2);
 							// minusn->accept(*visitor); cout << endl;
 							$$ = minusn;
 						}
 	| TILDE factor 		{$$ = $2;}
-	| power 			{$$ = $1;cout<<"power"<<endl; 
+	| power 			{
+							$$ = $1;
+							// cout<<"power"<<endl; 
 							// Node* node = $1; node->accept(*visitor); cout << endl;
 						};
 
 power: /* atom trailer* ['**' factor] */
 	atom trailer_kleene					{
-											cout << "atom trailer_kleene" << endl; 
+											// cout << "atom trailer_kleene" << endl; 
 											// Node* node = $1; node->accept(*visitor); cout << endl;
 											if ($2 != NULL)
 											{
@@ -451,17 +464,19 @@ power: /* atom trailer* ['**' factor] */
 												$$ = $1;
 											}
 										}
-	| atom trailer_kleene POT factor	{$$ = $1;cout << "atom trailer_kleene POT factor" << endl;
+	| atom trailer_kleene POT factor	{
+											$$ = $1;
+											// cout << "atom trailer_kleene POT factor" << endl;
 											// Node* node = $1; node->accept(*visitor); cout << endl;
 										};
 
 trailer_kleene: /* trailer* */
 	epsilon					{
-								cout << "epsilon trailer_kleene" << endl;
+								// cout << "epsilon trailer_kleene" << endl;
 								$$ = NULL;
 							}
 	|trailer_kleene trailer {
-								cout << "trailer_kleene trailer" << endl;
+								// cout << "trailer_kleene trailer" << endl;
 								Node* node = $2;
 								// node->accept(*visitor); cout << endl;
 								if ($1 != NULL)
@@ -475,20 +490,20 @@ trailer_kleene: /* trailer* */
 /* FIXTHIS: Falta ver el soporte de esto */	
 trailer: /* '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME */
 	OPENPAR CLOSEPAR					{
-											cout<<"()"<<endl;
+											// cout<<"()"<<endl;
 											Node* argsn =  asTree->bArgsNode();
 											$$ = argsn;
 										}
 	| OPENPAR arglist CLOSEPAR			{
-											cout<<"(ARGLIST)"<<endl;
+											// cout<<"(ARGLIST)"<<endl;
 											$$ = $2; 
 										}
 	| OPENCOR subscriptlist CLOSECOR	{
-											cout<<"(SUBSCRIPTLIST)"<<endl;
+											// cout<<"(SUBSCRIPTLIST)"<<endl;
 											$$ = $2;
 										}
 	| DOT NAME							{
-											cout<<".NAME"<<endl;
+											// cout<<".NAME"<<endl;
 											string* id = new string($2);
 											Node *identn = asTree->bIdentNode(id);
 											// identn->accept(*visitor); cout << endl;
@@ -497,7 +512,7 @@ trailer: /* '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME */
 		
 arglist: /* (argument ',')* (argument [','] |'*' test (',' argument)* [',' '**' test] 	|'**' test) */
 	argument_comma argument_multiple 	{
-											cout << "argument_comma argument_multiple" << endl;
+											// cout << "argument_comma argument_multiple" << endl;
 											if ($1 != NULL)
 											{
 												Node *argsn = $1;
@@ -509,13 +524,13 @@ arglist: /* (argument ',')* (argument [','] |'*' test (',' argument)* [',' '**' 
 	
 argument_comma: /* (argument ',')* */
 	epsilon								{
-											cout << "epsilon argument_comma" << endl;
+											// cout << "epsilon argument_comma" << endl;
 											Node *argsn = asTree->bArgsNode();
 											// argsn->accept(*visitor); cout << endl;
 											$$ = argsn;
 										}
 	| argument_comma argument COMMA 	{
-											cout << "argument_comma argument COMMA" << endl;
+											// cout << "argument_comma argument COMMA" << endl;
 											if ($1 != NULL)
 											{
 												Node *argsn = $1;
@@ -626,7 +641,6 @@ atom: /* ( '(' [testlist_comp] ')' | '[' [listmaker] ']' |  '`' testlist1 '`' | 
 										}
 	| NONE								{$$ = NULL;}
 	| NAME			{
-						cout << ";;;" << $1 << ";;;" << endl;
 						string* id = new string($1);
 						Node *identn = asTree->bIdentNode(id);
 						// identn->accept(*visitor); cout << endl;
@@ -666,7 +680,10 @@ string_plus: /* (STRING)+ */
 									// strn->accept(*visitor); cout << endl;
 									$$ = strn;
 								}
-	| STRING string_plus		{$$ = $2; cout << "not here please......" << endl;};
+	| STRING string_plus		{
+									$$ = $2; 
+									// cout << "not here please......" << endl;
+								};
 
 /* FIXTHIS: No hay soporte para listas aún */
 listmaker: 	/* test (',' test)* */
@@ -677,28 +694,28 @@ testlist_comp: /* test ( comp_for | (',' test)* [','] ) */
 
 compound_stmt: /* (if_stmt | while_stmt | for_stmt | funcdef) --deprecated: classdef */
 	if_stmt			{
-						cout<<"compound_stmt"<<endl;
+						// cout<<"compound_stmt"<<endl;
 						$$ = $1;
 						Node* node = $1;
 						// node->accept(*visitor); 
 						cout << endl;
 					}
 	| while_stmt	{
-						cout<<"compound_stmt"<<endl;
+						// cout<<"compound_stmt"<<endl;
 						$$ = $1;
 						Node* node = $1;
 						// node->accept(*visitor); 
 						cout << endl;
 					}
 	| for_stmt		{
-						cout<<"compound_stmt"<<endl;
+						// cout<<"compound_stmt"<<endl;
 						$$ = $1;
 						Node* node = $1;
 						// node->accept(*visitor); 
 						cout << endl;
 					}
 	| funcdef		{
-						cout<<"compound_stmt"<<endl;
+						// cout<<"compound_stmt"<<endl;
 						$$ = $1;
 						Node* node = $1;
 						// node->accept(*visitor); 
@@ -707,7 +724,7 @@ compound_stmt: /* (if_stmt | while_stmt | for_stmt | funcdef) --deprecated: clas
 
 if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
 	IF test TWODOTS suite elif_test_td_suite_kleene ELSE TWODOTS suite 	{
-																			cout << "if _ : _ else : _" << endl;
+																			// cout << "if _ : _ else : _" << endl;
 																			Node *ifn = asTree->bIfNode();
 																			Node* exprn = asTree->bExprNode();
 																			exprn->addFChild($2);
@@ -723,7 +740,7 @@ if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
 																			$$ = ifn;
 																		}
 	| IF test TWODOTS suite elif_test_td_suite_kleene 					{
-																			cout << "if _ : _" << endl;
+																			// cout << "if _ : _" << endl;
 																			Node *ifn = asTree->bIfNode();
 																			Node* exprn = asTree->bExprNode();
 																			exprn->addFChild($2);
@@ -741,7 +758,7 @@ if_stmt: /* 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite] */
 elif_test_td_suite_kleene: /* ('elif' test ':' suite)* */
 	epsilon 											{ $$ = NULL; }
 	| elif_test_td_suite_kleene ELIF test TWODOTS suite {
-															cout << "elif _ : _" << endl;
+															// cout << "elif _ : _" << endl;
 															Node *ifn = asTree->bIfNode();
 															Node* exprn = asTree->bExprNode();
 															exprn->addFChild($3);
@@ -755,7 +772,7 @@ elif_test_td_suite_kleene: /* ('elif' test ':' suite)* */
 
 while_stmt: /* 'while' test ':' suite ['else' ':' suite] */
 	WHILE test TWODOTS suite ELSE TWODOTS suite 	{
-														cout << "while _ : _ else : _" << endl;
+														// cout << "while _ : _ else : _" << endl;
 														Node *whilen = asTree->bWhileNode();
 														Node* exprn = asTree->bExprNode();
 														exprn->addFChild($2);
@@ -767,7 +784,7 @@ while_stmt: /* 'while' test ':' suite ['else' ':' suite] */
 														$$ = whilen;
 													}
 	| WHILE test TWODOTS suite						{
-														cout << "while _ : _" << endl;
+														// cout << "while _ : _" << endl;
 														Node *whilen = asTree->bWhileNode();
 														Node* exprn = asTree->bExprNode();
 														exprn->addFChild($2);
@@ -780,7 +797,7 @@ while_stmt: /* 'while' test ':' suite ['else' ':' suite] */
 
 for_stmt: /* 'for' exprlist 'in' testlist ':' suite ['else' ':' suite] */
 	FOR exprlist IN testlist TWODOTS suite ELSE TWODOTS suite 	{
-																	cout << "for _ in _ : _ else : _" << endl;
+																	// cout << "for _ in _ : _ else : _" << endl;
 																	Node *forn = asTree->bForNode();
 																	forn->addFChild($2);
 																	forn->addLChild($4);
@@ -791,16 +808,16 @@ for_stmt: /* 'for' exprlist 'in' testlist ':' suite ['else' ':' suite] */
 																	$$ = forn;
 																}
 	| FOR exprlist IN testlist TWODOTS suite					{
-																	cout << "for _ in _ : _" << endl;
+																	// cout << "for _ in _ : _" << endl;
 																	Node *forn = asTree->bForNode();
 
-																	cout << "exprlist:" << endl;
+																	// cout << "exprlist:" << endl;
 																	Node* exprlist = $2;
 																	// exprlist->accept(*visitor); cout << endl;
-																	cout << "testlist:" << endl;
+																	// cout << "testlist:" << endl;
 																	Node* testlist = $4;
 																	// testlist->accept(*visitor); cout << endl;
-																	cout << "suite:" << endl;
+																	// cout << "suite:" << endl;
 																	Node* suite = $6;
 																	// suite->accept(*visitor); cout << endl;
 
@@ -851,11 +868,13 @@ stmt_plus: /* (stmt)+ */
 					};
 
 stmt: /* (simple_stmt | compound_stmt) */
-	simple_stmt 		{cout << "stmt:" <<endl; 
+	simple_stmt 		{
+							// cout << "stmt:" <<endl; 
 							$$ = $1;
 							// Node* node = $1; node->accept(*visitor); cout << endl; 
 						}
-	| compound_stmt 	{cout << "stmt:" <<endl; 
+	| compound_stmt 	{
+							// cout << "stmt:" <<endl; 
 							$$ = $1;
 							// Node* node = $1; node->accept(*visitor); cout << endl; 
 						};
@@ -959,7 +978,7 @@ expr_stmt_at: /* (augassign testlist | ('=' testlist)*) */
 		| ASSIGN test 			{
 									Node* exprn = asTree->bExprNode();
 									exprn->addFChild($2);
-									cout<<"="<<endl;
+									// cout<<"="<<endl;
 									Node* assignn = asTree->bAssignNode();
 									assignn->setSChild(exprn);
 
@@ -989,22 +1008,22 @@ assign_testlist_kleene:
 */
 augassign: /* ('+=' | '-=' | '*=' | '/=') */
 	MASIGUAL		{
-						cout<<"+="<<endl;
+						// cout<<"+="<<endl;
 						Node* assignn = asTree->bPlusNode();
 						$$ = assignn;
 					}
 	| MENOSIGUAL	{
-						cout<<"-="<<endl;
+						// cout<<"-="<<endl;
 						Node* assignn = asTree->bMinusNode();
 						$$ = assignn;
 					}
 	| PORIGUAL		{
-						cout<<"*="<<endl;
+						// cout<<"*="<<endl;
 						Node* assignn = asTree->bMultNode();
 						$$ = assignn;
 					}
 	| ENTREIGUAL	{
-						cout<<"/="<<endl;
+						// cout<<"/="<<endl;
 						Node* assignn = asTree->bDiviNode();
 						$$ = assignn;
 					};
@@ -1128,7 +1147,8 @@ return_stmt: /* 'return' [testlist] */
 
 /* Funciones */
 funcdef: /*'def' NAME parameters ':' suite*/
-	DEF NAME parameters TWODOTS suite	{ 	cout << "DEF NAME parameters TWODOTS suite" << endl;
+	DEF NAME parameters TWODOTS suite	{ 	
+											// cout << "DEF NAME parameters TWODOTS suite" << endl;
 											Node *funcn = asTree->bFuncNode();
 											/* FIXED: Bison recibe el NAME extrañamente */
 											string name ($2);
@@ -1144,13 +1164,13 @@ funcdef: /*'def' NAME parameters ':' suite*/
 
 parameters: /*'(' [varargslist] ')'*/
 	OPENPAR CLOSEPAR 				{
-										cout << "OPENPAR CLOSEPAR" << endl;
+										// cout << "OPENPAR CLOSEPAR" << endl;
 										Node *argsn = asTree->bArgsNode();
 										// argsn->accept(*visitor); cout << endl;
 										$$ = argsn;
 									}
 	| OPENPAR varargslist CLOSEPAR 	{
-										cout << "OPENPAR varargslist CLOSEPAR" << endl;
+										// cout << "OPENPAR varargslist CLOSEPAR" << endl;
 										if ($2 != NULL)
 										{
 											Node* node = $2;
@@ -1161,7 +1181,7 @@ parameters: /*'(' [varargslist] ')'*/
 
 varargslist: /* (NAME (',' NAME)*) */
 	NAME args_kleene	{
-							cout << "NAME args_kleene" << endl;
+							// cout << "NAME args_kleene" << endl;
 							/* FIXED: Bison recibe el NAME extrañamente */
 							string name ($1);
 							name = name.substr(0, name.find_first_of(' '));
@@ -1178,7 +1198,7 @@ varargslist: /* (NAME (',' NAME)*) */
 
 args_kleene: /* (',' NAME)* */
 	args_kleene COMMA NAME 	{
-								cout << "args_kleene COMMA NAME" << endl;
+								// cout << "args_kleene COMMA NAME" << endl;
 								Node *identn = asTree->bIdentNode(new string($3));
 								// identn->accept(*visitor); cout << endl;
 								Node *argsn = $1;
@@ -1187,7 +1207,7 @@ args_kleene: /* (',' NAME)* */
 								$$ = argsn;
 							}
 	| epsilon				{
-								cout << "args_kleene epsilon" << endl;
+								// cout << "args_kleene epsilon" << endl;
 								Node *argsn = asTree->bArgsNode();
 								// argsn->accept(*visitor); cout << endl;
 								$$ = argsn;

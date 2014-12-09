@@ -106,7 +106,6 @@ protected:
  	}
 
  	void accept(Visitor &v){
- 		// cout<<"int aceptado"<<endl;
  		v.visit(this);
  	}
  };
@@ -143,7 +142,6 @@ protected:
  	}
 
  	void accept(Visitor &v){
- 		// cout<<"String aceptado"<<endl;
  		v.visit(this);
  	}
  };
@@ -524,200 +522,199 @@ public:
  class MAST : public AST{
  public:
 	~MAST(){};
-	MAST():AST(){
-		cout<<"MAST creado"<<endl;
-	}
+	MAST():AST(){};
+
 	//LeafNode
  	IntNode* bIntNode(int val){
- 		cout << "bIntNode" << endl;
+ 		// cout << "bIntNode" << endl;
  		return new IntNode(val);
  	}
 
  	StrNode* bStrNode(string* val){
- 		cout << "bStrNode" << endl;
+ 		// cout << "bStrNode" << endl;
  		return new StrNode(val);
  	}
 
  	FloatNode* bFloatNode(float val){
- 		cout << "bFloatNode" << endl;
+ 		// cout << "bFloatNode" << endl;
  		return new FloatNode(val);
  	}
 
  	BoolNode* bBoolNode(bool val){
- 		cout << "bBoolNode" << endl;
+ 		// cout << "bBoolNode" << endl;
  		return new BoolNode(val);
  	}
 
  	IdentNode* bIdentNode(string* name){
- 		cout << "bIdentNode" << endl;
+ 		// cout << "bIdentNode" << endl;
  		return new IdentNode(name);
  	}
  	
 	//BinNode
  	PlusNode* bPlusNode(){
- 		cout << "bPlusNode" << endl;
+ 		// cout << "bPlusNode" << endl;
  		return new PlusNode;
  	}
 
  	MultNode* bMultNode(){
- 		cout << "bMultNode" << endl;
+ 		// cout << "bMultNode" << endl;
  		return new MultNode;
  	}
 
  	DiviNode* bDiviNode(){
- 		cout << "bDiviNode" << endl;
+ 		// cout << "bDiviNode" << endl;
  		return new DiviNode;
  	}
 
  	MinusNode* bMinusNode(){
- 		cout << "bMinusNode" << endl;
+ 		// cout << "bMinusNode" << endl;
  		return new MinusNode;
  	}
  	
  	AssignNode* bAssignNode(){
- 		cout << "bAssignNode" << endl;
+ 		// cout << "bAssignNode" << endl;
 		return new AssignNode;
 	}
 	
 	AndNode* bAndNode(){
-		cout << "bAndNode" << endl;
+		// cout << "bAndNode" << endl;
   		return new AndNode;
   	}
 
   	OrNode* bOrNode(){
-  		cout << "bOrNode" << endl;
+  		// cout << "bOrNode" << endl;
   		return new OrNode;
   	}
 
   	XorNode* bXorNode(){
-  		cout << "bXorNode" << endl;
+  		// cout << "bXorNode" << endl;
   		return new XorNode;
   	}
 
   	NotNode* bNotNode(){
-  		cout << "bNotNode" << endl;
+  		// cout << "bNotNode" << endl;
   		return new NotNode;
   	}
   	
   	LTNode* bLTNode(){
-  		cout << "bLTNode" << endl;
+  		// cout << "bLTNode" << endl;
   		return new LTNode;
   	}
   	
   	GTNode* bGTNode(){
-  		cout << "bGTNode" << endl;
+  		// cout << "bGTNode" << endl;
   		return new GTNode;
   	}
 
   	EqNode* bEqNode(){
-  		cout << "bEqNode" << endl;
+  		// cout << "bEqNode" << endl;
   		return new EqNode;
   	}
 
   	NEqNode* bNEqNode(){
-  		cout << "bNEqNode" << endl;
+  		// cout << "bNEqNode" << endl;
   		return new NEqNode;
   	}
 
   	LTEqNode* bLTEqNode(){
-  		cout << "bLTEqNode" << endl;
-  		return new LTEqNode();
+  		// cout << "bLTEqNode" << endl;
+  		return new LTEqNode;
   	}
 
   	GTEqNode* bGTEqNode(){
-  		cout << "bGTEqNode" << endl;
+  		// cout << "bGTEqNode" << endl;
   		return new GTEqNode;
   	}
 
   	PotNode* bPotNode(){
-  		cout << "bPotNode" << endl;
+  		// cout << "bPotNode" << endl;
   		return new PotNode;
   	}
   	
   	//INode
   	StmtNode* bStmtNode(){
-  		cout << "bStmtNode" << endl;
+  		// cout << "bStmtNode" << endl;
 		return new StmtNode;
 	}
 	
 	SStmtNode* bSStmtNode(){
-		cout << "bSStmtNode" << endl;
+		// cout << "bSStmtNode" << endl;
 		return new SStmtNode;
 	}
   	
   	StmtListNode* bStmtListNode(){
-  		cout << "bStmtListNode" << endl;
+  		// cout << "bStmtListNode" << endl;
  		return new StmtListNode;
  	}
 
  	SStmtListNode* bSStmtListNode(){
- 		cout << "bSStmtListNode" << endl;
+ 		// cout << "bSStmtListNode" << endl;
  		return new SStmtListNode;
  	}
  	
   	ExprNode* bExprNode(){
-  		cout << "bExprNode" << endl;
+  		// cout << "bExprNode" << endl;
  		return new ExprNode;
  	}
  	
  	IfNode* bIfNode(){
- 		cout << "bIfNode" << endl;
+ 		// cout << "bIfNode" << endl;
  		return new IfNode;
  	}
 
  	ForNode* bForNode(){
- 		cout << "bForNode" << endl;
+ 		// cout << "bForNode" << endl;
  		return new ForNode;
  	}
 
  	WhileNode* bWhileNode(){
- 		cout << "bWhileNode" << endl;
+ 		// cout << "bWhileNode" << endl;
  		return new WhileNode;
  	}
 
   	ArgsNode* bArgsNode(){
-  		cout << "bArgsNode" << endl;
+  		// cout << "bArgsNode" << endl;
   		return new ArgsNode;
   	}
 
   	FuncNode* bFuncNode(){
-  		cout << "bFuncNode" << endl;
+  		// cout << "bFuncNode" << endl;
   		return new FuncNode;
   	}
 
   	/* Implementación del b de nuevos nodos */
   	ReturnNode* bReturnNode(){
-  		cout << "bReturnNode" << endl;
+  		// cout << "bReturnNode" << endl;
   		return new ReturnNode;
   	}
   	
  	PrintNode* bPrintNode(){
- 		cout << "bPrintNode" << endl;
+ 		// cout << "bPrintNode" << endl;
  		return new PrintNode;
  	}
  	
  	BreakNode* bBreakNode(){
- 		cout << "bBreakNode" << endl;
+ 		// cout << "bBreakNode" << endl;
  		return new BreakNode;
  	}
  	
  	ContinueNode* bContinueNode(){
- 		cout << "bContinueNode" << endl;
+ 		// cout << "bContinueNode" << endl;
  		return new ContinueNode;
  	}
  	
  	FileNode* bFileNode() {
- 		cout << "bFileNode" << endl;
+ 		// cout << "bFileNode" << endl;
  		return new FileNode;
  	}
 
  	CallNode* bCallNode() {
- 		cout << "bCallNode" << endl;
+ 		// cout << "bCallNode" << endl;
  		return new CallNode;
  	}
 
  	ExprListNode* bExprListNode() {
- 		cout << "bExprListNode" << endl;
+ 		// cout << "bExprListNode" << endl;
  		return new ExprListNode;
  	}
  	
