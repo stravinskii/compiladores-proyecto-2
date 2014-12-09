@@ -18,7 +18,7 @@ using namespace std;
  */
 union tipo{
 	int integer;
-	double double_number;
+	float float_number;
 	string cadena;
 };
 
@@ -30,6 +30,11 @@ class Simbolo{
 		string *name;
 		tipo *valor;
 		int type;
+		
+		Simbolo(string *n){
+			valor= (tipo*)malloc(sizeof(tipo));
+			name=n;
+		}
 	
 		Simbolo(string *n, int *val){
 			valor= (tipo*)malloc(sizeof(tipo));
@@ -38,10 +43,10 @@ class Simbolo{
 			type=0;
 		}
 		
-		Simbolo(string *n, double *val){
+		Simbolo(string *n, float *val){
 			valor= (tipo*)malloc(sizeof(tipo));
 			name=n;
-			valor->double_number=*val;
+			valor->float_number=*val;
 			type=1;
 		}
 		
@@ -67,7 +72,7 @@ class Simbolo{
 		
 		void imprime(){
 			if(type==1)
-				cout<<*name<<" = "<<(*valor).double_number<<"\n";
+				cout<<*name<<" = "<<(*valor).float_number<<"\n";
 			if(type==0)
 				cout<<*name<<" = "<<(*valor).integer<<"\n";
 			if(type==2)

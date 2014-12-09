@@ -68,5 +68,9 @@ class PrintNode;
 class BreakNode;
 class ContinueNode;
 
+class FileNode;
+class CallNode;
+class ExprListNode;
+
 
 #endif
